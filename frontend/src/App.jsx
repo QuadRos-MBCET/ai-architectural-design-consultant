@@ -36,54 +36,69 @@ function App() {
   }
 
   return (
-    <div className="App" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <h1>AI Architectural Design Consultant</h1>
-      <p>Enter your architectural requirements below to get started.</p>
+    <div className="app-container">
+      <div className="header">
+        <h1>AI Architectural Design Consultant</h1>
+        <p>Transform natural language requirements into structured architectural concepts.</p>
+      </div>
       
-      <form onSubmit={handleSubmit}>
-        <textarea 
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="E.g., Design a 3-floor eco-friendly public library for a hot and humid climate..."
-          rows={6}
-          style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-          required
-        />
-        <br />
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px', fontSize: '16px' }}>
-          {loading ? 'Processing...' : 'Extract Requirements'}
-        </button>
-      </form>
+      <div className="input-card">
+        <form onSubmit={handleSubmit}>
+          <textarea 
+            className="prompt-textarea"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="E.g., Design a 3-floor eco-friendly public library for a hot and humid climate with natural ventilation..."
+            rows={5}
+            required
+          />
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? 'Processing via LLM...' : 'Extract Requirements'}
+          </button>
+        </form>
+      </div>
 
       {error && (
-        <div style={{ color: 'red', marginTop: '20px' }}>
-          <strong>Error:</strong> {error}
+        <div className="error-message">
+          <strong>Error connection to backend:</strong> {error}
         </div>
       )}
 
       {result && (
-        <div style={{ marginTop: '30px', textAlign: 'left', background: '#f4f4f4', padding: '20px', borderRadius: '5px' }}>
-          <h2>Extracted Requirements</h2>
-          <p><strong>Building Type:</strong> {result.building_type}</p>
-          <p><strong>Climate:</strong> {result.climate}</p>
-          <p><strong>User Capacity:</strong> {result.user_capacity}</p>
+        <div className="results-card">
+          <h2>Structured Project Requirements</h2>
           
-          <h3>Key Features</h3>
-          <ul>
+          <div className="result-grid">
+            <div className="info-box">
+              <span className="info-label">Building Type</span>
+              <span className="info-value">{result.building_type}</span>
+            </div>
+            <div className="info-box">
+              <span className="info-label">Climate context</span>
+              <span className="info-value">{result.climate}</span>
+            </div>
+            <div className="info-box">
+              <span className="info-label">User Capacity</span>
+              <span className="info-value">{result.user_capacity}</span>
+            </div>
+          </div>
+          
+          <h3 style={{marginTop: '20px', color: '#334155'}}>Key Design Features</h3>
+          <div className="tags-container">
             {result.key_features.map((feature, idx) => (
-              <li key={idx}>{feature}</li>
+              <span key={idx} className="tag">{feature}</span>
             ))}
-          </ul>
+          </div>
 
-          <h3>Sustainability Goals</h3>
-          <ul>
+          <h3 style={{marginTop: '20px', color: '#334155'}}>Sustainability Goals</h3>
+          <div className="tags-container">
             {result.sustainability_goals.map((goal, idx) => (
-              <li key={idx}>{goal}</li>
+              <span key={idx} className="tag sustainability-tag">{goal}</span>
             ))}
-          </ul>
+          </div>
           
-          <div style={{ marginTop: '20px', padding: '10px', background: '#e0e0e0', fontSize: '0.9em' }}>
-            <strong>Raw LLM Note:</strong> {result.raw_extraction}
+          <div className="raw-note">
+            <strong>System Note:</strong> {result.raw_extraction}
           </div>
         </div>
       )}
