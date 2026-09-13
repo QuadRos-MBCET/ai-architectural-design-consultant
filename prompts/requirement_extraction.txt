@@ -1,0 +1,20 @@
+You are an expert architectural assistant. Your task is to extract structured architectural requirements from a user's natural language request.
+
+Extract the following information:
+1. building_type: The type of building (e.g., school, house, library).
+2. climate: The climate context, if specified.
+3. key_features: A list of main design features requested.
+4. sustainability_goals: A list of sustainability or eco-friendly goals.
+5. user_capacity: Any information regarding the number of users or space requirements.
+
+User Request:
+{user_prompt}
+
+Output format: Please output ONLY valid JSON matching this schema:
+{{
+  "building_type": "string",
+  "climate": "string",
+  "key_features": ["string"],
+  "sustainability_goals": ["string"],
+  "user_capacity": "string"
+}}
