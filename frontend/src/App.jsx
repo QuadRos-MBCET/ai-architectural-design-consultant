@@ -33,6 +33,8 @@ function App() {
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
 
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
   const generateDesign = async () => {
     setIsLoading(true);
     setError('');
@@ -43,7 +45,7 @@ function App() {
     try {
       setStatus('Analyzing geometry & generating blueprints...');
       
-      const extractRes = await fetch('http://localhost:8000/api/requirements/extract', {
+      const extractRes = await fetch(`${API_BASE}/api/requirements/extract`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_prompt: prompt })
@@ -56,7 +58,7 @@ function App() {
       setReportData(jsonSpec);
       
       setStatus('Extruding Multi-Story Massing Model...');
-      const gen3dRes = await fetch('http://localhost:8000/api/design/generate-3d', {
+      const gen3dRes = await fetch(`${API_BASE}/api/design/generate-3d`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ structured_json: jsonSpec })
@@ -83,14 +85,14 @@ function App() {
 
   if (gen3dData) {
     if (selectedTab === 'combined') {
-      currentModelUrl = `http://localhost:5173${gen3dData.combined_model_url}`;
+      currentModelUrl = `${API_BASE}${gen3dData.combined_model_url}`;
       viewTitle = "Multi-Story Building View";
     } else if (selectedTab === 'systems') {
       viewTitle = "Climate & Systems Architecture";
     } else {
       const floor = gen3dData.floors[selectedTab];
-      currentModelUrl = `http://localhost:5173${floor.model_url}`;
-      currentBlueprintUrl = `http://localhost:5173${floor.blueprint_url}`;
+      currentModelUrl = `${API_BASE}${floor.model_url}`;
+      currentBlueprintUrl = `${API_BASE}${floor.blueprint_url}`;
       viewTitle = `${floor.name} View`;
     }
   }

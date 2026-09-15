@@ -24,8 +24,8 @@ class Generate3DResponse(BaseModel):
 @router.post("/generate-3d", response_model=Generate3DResponse)
 async def generate_3d(request: Generate3DRequest):
     try:
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        public_dir = os.path.join(base_dir, "frontend", "public")
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        public_dir = os.path.join(base_dir, "static")
         os.makedirs(public_dir, exist_ok=True)
         
         json_data = request.structured_json
@@ -59,8 +59,8 @@ async def generate_3d(request: Generate3DRequest):
             floor_responses.append(FloorResponse(
                 level=level,
                 name=name,
-                blueprint_url=f"/{svg_filename}?t={timestamp}",
-                model_url=f"/{glb_filename}?t={timestamp}"
+                blueprint_url=f"/static/{svg_filename}?t={timestamp}",
+                model_url=f"/static/{glb_filename}?t={timestamp}"
             ))
             
         # Combine
@@ -69,7 +69,7 @@ async def generate_3d(request: Generate3DRequest):
         export_combined_meshes(all_floor_meshes, combined_path)
         
         return Generate3DResponse(
-            combined_model_url=f"/{combined_filename}?t={timestamp}",
+            combined_model_url=f"/static/{combined_filename}?t={timestamp}",
             floors=floor_responses
         )
             
