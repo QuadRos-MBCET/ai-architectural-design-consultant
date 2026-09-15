@@ -212,8 +212,16 @@ with col2:
         tab_names = ["Entire Building", "Bill of Materials"] + [f["name"] for f in st.session_state.gen3d_data["floors"]]
         tabs = st.tabs(tab_names)
         
+        legend_html = """
+        <div style='display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; background-color: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #334155;'>
+            <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #ADD8E6; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Window Glass</span></div>
+            <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #8B4513; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Solid Door</span></div>
+        </div>
+        """
+        
         with tabs[0]:
             st.subheader("Multi-Story Building View")
+            st.markdown(legend_html, unsafe_allow_html=True)
             render_model_viewer(st.session_state.gen3d_data["combined_glb"])
             
         with tabs[1]:
@@ -235,6 +243,7 @@ with col2:
                 st.markdown(floor['svg_content'], unsafe_allow_html=True)
                 
                 st.subheader("3D CAD Rendering")
+                st.markdown(legend_html, unsafe_allow_html=True)
                 render_model_viewer(floor['glb_base64'])
     else:
         st.info("Enter a prompt and click Generate to see visualizations here.")
