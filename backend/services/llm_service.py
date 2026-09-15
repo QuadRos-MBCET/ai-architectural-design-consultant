@@ -106,22 +106,22 @@ def extract_requirements(user_prompt: str) -> dict:
                 name = f"Museum Level {i+1} (Private Collections)"
                 rooms = [{"name": f"Exhibition Hall {i}", "x": 0, "y": 0, "width": 15 + (i%5), "length": 25}, {"name": "Curator Study", "x": 15 + (i%5), "y": 0, "width": 15, "length": 15}, {"name": "Storage", "x": 15 + (i%5), "y": 15, "width": 15, "length": 10}]
         else:
-            # TRUE DYNAMIC FALLBACK: If they type "school", "cinema", "office", it handles it automatically!
+            # TRUE DYNAMIC FALLBACK: Perfectly balanced 30x30 procedural grids
             bt_title = building_type.title()
             if i == 0:
                 name = f"{bt_title} Ground (Lobby and Reception)"
                 rooms = [
                     {"name": f"Main Reception", "x": 0, "y": 0, "width": 15, "length": 15},
                     {"name": f"Public Waiting Area", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": f"Security and Control", "x": 0, "y": 15, "width": 15, "length": 10},
-                    {"name": f"{bt_title} Facilities", "x": 15, "y": 15, "width": 15, "length": 10}
+                    {"name": f"Security and Control", "x": 0, "y": 15, "width": 15, "length": 15},
+                    {"name": f"{bt_title} Facilities", "x": 15, "y": 15, "width": 15, "length": 15}
                 ]
             elif i == 1:
                 name = f"{bt_title} Level {i+1} (Operations)"
                 rooms = [
-                    {"name": f"Core {bt_title} Space", "x": 0, "y": 0, "width": 20, "length": 25},
+                    {"name": f"Core {bt_title} Space", "x": 0, "y": 0, "width": 20, "length": 30},
                     {"name": f"Secondary Zones", "x": 20, "y": 0, "width": 10, "length": 15},
-                    {"name": "Admin Offices", "x": 20, "y": 15, "width": 10, "length": 10}
+                    {"name": "Admin Offices", "x": 20, "y": 15, "width": 10, "length": 15}
                 ]
             elif i == 2:
                 name = f"{bt_title} Level {i+1} (Specialty Space)"
@@ -135,15 +135,15 @@ def extract_requirements(user_prompt: str) -> dict:
                 rooms = [
                     {"name": "Executive Offices", "x": 0, "y": 0, "width": 15, "length": 15},
                     {"name": "Boardroom", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": "Archive Room", "x": 0, "y": 15, "width": 15, "length": 10},
-                    {"name": "R and D Space", "x": 15, "y": 15, "width": 15, "length": 10}
+                    {"name": "Archive Room", "x": 0, "y": 15, "width": 15, "length": 15},
+                    {"name": "R and D Space", "x": 15, "y": 15, "width": 15, "length": 15}
                 ]
             else:
                 name = f"{bt_title} Level {i+1} (Extended Wing)"
                 rooms = [
-                    {"name": f"Expansion Zone {i}", "x": 0, "y": 0, "width": 20 + (i%2)*5, "length": 15},
-                    {"name": f"Flex Space {i}", "x": 20 + (i%2)*5, "y": 0, "width": 15, "length": 15},
-                    {"name": "Utilities", "x": 0, "y": 15, "width": 35 + (i%2)*5, "length": 5}
+                    {"name": f"Expansion Zone {i}", "x": 0, "y": 0, "width": 15, "length": 15},
+                    {"name": f"Flex Space {i}", "x": 15, "y": 0, "width": 15, "length": 15},
+                    {"name": "Utilities", "x": 0, "y": 15, "width": 30, "length": 15}
                 ]
         
         dynamic_floors.append({

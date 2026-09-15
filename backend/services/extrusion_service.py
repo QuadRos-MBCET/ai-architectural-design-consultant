@@ -16,10 +16,12 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
         door_width = 2.0    
         
         colors = [
-            [230, 240, 250, 255], 
-            [250, 240, 230, 255], 
-            [240, 250, 230, 255], 
-            [245, 235, 245, 255], 
+            [255, 99, 71, 255],     # Tomato Red
+            [64, 224, 208, 255],    # Turquoise
+            [255, 215, 0, 255],     # Bright Gold
+            [138, 43, 226, 255],    # Blue Violet
+            [50, 205, 50, 255],     # Lime Green
+            [255, 105, 180, 255],   # Hot Pink
         ]
         
         for idx, room in enumerate(rooms):
@@ -54,7 +56,7 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
         # Floor plate
         if rooms:
             floor_mesh = trimesh.creation.box(extents=(b_width + 2, 0.2, b_length + 2))
-            floor_mesh.visual.face_colors = [200, 200, 200, 255]
+            floor_mesh.visual.face_colors = [45, 45, 50, 255] # Sleek Charcoal Base
             tf = np.eye(4)
             tf[0, 3] = b_width / 2
             tf[1, 3] = -0.1 + elevation
