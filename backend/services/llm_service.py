@@ -39,9 +39,20 @@ def extract_requirements(user_prompt: str) -> dict:
     # 1. RAG Retrieval Phase
     prompt_lower = user_prompt.lower()
     
+    # Active blocking of error messages and tracebacks
+    if "file " in prompt_lower and "line " in prompt_lower and (".py" in prompt_lower or "traceback" in prompt_lower):
+        raise ValueError("Invalid Prompt: The AI Consultant detected a Python error traceback in your request. Please provide a valid architectural description.")
+    
     # Prompt Validation: Ensure it's an architectural request, not an error message or gibberish
-    valid_keywords = ["design", "building", "floor", "story", "hospital", "mall", "house", "villa", "home", "museum", "office", "library", "school", "residential", "commercial", "project", "architecture", "plan", "mansion", "clinic", "retail"]
-    if not any(kw in prompt_lower for kw in valid_keywords) and len(prompt_lower.split()) > 0:
+    valid_keywords = ["building", "floor", "story", "hospital", "mall", "house", "villa", "home", "museum", "office", "library", "school", "residential", "commercial", "architecture", "mansion", "clinic", "retail"]
+    
+    has_valid_word = False
+    for kw in valid_keywords:
+        if re.search(r'\b' + kw + r'\b', prompt_lower):
+            has_valid_word = True
+            break
+            
+    if not has_valid_word and len(prompt_lower.split()) > 0:
         raise ValueError("Invalid Prompt: The AI Consultant could not detect any architectural requirements in your request. Please describe a building, specify the number of floors, or provide a valid architectural typology.")
     
     # Dynamically extract building type from prompt (e.g., "public museum" -> "museum")
