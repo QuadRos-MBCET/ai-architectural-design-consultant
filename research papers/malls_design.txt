@@ -1,0 +1,6 @@
+Architectural Guidelines for Shopping Malls:
+1. Spatial Organization: Malls require massive footprints with anchor stores at the extremities to ensure foot traffic across smaller retail zones.
+2. Circulation: Corridors should be a minimum of 6 meters wide. Use a looped or figure-eight layout to prevent dead ends.
+3. Daylighting: Incorporate large central atrium skylights (with Low-E glazing) to provide natural light to interior circulation spaces.
+4. MEP Systems: Centralized HVAC systems with high-capacity chillers are required. Exhaust systems must be routed to the roof.
+5. Sustainability: Incorporate vast solar canopies over parking areas and rainwater harvesting systems for landscape irrigation.
