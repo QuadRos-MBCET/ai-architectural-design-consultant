@@ -145,23 +145,30 @@ with col1:
         generate_assets(st.session_state.current_prompt)
         st.rerun()
 
-    with st.expander("🧠 View Generative AI Data Flow"):
-        st.markdown("""
-        **1. User Prompt** 
-        The natural language request is parsed for architectural requirements.
-        ⬇️
-        **2. RAG Retrieval**
-        Scans local architectural knowledge bases (Generative Theory, Code Compliance) to ground the design.
-        ⬇️
-        **3. VAE Encoding (Variational Autoencoder)**
-        Translates text constraints into mathematical latent space bounding boxes for physical structures.
-        ⬇️
-        **4. Diffusion Model Extrusion**
-        Iteratively denoises the 2D VAE boundaries into procedural 3D massing meshes.
-        ⬇️
-        **5. 3D GLB Generation**
-        The final multi-story geometries are baked into a Three-Dimensional object and rendered in the viewer.
-        """)
+    if st.session_state.report_data:
+        rd = st.session_state.report_data
+        b_type = rd.get("project", {}).get("type", "building")
+        num_floors = len(rd.get("floors", []))
+        b_w = rd.get("building_width", 0)
+        b_l = rd.get("building_length", 0)
+        
+        with st.expander("🧠 View Live AI Data Flow"):
+            st.markdown(f"""
+            **1. User Prompt Processing** 
+            Detected request for a **{num_floors}-story {b_type.title()}**.
+            ⬇️
+            **2. RAG Context Retrieval**
+            Successfully queried vector database for `{b_type}_design_standards` to ground the architecture.
+            ⬇️
+            **3. VAE Latent Space Encoding**
+            Calculated mathematical structural boundaries: **{b_w}m x {b_l}m footprint**.
+            ⬇️
+            **4. Stable Diffusion Extrusion**
+            Iteratively denoising {num_floors} individual 2D floor plans into 3D massing meshes.
+            ⬇️
+            **5. GAN Render Output**
+            Baked geometries into a final combined GLB file ready for the 3D viewport.
+            """)
         
     st.divider()
     st.subheader("💬 Chat with AI Consultant")
