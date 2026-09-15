@@ -154,19 +154,27 @@ with col1:
         
         with st.expander("🧠 View Live AI Data Flow"):
             st.markdown(f"""
-            **1. User Prompt Processing** 
+            **1. User Prompt Processing**  
             Detected request for a **{num_floors}-story {b_type.title()}**.
+            
             ⬇️
-            **2. RAG Context Retrieval**
+            
+            **2. RAG Context Retrieval**  
             Successfully queried vector database for `{b_type}_design_standards` to ground the architecture.
+            
             ⬇️
-            **3. VAE Latent Space Encoding**
+            
+            **3. VAE Latent Space Encoding**  
             Calculated mathematical structural boundaries: **{b_w}m x {b_l}m footprint**.
+            
             ⬇️
-            **4. Stable Diffusion Extrusion**
+            
+            **4. Stable Diffusion Extrusion**  
             Iteratively denoising {num_floors} individual 2D floor plans into 3D massing meshes.
+            
             ⬇️
-            **5. GAN Render Output**
+            
+            **5. GAN Render Output**  
             Baked geometries into a final combined GLB file ready for the 3D viewport.
             """)
         
