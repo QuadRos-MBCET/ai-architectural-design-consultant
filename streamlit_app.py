@@ -140,114 +140,113 @@ if app_mode == "Generative 3D Design":
     col1, col2 = st.columns([1, 2])
     
     with col1:
-    st.header("Project Requirements")
-    prompt = st.text_area("Describe the architectural project...", value=st.session_state.current_prompt, height=100)
-    
-    if st.button("Generate Multi-Story Design", type="primary", use_container_width=True):
-        st.session_state.current_prompt = prompt
-        generate_assets(st.session_state.current_prompt)
-        st.rerun()
-
-    if st.session_state.report_data:
-        rd = st.session_state.report_data
-        b_type = rd.get("project", {}).get("type", "building")
-        num_floors = len(rd.get("floors", []))
-        b_w = rd.get("building_width", 0)
-        b_l = rd.get("building_length", 0)
+        st.header("Project Requirements")
+        prompt = st.text_area("Describe the architectural project...", value=st.session_state.current_prompt, height=100)
         
-        with st.expander("🧠 View Live AI Data Flow"):
-            st.markdown(f"""
-            **1. User Prompt Processing**  
-            Detected request for a **{num_floors}-story {b_type.title()}**.
-            
-            ⬇️
-            
-            **2. RAG Context Retrieval**  
-            Successfully queried vector database for `{b_type}_design_standards` to ground the architecture.
-            
-            ⬇️
-            
-            **3. VAE Latent Space Encoding**  
-            Calculated mathematical structural boundaries: **{b_w}m x {b_l}m footprint**.
-            
-            ⬇️
-            
-            **4. Stable Diffusion Extrusion**  
-            Iteratively denoising {num_floors} individual 2D floor plans into 3D massing meshes.
-            
-            ⬇️
-            
-            **5. GAN Render Output**  
-            Baked geometries into a final combined GLB file ready for the 3D viewport.
-            """)
-        
-    st.divider()
-    st.subheader("💬 Chat with AI Consultant")
-    
-    # Chat UI Container
-    chat_container = st.container(height=400)
-    with chat_container:
-        for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-                
-    if chat_input := st.chat_input("Ask me to add a floor or change the building..."):
-        # Append user message
-        st.session_state.messages.append({"role": "user", "content": chat_input})
-        
-        # Process logic
-        new_prompt, bot_reply = process_simulated_chat(chat_input, st.session_state.current_prompt)
-        
-        # Append bot reply
-        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-        
-        # If the chatbot decided to modify the architecture prompt, trigger regeneration!
-        if new_prompt != st.session_state.current_prompt:
-            st.session_state.current_prompt = new_prompt
+        if st.button("Generate Multi-Story Design", type="primary", use_container_width=True):
+            st.session_state.current_prompt = prompt
             generate_assets(st.session_state.current_prompt)
-            
-        st.rerun()
+            st.rerun()
 
-
-with col2:
-    if st.session_state.gen3d_data and st.session_state.report_data:
-        # Create tabs dynamically based on floors + combined + materials
-        tab_names = ["Entire Building", "Bill of Materials"] + [f["name"] for f in st.session_state.gen3d_data["floors"]]
-        tabs = st.tabs(tab_names)
-        
-        legend_html = """
-        <div style='display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; background-color: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #334155;'>
-            <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #ADD8E6; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Window Glass</span></div>
-            <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #8B4513; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Solid Door</span></div>
-        </div>
-        """
-        
-        with tabs[0]:
-            st.subheader("Multi-Story Building View")
-            st.markdown(legend_html, unsafe_allow_html=True)
-            render_model_viewer(st.session_state.gen3d_data["combined_glb"])
+        if st.session_state.report_data:
+            rd = st.session_state.report_data
+            b_type = rd.get("project", {}).get("type", "building")
+            num_floors = len(rd.get("floors", []))
+            b_w = rd.get("building_width", 0)
+            b_l = rd.get("building_length", 0)
             
-        with tabs[1]:
-            st.subheader("Estimated Bill of Materials (INR)")
-            materials = st.session_state.report_data.get("materials_estimate", [])
-            df_data = []
-            for m in materials:
-                df_data.append({
-                    "Item": m["item"],
-                    "Qty": f"{m['quantity']} {m['unit']}",
-                    "Rate": f"₹{m['present_rate']:,.2f}",
-                    "Total Cost": f"₹{m['total_cost']:,.0f}"
-                })
-            st.dataframe(df_data, hide_index=True, use_container_width=True)
-            
-        for idx, floor in enumerate(st.session_state.gen3d_data["floors"]):
-            with tabs[idx + 2]:
-                st.subheader(f"2D Blueprint - {floor['name']}")
-                st.markdown(floor['svg_content'], unsafe_allow_html=True)
+            with st.expander("🧠 View Live AI Data Flow"):
+                st.markdown(f"""
+                **1. User Prompt Processing**  
+                Detected request for a **{num_floors}-story {b_type.title()}**.
                 
-                st.subheader("3D CAD Rendering")
+                ⬇️
+                
+                **2. RAG Context Retrieval**  
+                Successfully queried vector database for `{b_type}_design_standards` to ground the architecture.
+                
+                ⬇️
+                
+                **3. VAE Latent Space Encoding**  
+                Calculated mathematical structural boundaries: **{b_w}m x {b_l}m footprint**.
+                
+                ⬇️
+                
+                **4. Stable Diffusion Extrusion**  
+                Iteratively denoising {num_floors} individual 2D floor plans into 3D massing meshes.
+                
+                ⬇️
+                
+                **5. GAN Render Output**  
+                Baked geometries into a final combined GLB file ready for the 3D viewport.
+                """)
+            
+        st.divider()
+        st.subheader("💬 Chat with AI Consultant")
+        
+        # Chat UI Container
+        chat_container = st.container(height=400)
+        with chat_container:
+            for msg in st.session_state.messages:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+                    
+        if chat_input := st.chat_input("Ask me to add a floor or change the building..."):
+            # Append user message
+            st.session_state.messages.append({"role": "user", "content": chat_input})
+            
+            # Process logic
+            new_prompt, bot_reply = process_simulated_chat(chat_input, st.session_state.current_prompt)
+            
+            # Append bot reply
+            st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+            
+            # If the chatbot decided to modify the architecture prompt, trigger regeneration!
+            if new_prompt != st.session_state.current_prompt:
+                st.session_state.current_prompt = new_prompt
+                generate_assets(st.session_state.current_prompt)
+                
+            st.rerun()
+
+    with col2:
+        if st.session_state.gen3d_data and st.session_state.report_data:
+            # Create tabs dynamically based on floors + combined + materials
+            tab_names = ["Entire Building", "Bill of Materials"] + [f["name"] for f in st.session_state.gen3d_data["floors"]]
+            tabs = st.tabs(tab_names)
+            
+            legend_html = """
+            <div style='display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; background-color: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #334155;'>
+                <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #ADD8E6; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Window Glass</span></div>
+                <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #8B4513; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Solid Door</span></div>
+            </div>
+            """
+            
+            with tabs[0]:
+                st.subheader("Multi-Story Building View")
                 st.markdown(legend_html, unsafe_allow_html=True)
-                render_model_viewer(floor['glb_base64'])
+                render_model_viewer(st.session_state.gen3d_data["combined_glb"])
+                
+            with tabs[1]:
+                st.subheader("Estimated Bill of Materials (INR)")
+                materials = st.session_state.report_data.get("materials_estimate", [])
+                df_data = []
+                for m in materials:
+                    df_data.append({
+                        "Item": m["item"],
+                        "Qty": f"{m['quantity']} {m['unit']}",
+                        "Rate": f"₹{m['present_rate']:,.2f}",
+                        "Total Cost": f"₹{m['total_cost']:,.0f}"
+                    })
+                st.dataframe(df_data, hide_index=True, use_container_width=True)
+                
+            for idx, floor in enumerate(st.session_state.gen3d_data["floors"]):
+                with tabs[idx + 2]:
+                    st.subheader(f"2D Blueprint - {floor['name']}")
+                    st.markdown(floor['svg_content'], unsafe_allow_html=True)
+                    
+                    st.subheader("3D CAD Rendering")
+                    st.markdown(legend_html, unsafe_allow_html=True)
+                    render_model_viewer(floor['glb_base64'])
         else:
             st.info("Enter a prompt and click Generate to see visualizations here.")
             
