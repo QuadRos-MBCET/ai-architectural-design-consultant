@@ -24,13 +24,16 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
             [255, 105, 180, 255],   # Hot Pink
         ]
         
+        level = floor.get("level", 1)
+        floor_color = colors[(level - 1) % len(colors)]
+        
         for idx, room in enumerate(rooms):
             rw = room.get("width", 5)
             rl = room.get("length", 5)
             rx = room.get("x", 0)
             ry = room.get("y", 0)
             
-            color = colors[idx % len(colors)]
+            color = floor_color
             
             def create_wall(w, d, x, z, h=wall_height, elevation_offset=0, custom_color=None):
                 box = trimesh.creation.box(extents=(w, h, d))
