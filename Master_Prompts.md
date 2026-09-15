@@ -30,3 +30,25 @@ Top Level (Private / Executive / Amenity): Specialized quiet zones (executive su
 Layered 2D schematic layouts showing circulation cores, structural column grid, egress paths, and spatial dimensions.
 Functional adjacency matrix and area programming breakdown.
 3D isometric cutaway diagram showing spatial volume relationships and facade articulation.
+
+---
+
+## 2. PDF Document Analysis & Code Compliance Prompt
+
+**Use this prompt when demonstrating the AI's ability to analyze existing blueprints and run structural/plumbing checks:**
+
+You are an expert computational architect and BIM consultant. Analyze the floor plan and drawing details provided in the uploaded PDF document to generate an optimized spatial breakdown and architectural model.
+
+**1. Document & Drawing Ingestion:**
+Scale & Vector Extraction: Detect the drawing scale, grid lines, structural columns, load-bearing vs. partition walls, door swings, and window openings.
+Typology Detection: Identify the target program based on spatial distribution, whether Residential (single/multi-family, duplex, villa) or Hospitality (boutique hotel, business hotel, guest lodge, resort units).
+
+**2. Typology-Specific & En-Suite Spatial Rules:**
+En-Suite & Wet-Area Detection: Explicitly account for internal en-suite bathrooms/toilets integrated directly within bedrooms or guest rooms (water closet, vanity, shower/bath zone, and plumbing chase alignment). Distinguish between private attached en-suites and common/powder rooms.
+Residential Logic: Delineate private sleeping zones, public living/dining zones, service access, and utility balconies while checking circulation privacy.
+Hospitality Logic: Account for standard guest key rooms (typical bay widths, entry vestibules with en-suite bathrooms, wardrobe closets), service corridors, housekeeping vertical cores, fire egress stairs, and acoustic buffer zones.
+
+**3. Analysis & Output Deliverables:**
+Programmatic Area Schedule: Provide a tabular summary listing each detected space, room function, estimated dimensions (L × W), total usable floor area, and en-suite connection.
+Circulation & Code Compliance Assessment: Flag bottlenecks, dead-end corridors, daylight access (window-to-floor area adequacy), and plumbing stack efficiency across floors.
+Redesign / 3D Extrusion Recommendations: Suggest massing refinements, structural grid optimization, and spatial reallocations based on the detected layout.
