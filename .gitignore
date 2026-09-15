@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+frontend/public/*.glb
+frontend/public/*.svg
+node_modules/
