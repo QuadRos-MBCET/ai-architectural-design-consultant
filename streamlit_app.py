@@ -175,8 +175,8 @@ with col1:
 
 with col2:
     if st.session_state.gen3d_data and st.session_state.report_data:
-        # Create tabs dynamically based on floors + systems + combined + materials
-        tab_names = ["Entire Building", "Systems Diagram", "Bill of Materials"] + [f["name"] for f in st.session_state.gen3d_data["floors"]]
+        # Create tabs dynamically based on floors + combined + materials
+        tab_names = ["Entire Building", "Bill of Materials"] + [f["name"] for f in st.session_state.gen3d_data["floors"]]
         tabs = st.tabs(tab_names)
         
         with tabs[0]:
@@ -184,10 +184,6 @@ with col2:
             render_model_viewer(st.session_state.gen3d_data["combined_glb"])
             
         with tabs[1]:
-            st.subheader("Climate & Systems Architecture")
-            render_mermaid(st.session_state.report_data["systems_diagram"])
-            
-        with tabs[2]:
             st.subheader("Estimated Bill of Materials (INR)")
             materials = st.session_state.report_data.get("materials_estimate", [])
             df_data = []
@@ -201,7 +197,7 @@ with col2:
             st.dataframe(df_data, hide_index=True, use_container_width=True)
             
         for idx, floor in enumerate(st.session_state.gen3d_data["floors"]):
-            with tabs[idx + 3]:
+            with tabs[idx + 2]:
                 st.subheader(f"2D Blueprint - {floor['name']}")
                 st.markdown(floor['svg_content'], unsafe_allow_html=True)
                 
