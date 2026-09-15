@@ -32,17 +32,22 @@ if "current_prompt" not in st.session_state:
 
 def render_mermaid(mermaid_code):
     html_code = f"""
-    <div style="background-color: #1a202c; padding: 20px; border-radius: 8px;">
-        <div class="mermaid" style="display: flex; justify-content: center; color: white;">
-            {mermaid_code}
-        </div>
-    </div>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({{ startOnLoad: true, theme: 'dark' }});
-    </script>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{ startOnLoad: true, theme: 'dark' }});
+        </script>
+    </head>
+    <body style="background-color: #1a202c; color: white; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px;">
+        <pre class="mermaid">
+{mermaid_code}
+        </pre>
+    </body>
+    </html>
     """
-    components.html(html_code, height=500, scrolling=True)
+    components.html(html_code, height=600, scrolling=True)
 
 def render_model_viewer(glb_base64):
     html_code = f"""
