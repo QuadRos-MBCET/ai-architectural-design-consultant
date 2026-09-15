@@ -11,6 +11,7 @@ from services.llm_service import extract_requirements
 from services.floorplan_service import generate_svg_floorplan
 from services.extrusion_service import generate_floor_extrusion, export_combined_meshes
 from services.chat_service import process_simulated_chat
+from services.pdf_service import analyze_pdf_blueprint
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="AI Architectural Consultant", layout="wide")
@@ -133,10 +134,12 @@ def generate_assets(prompt_text):
         progress_bar.empty()
         status_text.empty()
 
+app_mode = st.sidebar.radio("Navigation", ["Generative 3D Design", "PDF Blueprint Analysis"])
 
-col1, col2 = st.columns([1, 2])
-
-with col1:
+if app_mode == "Generative 3D Design":
+    col1, col2 = st.columns([1, 2])
+    
+    with col1:
     st.header("Project Requirements")
     prompt = st.text_area("Describe the architectural project...", value=st.session_state.current_prompt, height=100)
     
@@ -245,5 +248,33 @@ with col2:
                 st.subheader("3D CAD Rendering")
                 st.markdown(legend_html, unsafe_allow_html=True)
                 render_model_viewer(floor['glb_base64'])
-    else:
-        st.info("Enter a prompt and click Generate to see visualizations here.")
+        else:
+            st.info("Enter a prompt and click Generate to see visualizations here.")
+            
+elif app_mode == "PDF Blueprint Analysis":
+    st.header("📄 PDF Blueprint Analysis & Code Compliance")
+    st.markdown("Upload a 2D PDF architectural floor plan to automatically extract programmatic area schedules, verify code compliance, and analyze structural typology.")
+    
+    uploaded_file = st.file_uploader("Upload Blueprint PDF", type=["pdf"])
+    
+    if uploaded_file is not None:
+        with st.spinner("Ingesting vector lines, detecting scales, and running BIM analysis..."):
+            analysis = analyze_pdf_blueprint(uploaded_file.name)
+            
+        st.success(f"Successfully analyzed **{analysis['filename']}**")
+        st.markdown(f"**Detected Typology:** {analysis['typology']} | **Detected Scale:** {analysis['scale_detected']}")
+        
+        st.subheader("📊 Programmatic Area Schedule")
+        st.dataframe(analysis['schedule'], hide_index=True, use_container_width=True)
+        
+        st.subheader("⚖️ Circulation & Code Compliance")
+        for item in analysis['compliance']:
+            if item['type'] == 'success':
+                st.success(item['message'])
+            elif item['type'] == 'warning':
+                st.warning(item['message'])
+            elif item['type'] == 'error':
+                st.error(item['message'])
+                
+        st.subheader("💡 Redesign & 3D Extrusion Recommendations")
+        st.info(analysis['recommendations'])
