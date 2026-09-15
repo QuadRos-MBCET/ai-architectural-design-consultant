@@ -105,6 +105,37 @@ def extract_requirements(user_prompt: str) -> dict:
             else:
                 name = f"Museum Level {i+1} (Private Collections)"
                 rooms = [{"name": f"Exhibition Hall {i}", "x": 0, "y": 0, "width": 15 + (i%5), "length": 25}, {"name": "Curator Study", "x": 15 + (i%5), "y": 0, "width": 15, "length": 15}, {"name": "Storage", "x": 15 + (i%5), "y": 15, "width": 15, "length": 10}]
+        elif any(word in lower_prompt for word in ["house", "home", "villa", "residential", "mansion"]):
+            if i == 0:
+                name = "Ground Floor (Living and Services)"
+                rooms = [
+                    {"name": "Foyer and Living Room", "x": 0, "y": 0, "width": 15, "length": 30},
+                    {"name": "Open Kitchen", "x": 15, "y": 0, "width": 15, "length": 15},
+                    {"name": "Dining Area", "x": 15, "y": 15, "width": 15, "length": 15}
+                ]
+            elif i == 1:
+                name = "First Floor (Master Suite)"
+                rooms = [
+                    {"name": "Master Bedroom", "x": 0, "y": 0, "width": 20, "length": 20},
+                    {"name": "En-suite Bathroom", "x": 20, "y": 0, "width": 10, "length": 15},
+                    {"name": "Walk-in Closet", "x": 20, "y": 15, "width": 10, "length": 15},
+                    {"name": "Balcony Lounge", "x": 0, "y": 20, "width": 20, "length": 10}
+                ]
+            elif i == 2:
+                name = "Second Floor (Family & Bedrooms)"
+                rooms = [
+                    {"name": "Bedroom 2", "x": 0, "y": 0, "width": 15, "length": 15},
+                    {"name": "Bedroom 3", "x": 15, "y": 0, "width": 15, "length": 15},
+                    {"name": "Shared Bathroom", "x": 15, "y": 15, "width": 15, "length": 15},
+                    {"name": "Family Room", "x": 0, "y": 15, "width": 15, "length": 15}
+                ]
+            else:
+                name = f"Level {i+1} (Terrace & Amenities)"
+                rooms = [
+                    {"name": "Home Office", "x": 0, "y": 0, "width": 15, "length": 15},
+                    {"name": "Home Gym", "x": 15, "y": 0, "width": 15, "length": 15},
+                    {"name": "Roof Garden", "x": 0, "y": 15, "width": 30, "length": 15}
+                ]
         else:
             # TRUE DYNAMIC FALLBACK: Perfectly balanced 30x30 procedural grids
             bt_title = building_type.title()
