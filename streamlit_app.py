@@ -68,7 +68,14 @@ def render_model_viewer(glb_base64):
 
 def generate_assets(prompt_text):
     with st.spinner("Analyzing geometry & generating blueprints..."):
-        json_spec = extract_requirements(prompt_text)
+        try:
+            json_spec = extract_requirements(prompt_text)
+        except ValueError as e:
+            st.error(str(e))
+            st.session_state.report_data = None
+            st.session_state.gen3d_data = None
+            return
+            
         st.session_state.report_data = json_spec
         
         public_dir = os.path.join(os.path.dirname(__file__), "static")

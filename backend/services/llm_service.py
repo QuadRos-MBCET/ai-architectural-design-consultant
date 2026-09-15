@@ -39,6 +39,11 @@ def extract_requirements(user_prompt: str) -> dict:
     # 1. RAG Retrieval Phase
     prompt_lower = user_prompt.lower()
     
+    # Prompt Validation: Ensure it's an architectural request, not an error message or gibberish
+    valid_keywords = ["design", "building", "floor", "story", "hospital", "mall", "house", "villa", "home", "museum", "office", "library", "school", "residential", "commercial", "project", "architecture", "plan", "mansion", "clinic", "retail"]
+    if not any(kw in prompt_lower for kw in valid_keywords) and len(prompt_lower.split()) > 0:
+        raise ValueError("Invalid Prompt: The AI Consultant could not detect any architectural requirements in your request. Please describe a building, specify the number of floors, or provide a valid architectural typology.")
+    
     # Dynamically extract building type from prompt (e.g., "public museum" -> "museum")
     # We strip common adjectives and look for the main noun.
     words = prompt_lower.split()
