@@ -32,26 +32,43 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
             
             color = colors[idx % len(colors)]
             
-            def create_wall(w, d, x, z):
-                box = trimesh.creation.box(extents=(w, wall_height, d))
-                box.visual.face_colors = color
+            def create_wall(w, d, x, z, h=wall_height, elevation_offset=0, custom_color=None):
+                box = trimesh.creation.box(extents=(w, h, d))
+                box.visual.face_colors = custom_color if custom_color else color
                 transform = np.eye(4)
                 transform[0, 3] = x + (w / 2)
-                transform[1, 3] = (wall_height / 2) + elevation
+                transform[1, 3] = (h / 2) + elevation + elevation_offset
                 transform[2, 3] = z + (d / 2)
                 box.apply_transform(transform)
                 meshes.append(box)
 
+            # Back Wall
             create_wall(rw, wall_thick, rx, ry)
             
             window_width = 3.0
+            # Front Wall (with Window)
             create_wall((rw - window_width)/2, wall_thick, rx, ry + rl - wall_thick)
             create_wall((rw - window_width)/2, wall_thick, rx + (rw + window_width)/2, ry + rl - wall_thick)
             
+            # Window Sill, Header, and Glass
+            window_x = rx + (rw - window_width)/2
+            window_z = ry + rl - wall_thick
+            create_wall(window_width, wall_thick, window_x, window_z, h=1.0, elevation_offset=0) # Sill
+            create_wall(window_width, wall_thick, window_x, window_z, h=1.0, elevation_offset=3.0) # Header
+            create_wall(window_width, wall_thick * 0.2, window_x, window_z + (wall_thick*0.4), h=2.0, elevation_offset=1.0, custom_color=[173, 216, 230, 200]) # Glass (Light Blue)
+            
+            # Left Wall
             create_wall(wall_thick, rl - (wall_thick * 2), rx, ry + wall_thick)
             
+            # Right Wall (with Door)
+            door_z_start = ry + wall_thick + ((rl - (wall_thick * 2) - door_width) / 2)
             create_wall(wall_thick, (rl - (wall_thick * 2) - door_width) / 2, rx + rw - wall_thick, ry + wall_thick)
-            create_wall(wall_thick, (rl - (wall_thick * 2) - door_width) / 2, rx + rw - wall_thick, ry + wall_thick + ((rl - (wall_thick * 2) - door_width) / 2) + door_width)
+            create_wall(wall_thick, (rl - (wall_thick * 2) - door_width) / 2, rx + rw - wall_thick, door_z_start + door_width)
+            
+            # Door Header and Wooden Slab
+            door_x = rx + rw - wall_thick
+            create_wall(wall_thick, door_width, door_x, door_z_start, h=1.0, elevation_offset=3.0) # Header
+            create_wall(wall_thick * 0.3, door_width, door_x + (wall_thick*0.35), door_z_start, h=3.0, elevation_offset=0, custom_color=[139, 69, 19, 255]) # Wooden Door
             
         # Floor plate
         if rooms:
