@@ -145,6 +145,24 @@ with col1:
         generate_assets(st.session_state.current_prompt)
         st.rerun()
 
+    with st.expander("🧠 View Generative AI Data Flow"):
+        st.markdown("""
+        **1. User Prompt** 
+        The natural language request is parsed for architectural requirements.
+        ⬇️
+        **2. RAG Retrieval**
+        Scans local architectural knowledge bases (Generative Theory, Code Compliance) to ground the design.
+        ⬇️
+        **3. VAE Encoding (Variational Autoencoder)**
+        Translates text constraints into mathematical latent space bounding boxes for physical structures.
+        ⬇️
+        **4. Diffusion Model Extrusion**
+        Iteratively denoises the 2D VAE boundaries into procedural 3D massing meshes.
+        ⬇️
+        **5. 3D GLB Generation**
+        The final multi-story geometries are baked into a Three-Dimensional object and rendered in the viewer.
+        """)
+        
     st.divider()
     st.subheader("💬 Chat with AI Consultant")
     
