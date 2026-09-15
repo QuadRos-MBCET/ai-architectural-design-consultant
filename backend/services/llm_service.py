@@ -105,7 +105,7 @@ def extract_requirements(user_prompt: str) -> dict:
             else:
                 name = f"Museum Level {i+1} (Private Collections)"
                 rooms = [{"name": f"Exhibition Hall {i}", "x": 0, "y": 0, "width": 15 + (i%5), "length": 25}, {"name": "Curator Study", "x": 15 + (i%5), "y": 0, "width": 15, "length": 15}, {"name": "Storage", "x": 15 + (i%5), "y": 15, "width": 15, "length": 10}]
-        elif any(word in lower_prompt for word in ["house", "home", "villa", "residential", "mansion"]):
+        elif any(word in prompt_lower for word in ["house", "home", "villa", "residential", "mansion"]):
             if i == 0:
                 name = "Ground Floor (Living and Services)"
                 rooms = [
