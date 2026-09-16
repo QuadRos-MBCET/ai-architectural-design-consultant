@@ -210,9 +210,8 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
                 
         # Fully dynamic fallback if not found in database
         if not left_rooms or not right_rooms:
-            b_name = building_type.title()
-            left_rooms = [f"Primary {b_name} Zone A", f"Primary {b_name} Zone B", "Secondary Storage"]
-            right_rooms = [f"Executive {b_name} Suite", "Conference/Meeting Room", "Communal Restrooms"]
+            # Trigger chatbot intervention
+            raise ValueError(f"Unknown Typology: I noticed you want to design a '{building_type.title()}', which isn't currently in my core architectural database. To ensure a professional layout, could you explain exactly what kind of spaces/rooms this building requires? Alternatively, you can ask me to suggest a room program for a '{building_type.title()}'!")
         floor_rooms.extend(bsp_pack(0, foyer_h if i==0 else 0, left_wing_w, b_length - (foyer_h if i==0 else 0), left_rooms, is_hot))
         floor_rooms.extend(bsp_pack(right_wing_x, foyer_h if i==0 else 0, right_wing_w, b_length - (foyer_h if i==0 else 0), right_rooms, is_hot))
 

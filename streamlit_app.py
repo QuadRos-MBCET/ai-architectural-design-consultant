@@ -194,7 +194,12 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
         try:
             json_spec = extract_requirements(prompt_text, width=p_width, length=p_length, height=p_height, wwr=p_wwr)
         except ValueError as e:
-            st.error(str(e))
+            if "Unknown Typology:" in str(e):
+                err_msg = str(e).replace("Unknown Typology: ", "")
+                st.session_state.messages.append({"role": "assistant", "content": err_msg})
+                st.warning("⚠️ Unknown Building Type detected! I have sent you a message in the AI Consultant Chat in the sidebar.")
+            else:
+                st.error(str(e))
             st.session_state.report_data = None
             st.session_state.gen3d_data = None
             return
