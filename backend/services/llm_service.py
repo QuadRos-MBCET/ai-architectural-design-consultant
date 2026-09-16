@@ -44,7 +44,11 @@ def extract_requirements(user_prompt: str) -> dict:
         raise ValueError("Invalid Prompt: The AI Consultant detected a Python error traceback in your request. Please provide a valid architectural description.")
     
     # Prompt Validation: Ensure it's an architectural request, not an error message or gibberish
-    valid_keywords = ["building", "floor", "story", "hospital", "mall", "house", "villa", "home", "museum", "office", "library", "school", "residential", "commercial", "architecture", "mansion", "clinic", "retail"]
+    valid_keywords = [
+        "building", "floor", "story", "hospital", "mall", "house", "villa", "home", 
+        "museum", "office", "library", "school", "residential", "commercial", "architecture", 
+        "mansion", "clinic", "retail", "pyramid", "skyscraper", "tower", "burj", "khalifa", "monument"
+    ]
     
     has_valid_word = False
     for kw in valid_keywords:
@@ -68,12 +72,38 @@ def extract_requirements(user_prompt: str) -> dict:
     floor_match = re.search(r'(\d+)\s*floor', prompt_lower)
     num_floors = int(floor_match.group(1)) if floor_match else 3
     
+    # NLP Semantic Override for Specific Geometries
+    if "pyramid" in prompt_lower:
+        building_type = "pyramid"
+        num_floors = max(5, num_floors)
+    elif "skyscraper" in prompt_lower or "burj" in prompt_lower or "tower" in prompt_lower:
+        building_type = "skyscraper"
+        num_floors = max(8, num_floors)
+    
     dynamic_floors = []
     
     # Generate completely dynamic generic layouts based on ANY building type!
     for i in range(num_floors):
         # We handle the specific ones we already made for high quality
-        if building_type == "mall":
+        if building_type == "pyramid":
+            # Pyramid logic: Base is wide, shrinks rapidly at each floor
+            size = max(5, 30 - (i * 6))
+            offset = (30 - size) // 2
+            name = f"Level {i+1} (Pyramid Tier)"
+            rooms = [
+                {"name": "Core Chamber", "x": offset, "y": offset, "width": size, "length": size}
+            ]
+        elif building_type == "skyscraper":
+            # Skyscraper logic: Tapering floors as it gets taller
+            size = max(10, 30 - (i * 2))
+            offset = (30 - size) // 2
+            name = f"Level {i+1} (Tower Floor)"
+            rooms = [
+                {"name": "Elevator Core", "x": offset + size//3, "y": offset + size//3, "width": size//3, "length": size//3},
+                {"name": "Office Space A", "x": offset, "y": offset, "width": size//3, "length": size},
+                {"name": "Office Space B", "x": offset + (size//3)*2, "y": offset, "width": size//3, "length": size}
+            ]
+        elif building_type == "mall":
             if i == 0:
                 name = "Mall Ground Level (Main Atrium)"
                 rooms = [{"name": "Anchor Store A", "x": 0, "y": 0, "width": 15, "length": 25}, {"name": "Boutique Retail", "x": 15, "y": 0, "width": 10, "length": 10}, {"name": "Food Court", "x": 15, "y": 10, "width": 10, "length": 15}, {"name": "Anchor Store B", "x": 25, "y": 0, "width": 15, "length": 25}]
