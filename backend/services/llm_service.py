@@ -126,7 +126,24 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
     for i in range(num_floors):
         floor_rooms = []
         
-        # 1. Mandatory Core & Lightwell Constraints
+        # Unique Geometries (Pyramids & Skyscrapers)
+        if building_type == "pyramid":
+            size = max(10, b_width - (i * (b_width // num_floors)))
+            offset = (b_width - size) // 2
+            floor_rooms.extend(bsp_pack(offset, offset, size, size, ["Living Quarters", "Restrooms", "Storage"], is_hot))
+            dynamic_floors.append({"level": i + 1, "name": f"Level {i+1} (Pyramid Tier)", "rooms": floor_rooms})
+            continue
+            
+        if building_type == "skyscraper":
+            size = max(10, b_width - (i * 2))
+            offset = (b_width - size) // 2
+            floor_rooms.append({"name": "Elevator Core", "x": offset + size//3, "y": offset + size//3, "width": size//3, "length": size//3, "is_nested": True})
+            floor_rooms.extend(bsp_pack(offset, offset, size//3, size, ["Office A", "Office B"], is_hot))
+            floor_rooms.extend(bsp_pack(offset + (size//3)*2, offset, size//3, size, ["Office C", "Office D"], is_hot))
+            dynamic_floors.append({"level": i + 1, "name": f"Level {i+1} (Tower Floor)", "rooms": floor_rooms})
+            continue
+            
+        # 1. Mandatory Core & Lightwell Constraints for Standard Buildings
         core_w, core_h = 6, 6
         core_x = (b_width // 2) - (core_w // 2)
         core_y = b_length - core_h - 2
