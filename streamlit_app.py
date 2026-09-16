@@ -14,7 +14,7 @@ from services.chat_service import process_simulated_chat
 from services.pdf_service import analyze_pdf_blueprint
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="AI Architectural Consultant", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="R D Homes | AI Architecture", layout="wide", initial_sidebar_state="expanded")
 
 # Inject Custom Premium CSS Styling
 st.markdown("""
@@ -117,8 +117,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("AI Architectural Design Consultant")
-st.markdown("<p style='font-size: 1.2rem; color: #94a3b8; margin-top: -10px; margin-bottom: 30px;'>Generative Retrieval-Augmented 3D Design Pipeline</p>", unsafe_allow_html=True)
+st.title("R D Homes | AI Architectural Studio")
+st.markdown("<p style='font-size: 1.2rem; color: #94a3b8; margin-top: -10px; margin-bottom: 30px;'>Next-Generation Generative 3D Design Pipeline</p>", unsafe_allow_html=True)
 
 # Initialize session state
 if "report_data" not in st.session_state:
@@ -127,7 +127,7 @@ if "gen3d_data" not in st.session_state:
     st.session_state.gen3d_data = None
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Welcome! Describe a building you want me to design, or click Generate. Once it's built, you can ask me to **add a floor**, **remove a floor**, or **change the building type**!"}
+        {"role": "assistant", "content": "Welcome to R D Homes! Describe a building you want our AI to design, or click Generate. Once it's built, you can ask me to **add a floor**, **remove a floor**, or **change the building type**!"}
     ]
 if "current_prompt" not in st.session_state:
     st.session_state.current_prompt = "design a 4 floor eco friendly public library for a hot climate"
@@ -290,7 +290,7 @@ if app_mode == "Generative 3D Design":
                 """)
             
         st.divider()
-        st.subheader("💬 Chat with AI Consultant")
+        st.subheader("💬 Chat with R D Homes AI Consultant")
         
         # Chat UI Container
         chat_container = st.container(height=400)
