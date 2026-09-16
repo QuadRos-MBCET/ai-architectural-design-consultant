@@ -243,10 +243,13 @@ def extract_requirements(user_prompt: str) -> dict:
     max_l = max(room["y"] + room["length"] for floor in dynamic_floors for room in floor["rooms"])
 
     # 4. Construct JSON Response representing Diffusion/GAN output
+    # Calculate total gross floor area for accurate material estimation
+    total_area = max_w * max_l * num_floors
+    
     return {
       "project": {
+        "name": f"{building_type.title()} Project",
         "type": building_type,
-        "location": "Generative Space",
         "climate": "optimized"
       },
       "building_width": max_w,
@@ -260,31 +263,59 @@ def extract_requirements(user_prompt: str) -> dict:
       "materials_estimate": [
         {
           "item": "Portland Cement (Grade 53)",
-          "quantity": 120 * num_floors,
-          "unit": "Tons",
-          "present_rate": 7500.00,
-          "total_cost": 7500.00 * (120 * num_floors)
+          "quantity": round(total_area * 4),
+          "unit": "Bags (50kg)",
+          "present_rate": 420.00,
+          "total_cost": 420.00 * round(total_area * 4)
         },
         {
           "item": "Structural Steel (TMT Bars)",
-          "quantity": 45 * num_floors,
-          "unit": "Tons",
-          "present_rate": 65000.00,
-          "total_cost": 65000.00 * (45 * num_floors)
+          "quantity": round(total_area * 40),
+          "unit": "Kg",
+          "present_rate": 68.00,
+          "total_cost": 68.00 * round(total_area * 40)
         },
         {
-          "item": "Electrical Equipment & Wiring",
-          "quantity": 1500 * num_floors,
-          "unit": "Meters",
-          "present_rate": 150.00,
-          "total_cost": 150.00 * (1500 * num_floors)
+          "item": "AAC Blocks / Masonry",
+          "quantity": round(total_area * 15),
+          "unit": "Units",
+          "present_rate": 65.00,
+          "total_cost": 65.00 * round(total_area * 15)
+        },
+        {
+          "item": "Vitrified Tile Flooring",
+          "quantity": round(total_area * 0.85),
+          "unit": "Sq. Meters",
+          "present_rate": 850.00,
+          "total_cost": 850.00 * round(total_area * 0.85)
+        },
+        {
+          "item": "Internal Painting (Emulsion)",
+          "quantity": round(total_area * 3.5),
+          "unit": "Sq. Meters",
+          "present_rate": 140.00,
+          "total_cost": 140.00 * round(total_area * 3.5)
+        },
+        {
+          "item": "Electrical & Wiring Modules",
+          "quantity": round(total_area),
+          "unit": "Sq. Meter Eq.",
+          "present_rate": 1250.00,
+          "total_cost": 1250.00 * round(total_area)
+        },
+        {
+          "item": "Plumbing & Sanitary Core",
+          "quantity": round(total_area),
+          "unit": "Sq. Meter Eq.",
+          "present_rate": 1100.00,
+          "total_cost": 1100.00 * round(total_area)
         },
         {
           "item": "Low-E Eco Glazing",
-          "quantity": 300 * num_floors,
+          "quantity": round(total_area * 0.20),
           "unit": "Sq. Meters",
-          "present_rate": 4500.00,
-          "total_cost": 4500.00 * (300 * num_floors)
+          "present_rate": 4800.00,
+          "total_cost": 4800.00 * round(total_area * 0.20)
         }
       ]
     }
