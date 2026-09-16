@@ -117,8 +117,30 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("R D Homes | AI Architectural Studio")
-st.markdown("<p style='font-size: 1.2rem; color: #94a3b8; margin-top: -10px; margin-bottom: 30px;'>Next-Generation Generative 3D Design Pipeline</p>", unsafe_allow_html=True)
+st.markdown("""
+<div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 40px; margin-top: 10px;">
+    <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 16px; border-radius: 16px; box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center;">
+            <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18"></path>
+                <path d="M9 8h1"></path>
+                <path d="M9 12h1"></path>
+                <path d="M9 16h1"></path>
+                <path d="M14 8h1"></path>
+                <path d="M14 12h1"></path>
+                <path d="M14 16h1"></path>
+                <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+            </svg>
+        </div>
+        <div>
+            <h1 style="font-size: 3.8rem; font-weight: 900; letter-spacing: -0.04em; margin: 0; line-height: 1.1; background: -webkit-linear-gradient(45deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                R D <span style="background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Homes</span>
+            </h1>
+            <p style="font-size: 1.2rem; color: #94a3b8; margin: 0; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;">AI Architectural Studio</p>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # Initialize session state
 if "report_data" not in st.session_state:
