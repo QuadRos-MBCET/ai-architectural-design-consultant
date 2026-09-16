@@ -14,7 +14,7 @@ def generate_svg_floorplan(b_width: int, b_length: int, floor: Dict[str, Any], o
         svg_height = b_length * scale + 150
 
         svg_content = [
-            f'<svg width="{svg_width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">',
+            f'<svg viewBox="0 0 {svg_width} {svg_height}" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">',
             f'<rect width="{svg_width}" height="{svg_height}" fill="#f0f4f8"/>',
             # Building outline
             f'<rect x="75" y="75" width="{b_width * scale}" height="{b_length * scale}" fill="#ffffff" stroke="#1f2937" stroke-width="4"/>'

@@ -47,8 +47,13 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
 
             is_nested = room.get("is_nested", False)
             
-            # Back Wall
-            create_wall(rw, wall_thick, rx, ry)
+            # Back Wall (North Facade - Passive Diffuse Light / High WWR)
+            if not is_nested and ry == 0:
+                create_wall(rw, wall_thick, rx, ry, h=0.5) # Low Sill
+                create_wall(rw, wall_thick, rx, ry, h=0.5, elevation_offset=3.5) # Header
+                create_wall(rw, wall_thick * 0.2, rx, ry + (wall_thick*0.4), h=3.0, elevation_offset=0.5, custom_color=[173, 216, 230, 150]) # Large Curtain Glass
+            else:
+                create_wall(rw, wall_thick, rx, ry)
             
             # Front Wall
             if not is_nested:
@@ -95,9 +100,9 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
             else:
                 create_wall(wall_thick, rl - (wall_thick * 2), rx + rw - wall_thick, ry + wall_thick)
             
-        # Floor plate
+        # Floor plate (Climate Responsive Deep Overhangs/Louvers)
         if rooms:
-            floor_mesh = trimesh.creation.box(extents=(b_width + 2, 0.2, b_length + 2))
+            floor_mesh = trimesh.creation.box(extents=(b_width + 8, 0.4, b_length + 8))
             floor_mesh.visual.face_colors = [45, 45, 50, 255] # Sleek Charcoal Base
             tf = np.eye(4)
             tf[0, 3] = b_width / 2

@@ -189,10 +189,10 @@ def render_model_viewer(glb_base64):
     """
     components.html(html_code, height=520)
 
-def generate_assets(prompt_text):
+def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40):
     with st.spinner("Analyzing geometry & generating blueprints..."):
         try:
-            json_spec = extract_requirements(prompt_text)
+            json_spec = extract_requirements(prompt_text, width=p_width, length=p_length, height=p_height, wwr=p_wwr)
         except ValueError as e:
             st.error(str(e))
             st.session_state.report_data = None
@@ -266,6 +266,13 @@ def generate_assets(prompt_text):
 
 app_mode = st.sidebar.radio("Navigation", ["Generative 3D Design", "PDF Blueprint Analysis"])
 
+st.sidebar.markdown("---")
+st.sidebar.subheader("📐 Parametric Controls")
+b_width_override = st.sidebar.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
+b_length_override = st.sidebar.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
+ceiling_height = st.sidebar.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
+target_wwr = st.sidebar.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
+
 if app_mode == "Generative 3D Design":
     col1, col2 = st.columns([1, 2])
     
@@ -275,7 +282,7 @@ if app_mode == "Generative 3D Design":
         
         if st.button("Generate Multi-Story Design", type="primary", use_container_width=True):
             st.session_state.current_prompt = prompt
-            generate_assets(st.session_state.current_prompt)
+            generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
             st.rerun()
 
         if st.session_state.report_data:

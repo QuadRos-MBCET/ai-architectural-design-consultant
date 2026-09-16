@@ -31,13 +31,19 @@ def mock_rag_retrieval(building_type: str) -> str:
             
     return context
 
-def extract_requirements(user_prompt: str) -> dict:
+def extract_requirements(user_prompt: str, **kwargs) -> dict:
     """
     Simulated VAE/Diffusion RAG Pipeline for Mini Project Presentation.
     Bypasses heavy PyTorch FAISS and external LLMs.
     """
     # 1. RAG Retrieval Phase
     prompt_lower = user_prompt.lower()
+    
+    # Parametric Overrides from Streamlit
+    b_width = kwargs.get("width", 30)
+    b_length = kwargs.get("length", 30)
+    c_height = kwargs.get("height", 3.0)
+    t_wwr = kwargs.get("wwr", 40)
     
     # Active blocking of error messages and tracebacks
     if "file " in prompt_lower and "line " in prompt_lower and (".py" in prompt_lower or "traceback" in prompt_lower):
@@ -253,12 +259,46 @@ def extract_requirements(user_prompt: str) -> dict:
         if building_type not in ["pyramid", "house", "villa", "home", "residential", "mansion", "skyscraper"]:
             rooms.append({
                 "name": "Public Restrooms",
-                "x": 20,
-                "y": 5,
+                "x": b_width - 8,
+                "y": b_length // 2,
+                "width": 4,
+                "length": 6,
+                "is_nested": True
+            })
+            
+        # Mandatory Vertical Circulation Core
+        rooms.append({
+            "name": "Circulation Core (Stairs & Elevator)",
+            "x": (b_width // 2) - 3,
+            "y": b_length - 6,
+            "width": 6,
+            "length": 6,
+            "is_nested": True
+        })
+        
+        # Passive Design: Central Lightwell / Atrium
+        if b_width >= 30 and b_length >= 30:
+            rooms.append({
+                "name": "Central Lightwell (Stack Ventilation)",
+                "x": (b_width // 2) - 5,
+                "y": (b_length // 2) - 5,
                 "width": 10,
                 "length": 10,
                 "is_nested": True
             })
+            
+        # Ensure Entrance Foyer on Ground Floor
+        if i == 0:
+            has_foyer = any("reception" in r["name"].lower() or "lobby" in r["name"].lower() or "foyer" in r["name"].lower() for r in rooms)
+            if not has_foyer:
+                rooms.append({
+                    "name": "Main Entrance Foyer",
+                    "x": (b_width // 2) - 4,
+                    "y": 0,
+                    "width": 8,
+                    "length": 6,
+                    "is_nested": True
+                })
             
         dynamic_floors.append({
             "level": i + 1,
@@ -311,16 +351,19 @@ def extract_requirements(user_prompt: str) -> dict:
 
     # 4. Construct JSON Response representing Diffusion/GAN output
     # Calculate total gross floor area for accurate material estimation
-    total_area = max_w * max_l * num_floors
+    total_area = b_width * b_length * num_floors
     
     return {
       "project": {
         "name": f"{building_type.title()} Project",
         "type": building_type,
-        "climate": "optimized"
+        "style": "contemporary",
+        "climate": "hot_humid" if "hot" in prompt_lower else "temperate"
       },
-      "building_width": max_w,
-      "building_length": max_l,
+      "building_width": b_width,
+      "building_length": b_length,
+      "ceiling_height": c_height,
+      "target_wwr": t_wwr,
       "floors": dynamic_floors,
       "systems_diagram": mermaid_diagram,
       "explanation": {
