@@ -14,10 +14,111 @@ from services.chat_service import process_simulated_chat
 from services.pdf_service import analyze_pdf_blueprint
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="AI Architectural Consultant", layout="wide")
+st.set_page_config(page_title="AI Architectural Consultant", layout="wide", initial_sidebar_state="expanded")
 
-st.title("🏛️ AI Architectural Design Consultant")
-st.markdown("Generative Retrieval-Augmented 3D Design Pipeline")
+# Inject Custom Premium CSS Styling
+st.markdown("""
+<style>
+    /* Import modern Google Font */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+    /* Global Typography & Background */
+    html, body, [class*="css"] {
+        font-family: 'Outfit', sans-serif !important;
+    }
+    
+    .stApp {
+        background-color: #0b0f19;
+        background-image: radial-gradient(circle at 15% 50%, rgba(20, 30, 48, 1), rgba(11, 15, 25, 1));
+    }
+
+    /* Primary Headers */
+    h1, h2, h3 {
+        color: #f8fafc !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.02em;
+    }
+    
+    h1 {
+        background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0rem;
+    }
+
+    /* Style the Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        backdrop-filter: blur(12px) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+        color: white;
+    }
+
+    /* Text Inputs and Text Areas */
+    .stTextArea textarea, .stTextInput input {
+        background-color: rgba(30, 41, 59, 0.7) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        color: #f1f5f9 !important;
+        border-radius: 8px !important;
+    }
+    .stTextArea textarea:focus, .stTextInput input:focus {
+        border-color: #8b5cf6 !important;
+        box-shadow: 0 0 0 1px #8b5cf6 !important;
+    }
+
+    /* Expanders and Chat Bubbles */
+    .streamlit-expanderHeader {
+        background-color: rgba(30, 41, 59, 0.5) !important;
+        border-radius: 8px !important;
+    }
+    
+    [data-testid="stChatMessage"] {
+        background-color: rgba(30, 41, 59, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: rgba(30, 41, 59, 0.5);
+        border-radius: 8px 8px 0px 0px;
+        padding: 10px 20px;
+        color: #94a3b8;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(59, 130, 246, 0.1) !important;
+        color: #38bdf8 !important;
+        border-bottom: 2px solid #38bdf8;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+st.title("AI Architectural Design Consultant")
+st.markdown("<p style='font-size: 1.2rem; color: #94a3b8; margin-top: -10px; margin-bottom: 30px;'>Generative Retrieval-Augmented 3D Design Pipeline</p>", unsafe_allow_html=True)
 
 # Initialize session state
 if "report_data" not in st.session_state:
