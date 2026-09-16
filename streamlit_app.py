@@ -214,7 +214,7 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
                 st.error(str(e))
             st.session_state.report_data = None
             st.session_state.gen3d_data = None
-            return
+            return False
             
         st.session_state.report_data = json_spec
         
@@ -280,6 +280,7 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
         
         progress_bar.empty()
         status_text.empty()
+        return True
 
 app_mode = st.sidebar.radio("Navigation", ["Generative 3D Design", "PDF Blueprint Analysis"])
 
@@ -313,8 +314,9 @@ if app_mode == "Generative 3D Design":
     
     if st.button("✨ Generate Multi-Story Design", type="primary", use_container_width=True):
         st.session_state.current_prompt = prompt
-        generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
-        st.rerun()
+        success = generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
+        if success:
+            st.rerun()
         
     st.markdown("<br>", unsafe_allow_html=True)
     

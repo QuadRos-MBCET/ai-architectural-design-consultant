@@ -1,52 +1,809 @@
 {
   "office": {
     "description": "A workspace building focused on productivity, collaboration, and administrative tasks.",
-    "left_rooms": ["Open Plan Workspace", "Private Cubicles", "Meeting Room A", "Meeting Room B", "IT Server Room"],
-    "right_rooms": ["Executive Boardroom", "CEO Suite", "Manager Office", "Break Room / Kitchenette", "Public Restrooms"]
+    "left_rooms": {
+      "Open Plan Workspace": {
+        "contents": [
+          "Cubicles",
+          "Ergonomic Chairs",
+          "Whiteboards"
+        ]
+      },
+      "Private Cubicles": {
+        "contents": [
+          "Desks",
+          "Filing Cabinets",
+          "Monitors"
+        ]
+      },
+      "Meeting Room A": {
+        "contents": [
+          "Conference Table",
+          "Projector",
+          "Chairs"
+        ]
+      },
+      "Meeting Room B": {
+        "contents": [
+          "Conference Table",
+          "TV",
+          "Chairs"
+        ]
+      },
+      "IT Server Room": {
+        "contents": [
+          "Server Racks",
+          "Cooling Units",
+          "Cables"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Executive Boardroom": {
+        "contents": [
+          "Large Table",
+          "Leather Chairs",
+          "Smart Board"
+        ]
+      },
+      "CEO Suite": {
+        "contents": [
+          "Executive Desk",
+          "Sofa",
+          "Bookshelf"
+        ]
+      },
+      "Manager Office": {
+        "contents": [
+          "Desk",
+          "Visitor Chairs"
+        ]
+      },
+      "Break Room / Kitchenette": {
+        "contents": [
+          "Coffee Machine",
+          "Microwave",
+          "Fridge",
+          "Tables"
+        ]
+      },
+      "Public Restrooms": {
+        "contents": [
+          "Toilets",
+          "Sinks",
+          "Mirrors"
+        ]
+      }
+    }
   },
   "house": {
     "description": "A residential dwelling designed for private living, family activities, and rest.",
-    "left_rooms": ["Living Room", "Dining Room", "Modern Kitchen", "Pantry", "Guest Bathroom", "Home Office"],
-    "right_rooms": ["Master Bedroom", "En-Suite Bath", "Walk-in Closet", "Guest Bedroom", "Kids Room", "Laundry Room"]
+    "left_rooms": {
+      "Living Room": {
+        "contents": [
+          "Sofa Set",
+          "Coffee Table",
+          "Television",
+          "Rug"
+        ]
+      },
+      "Dining Room": {
+        "contents": [
+          "Dining Table",
+          "Chairs",
+          "Chandelier"
+        ]
+      },
+      "Modern Kitchen": {
+        "contents": [
+          "Refrigerator",
+          "Oven",
+          "Stove",
+          "Island Counter"
+        ]
+      },
+      "Pantry": {
+        "contents": [
+          "Shelving Units",
+          "Canned Goods"
+        ]
+      },
+      "Guest Bathroom": {
+        "contents": [
+          "Toilet",
+          "Sink",
+          "Shower"
+        ]
+      },
+      "Home Office": {
+        "contents": [
+          "Desk",
+          "Computer",
+          "Bookshelf"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Master Bedroom": {
+        "contents": [
+          "King Bed",
+          "Nightstands",
+          "Dresser"
+        ]
+      },
+      "En-Suite Bath": {
+        "contents": [
+          "Bathtub",
+          "Shower",
+          "Double Vanity",
+          "Toilet"
+        ]
+      },
+      "Walk-in Closet": {
+        "contents": [
+          "Wardrobes",
+          "Shoe Racks",
+          "Mirrors"
+        ]
+      },
+      "Guest Bedroom": {
+        "contents": [
+          "Queen Bed",
+          "Wardrobe",
+          "Desk"
+        ]
+      },
+      "Kids Room": {
+        "contents": [
+          "Twin Beds",
+          "Toys",
+          "Study Desk"
+        ]
+      },
+      "Laundry Room": {
+        "contents": [
+          "Washing Machine",
+          "Dryer",
+          "Ironing Board"
+        ]
+      }
+    }
   },
   "hospital": {
     "description": "A healthcare facility providing medical treatment, patient care, and emergency services.",
-    "left_rooms": ["General Ward", "Patient Room A", "Patient Room B", "Nurse Station", "Outpatient (OP) Clinic", "Waiting Area"],
-    "right_rooms": ["Operating Theater (OP)", "Doctor Consulting Room", "Intensive Care Unit (ICU)", "Pharmacist Dispensary", "Reception", "Emergency Triage"]
-  },
-  "library": {
-    "description": "A public or academic building for reading, studying, and archiving physical and digital media.",
-    "left_rooms": ["Main Reading Hall", "Digital Archives", "Quiet Study Pods", "Fiction Section", "Children's Corner"],
-    "right_rooms": ["Non-Fiction Stacks", "Reference Desk", "Librarian Office", "Community Meeting Room", "Public Restrooms"]
+    "left_rooms": {
+      "General Ward": {
+        "contents": [
+          "Hospital Beds",
+          "IV Stands",
+          "Privacy Curtains"
+        ]
+      },
+      "Patient Room A": {
+        "contents": [
+          "Hospital Bed",
+          "Visitor Chair",
+          "Medical Monitor"
+        ]
+      },
+      "Patient Room B": {
+        "contents": [
+          "Hospital Bed",
+          "Visitor Chair",
+          "Medical Monitor"
+        ]
+      },
+      "Nurse Station": {
+        "contents": [
+          "Desks",
+          "Computers",
+          "Medicine Cabinets"
+        ]
+      },
+      "Outpatient Clinic": {
+        "contents": [
+          "Exam Tables",
+          "Desks",
+          "Medical Tools"
+        ]
+      },
+      "Waiting Area": {
+        "contents": [
+          "Chairs",
+          "Magazines",
+          "TV"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Operating Theater": {
+        "contents": [
+          "Surgical Table",
+          "Surgical Lights",
+          "Anesthesia Machine",
+          "Monitors"
+        ]
+      },
+      "Doctor Consulting Room": {
+        "contents": [
+          "Desk",
+          "Exam Bed",
+          "Computer"
+        ]
+      },
+      "Intensive Care Unit (ICU)": {
+        "contents": [
+          "ICU Beds",
+          "Ventilators",
+          "Defibrillators",
+          "Monitors"
+        ]
+      },
+      "Pharmacist Dispensary": {
+        "contents": [
+          "Shelves",
+          "Medicine",
+          "Counters"
+        ]
+      },
+      "Reception": {
+        "contents": [
+          "Desks",
+          "Computers",
+          "Files"
+        ]
+      },
+      "Emergency Triage": {
+        "contents": [
+          "Triage Beds",
+          "Medical Supplies"
+        ]
+      }
+    }
   },
   "school": {
     "description": "An educational institution designed for teaching, learning, and student collaboration.",
-    "left_rooms": ["Classroom A", "Classroom B", "Classroom C", "Computer Lab", "Student Lockers", "Janitorial Closet"],
-    "right_rooms": ["Science Laboratory", "Principal's Office", "Teachers / Faculty Lounge", "Library Annex", "Student Restrooms"]
+    "left_rooms": {
+      "Classroom A": {
+        "contents": [
+          "Desks",
+          "Chairs",
+          "Whiteboard",
+          "Projector"
+        ]
+      },
+      "Classroom B": {
+        "contents": [
+          "Desks",
+          "Chairs",
+          "Whiteboard",
+          "Projector"
+        ]
+      },
+      "Classroom C": {
+        "contents": [
+          "Desks",
+          "Chairs",
+          "Whiteboard",
+          "Projector"
+        ]
+      },
+      "Computer Lab": {
+        "contents": [
+          "Computers",
+          "Desks",
+          "Server"
+        ]
+      },
+      "Student Lockers": {
+        "contents": [
+          "Lockers",
+          "Benches"
+        ]
+      },
+      "Janitorial Closet": {
+        "contents": [
+          "Mops",
+          "Brooms",
+          "Cleaning Supplies"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Science Laboratory": {
+        "contents": [
+          "Lab Benches",
+          "Sinks",
+          "Microscopes",
+          "Safety Shower"
+        ]
+      },
+      "Principal's Office": {
+        "contents": [
+          "Desk",
+          "Chairs",
+          "Filing Cabinets"
+        ]
+      },
+      "Faculty Lounge": {
+        "contents": [
+          "Sofas",
+          "Coffee Machine",
+          "Microwave",
+          "Tables"
+        ]
+      },
+      "Library Annex": {
+        "contents": [
+          "Bookshelves",
+          "Reading Tables",
+          "Computers"
+        ]
+      },
+      "Student Restrooms": {
+        "contents": [
+          "Toilets",
+          "Sinks",
+          "Mirrors"
+        ]
+      }
+    }
+  },
+  "library": {
+    "description": "A public or academic building for reading, studying, and archiving physical and digital media.",
+    "left_rooms": {
+      "Main Reading Hall": {
+        "contents": [
+          "Reading Desks",
+          "Chairs",
+          "Lamps"
+        ]
+      },
+      "Digital Archives": {
+        "contents": [
+          "Computers",
+          "Server Rack",
+          "Desks"
+        ]
+      },
+      "Quiet Study Pods": {
+        "contents": [
+          "Soundproof Pods",
+          "Chairs",
+          "Desks"
+        ]
+      },
+      "Fiction Section": {
+        "contents": [
+          "Bookshelves",
+          "Armchairs"
+        ]
+      },
+      "Children's Corner": {
+        "contents": [
+          "Small Tables",
+          "Bean Bags",
+          "Low Shelves"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Non-Fiction Stacks": {
+        "contents": [
+          "Tall Bookshelves",
+          "Step Stools"
+        ]
+      },
+      "Reference Desk": {
+        "contents": [
+          "Desk",
+          "Computer",
+          "Files"
+        ]
+      },
+      "Librarian Office": {
+        "contents": [
+          "Desk",
+          "Chair",
+          "Filing Cabinets"
+        ]
+      },
+      "Community Meeting Room": {
+        "contents": [
+          "Large Table",
+          "Chairs",
+          "Projector"
+        ]
+      },
+      "Public Restrooms": {
+        "contents": [
+          "Toilets",
+          "Sinks",
+          "Mirrors"
+        ]
+      }
+    }
   },
   "mall": {
     "description": "A large commercial retail complex featuring multiple shops, food courts, and entertainment zones.",
-    "left_rooms": ["Retail Anchor Store", "Boutique Shops", "Apparel Kiosks", "Electronics Store", "Mall Security Office"],
-    "right_rooms": ["Multiplex Cinema", "Food Court", "Dining Atrium", "Customer Service Desk", "Public Restrooms"]
+    "left_rooms": {
+      "Retail Anchor Store": {
+        "contents": [
+          "Display Racks",
+          "Checkout Counters",
+          "Mannequins"
+        ]
+      },
+      "Boutique Shops": {
+        "contents": [
+          "Shelving",
+          "Mirrors",
+          "Cash Register"
+        ]
+      },
+      "Apparel Kiosks": {
+        "contents": [
+          "Small Display Stands",
+          "POS System"
+        ]
+      },
+      "Electronics Store": {
+        "contents": [
+          "Display Tables",
+          "TV Walls",
+          "Counters"
+        ]
+      },
+      "Mall Security Office": {
+        "contents": [
+          "Monitors",
+          "Desks",
+          "Radios"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Multiplex Cinema": {
+        "contents": [
+          "Theater Seating",
+          "Projector",
+          "Screen"
+        ]
+      },
+      "Food Court": {
+        "contents": [
+          "Tables",
+          "Chairs",
+          "Trash Bins"
+        ]
+      },
+      "Dining Atrium": {
+        "contents": [
+          "Caf\u00e9 Tables",
+          "Plants",
+          "Benches"
+        ]
+      },
+      "Customer Service Desk": {
+        "contents": [
+          "Desk",
+          "Computers",
+          "Pamphlets"
+        ]
+      },
+      "Public Restrooms": {
+        "contents": [
+          "Toilets",
+          "Sinks",
+          "Mirrors"
+        ]
+      }
+    }
   },
   "museum": {
     "description": "A cultural institution dedicated to preserving and exhibiting artifacts of historical, scientific, or artistic significance.",
-    "left_rooms": ["Main Exhibition Hall", "Classical Antiquities", "Modern Art Wing", "Interactive Displays", "Coat Check"],
-    "right_rooms": ["Rotating Guest Gallery", "Curator's Office", "Artifact Storage", "Museum Gift Shop", "Cafeteria"]
+    "left_rooms": {
+      "Main Exhibition Hall": {
+        "contents": [
+          "Display Cases",
+          "Lighting",
+          "Benches"
+        ]
+      },
+      "Classical Antiquities": {
+        "contents": [
+          "Statues",
+          "Pedestals",
+          "Information Plaques"
+        ]
+      },
+      "Modern Art Wing": {
+        "contents": [
+          "Paintings",
+          "Sculptures",
+          "Track Lighting"
+        ]
+      },
+      "Interactive Displays": {
+        "contents": [
+          "Touchscreens",
+          "Headphones",
+          "Stools"
+        ]
+      },
+      "Coat Check": {
+        "contents": [
+          "Hangers",
+          "Counters",
+          "Tags"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Rotating Guest Gallery": {
+        "contents": [
+          "Temporary Partitions",
+          "Spotlights"
+        ]
+      },
+      "Curator's Office": {
+        "contents": [
+          "Desk",
+          "Bookshelves",
+          "Computer"
+        ]
+      },
+      "Artifact Storage": {
+        "contents": [
+          "Climate Controlled Cabinets",
+          "Shelves"
+        ]
+      },
+      "Museum Gift Shop": {
+        "contents": [
+          "Display Racks",
+          "Cash Register",
+          "Souvenirs"
+        ]
+      },
+      "Cafeteria": {
+        "contents": [
+          "Tables",
+          "Chairs",
+          "Food Counters"
+        ]
+      }
+    }
   },
   "warehouse": {
     "description": "A large industrial facility used for storage, logistics, and goods distribution.",
-    "left_rooms": ["Heavy Pallet Storage", "Racking Aisles", "Forklift Charging Station", "Hazardous Material Zone", "Packing Station"],
-    "right_rooms": ["Loading Dock", "Dispatch Office", "Quality Control Room", "Inventory Management", "Staff Restrooms"]
+    "left_rooms": {
+      "Heavy Pallet Storage": {
+        "contents": [
+          "Industrial Racking",
+          "Pallets"
+        ]
+      },
+      "Racking Aisles": {
+        "contents": [
+          "Shelving Units",
+          "Barcode Scanners"
+        ]
+      },
+      "Forklift Charging Station": {
+        "contents": [
+          "Charging Ports",
+          "Safety Gear"
+        ]
+      },
+      "Hazardous Material Zone": {
+        "contents": [
+          "Secure Cabinets",
+          "Ventilation"
+        ]
+      },
+      "Packing Station": {
+        "contents": [
+          "Workbenches",
+          "Boxes",
+          "Tape Dispensers"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Loading Dock": {
+        "contents": [
+          "Dock Levelers",
+          "Roll-up Doors",
+          "Pallet Jacks"
+        ]
+      },
+      "Dispatch Office": {
+        "contents": [
+          "Desks",
+          "Computers",
+          "Radios"
+        ]
+      },
+      "Quality Control Room": {
+        "contents": [
+          "Inspection Tables",
+          "Tools"
+        ]
+      },
+      "Inventory Management": {
+        "contents": [
+          "Computers",
+          "Filing Cabinets"
+        ]
+      },
+      "Staff Restrooms": {
+        "contents": [
+          "Toilets",
+          "Sinks",
+          "Lockers"
+        ]
+      }
+    }
   },
   "hotel": {
     "description": "A commercial hospitality building providing lodging, dining, and guest services.",
-    "left_rooms": ["Standard Room 101", "Standard Room 102", "Deluxe Room", "Housekeeping Storage", "Linen Closet"],
-    "right_rooms": ["Luxury Suite", "Presidential Suite", "Fitness Center / Gym", "Hotel Restaurant", "Main Reception Lobby"]
+    "left_rooms": {
+      "Standard Room 101": {
+        "contents": [
+          "Double Bed",
+          "TV",
+          "Desk",
+          "Bathroom"
+        ]
+      },
+      "Standard Room 102": {
+        "contents": [
+          "Double Bed",
+          "TV",
+          "Desk",
+          "Bathroom"
+        ]
+      },
+      "Deluxe Room": {
+        "contents": [
+          "King Bed",
+          "Sofa",
+          "Minibar",
+          "Large Bathroom"
+        ]
+      },
+      "Housekeeping Storage": {
+        "contents": [
+          "Cleaning Carts",
+          "Vacuums",
+          "Supplies"
+        ]
+      },
+      "Linen Closet": {
+        "contents": [
+          "Towels",
+          "Bed Sheets",
+          "Pillows"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Luxury Suite": {
+        "contents": [
+          "Living Room",
+          "King Bed",
+          "Jacuzzi",
+          "Kitchenette"
+        ]
+      },
+      "Presidential Suite": {
+        "contents": [
+          "Grand Piano",
+          "Dining Area",
+          "Master Bed",
+          "Sauna"
+        ]
+      },
+      "Fitness Center": {
+        "contents": [
+          "Treadmills",
+          "Weights",
+          "Mirrors"
+        ]
+      },
+      "Hotel Restaurant": {
+        "contents": [
+          "Dining Tables",
+          "Bar",
+          "Buffet Counters"
+        ]
+      },
+      "Main Reception Lobby": {
+        "contents": [
+          "Check-in Desk",
+          "Lounge Seating",
+          "Luggage Carts"
+        ]
+      }
+    }
   },
   "restaurant": {
     "description": "A commercial establishment where meals and drinks are prepared and served to customers.",
-    "left_rooms": ["Main Dining Hall", "Private Dining Room", "Bar & Lounge Seating", "Host/Hostess Station", "Customer Restrooms"],
-    "right_rooms": ["Commercial Kitchen", "Cold Storage / Freezer", "Pantry", "Dishwashing Station", "Manager Office"]
+    "left_rooms": {
+      "Main Dining Hall": {
+        "contents": [
+          "Dining Tables",
+          "Chairs",
+          "Booths",
+          "Decor"
+        ]
+      },
+      "Private Dining Room": {
+        "contents": [
+          "Large Table",
+          "Chairs",
+          "Curtains"
+        ]
+      },
+      "Bar & Lounge Seating": {
+        "contents": [
+          "Bar Stools",
+          "Liquor Shelves",
+          "TVs"
+        ]
+      },
+      "Host Station": {
+        "contents": [
+          "Podium",
+          "Reservation Screen",
+          "Menus"
+        ]
+      },
+      "Customer Restrooms": {
+        "contents": [
+          "Toilets",
+          "Sinks",
+          "Mirrors"
+        ]
+      }
+    },
+    "right_rooms": {
+      "Commercial Kitchen": {
+        "contents": [
+          "Industrial Stoves",
+          "Ovens",
+          "Prep Stations"
+        ]
+      },
+      "Cold Storage": {
+        "contents": [
+          "Walk-in Fridge",
+          "Walk-in Freezer",
+          "Shelves"
+        ]
+      },
+      "Pantry": {
+        "contents": [
+          "Dry Ingredients",
+          "Canned Goods",
+          "Shelving"
+        ]
+      },
+      "Dishwashing Station": {
+        "contents": [
+          "Industrial Sinks",
+          "Dishwashers",
+          "Drying Racks"
+        ]
+      },
+      "Manager Office": {
+        "contents": [
+          "Desk",
+          "Safe",
+          "Computer"
+        ]
+      }
+    }
   }
 }
