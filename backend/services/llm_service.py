@@ -289,6 +289,7 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
     total_nia = sum(room.get("area", room.get("width", 0) * room.get("length", 0)) for floor in dynamic_floors for room in floor["rooms"])
     circulation_area = sum(room.get("area", room.get("width", 0) * room.get("length", 0)) for floor in dynamic_floors for room in floor["rooms"] if "core" in room["name"].lower() or "corridor" in room["name"].lower())
     circ_ratio = (circulation_area / total_nia * 100) if total_nia > 0 else 0
+    total_area = total_gea
     
     return {
       "project": {
