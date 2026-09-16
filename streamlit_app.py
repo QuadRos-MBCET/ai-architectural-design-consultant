@@ -371,6 +371,9 @@ if app_mode == "Generative 3D Design":
                 st.markdown(legend_html, unsafe_allow_html=True)
                 render_model_viewer(st.session_state.gen3d_data["combined_glb"])
                 
+                glb_bytes = base64.b64decode(st.session_state.gen3d_data["combined_glb"])
+                st.download_button("📥 Download Combined 3D Model (.glb)", data=glb_bytes, file_name="concept_combined.glb", mime="model/gltf-binary", use_container_width=True)
+                
             with tabs[1]:
                 st.subheader("Estimated Bill of Materials (INR)")
                 materials = st.session_state.report_data.get("materials_estimate", [])
@@ -388,10 +391,14 @@ if app_mode == "Generative 3D Design":
                 with tabs[idx + 2]:
                     st.subheader(f"2D Blueprint - {floor['name']}")
                     st.markdown(floor['svg_content'], unsafe_allow_html=True)
+                    st.download_button(f"📥 Download 2D Blueprint (.svg)", data=floor['svg_content'], file_name=f"floor_{idx+1}.svg", mime="image/svg+xml", use_container_width=True, key=f"svg_dl_{idx}")
                     
                     st.subheader("3D CAD Rendering")
                     st.markdown(legend_html, unsafe_allow_html=True)
                     render_model_viewer(floor['glb_base64'])
+                    
+                    glb_bytes = base64.b64decode(floor['glb_base64'])
+                    st.download_button(f"📥 Download 3D Floor (.glb)", data=glb_bytes, file_name=f"floor_{idx+1}.glb", mime="model/gltf-binary", use_container_width=True, key=f"glb_dl_{idx}")
         else:
             st.info("Enter a prompt and click Generate to see visualizations here.")
             
