@@ -31,12 +31,22 @@ def mock_rag_retrieval(building_type: str) -> str:
             
     return context
 
+import uuid
+
 def bsp_pack(x, y, w, h, room_names, is_hot=False):
-    """Recursive Binary Space Partitioning for Room Layouts"""
+    """Recursive Binary Space Partitioning returning BIM Polygons"""
     if not room_names:
         return []
     if len(room_names) == 1:
-        return [{"name": room_names[0], "x": x, "y": y, "width": w, "length": h}]
+        return [{
+            "id": f"room_{str(uuid.uuid4())[:6]}",
+            "name": room_names[0], 
+            "type": "wet" if "restroom" in room_names[0].lower() else "primary",
+            "polygon": [[x, y], [x+w, y], [x+w, y+h], [x, y+h]],
+            "area": w * h,
+            # Legacy coords for backwards compat with some 3D mesher tools
+            "x": x, "y": y, "width": w, "length": h
+        }]
     
     # Sort buffers to sides if hot climate
     if is_hot:
@@ -274,15 +284,23 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
     max_l = max(room["y"] + room["length"] for floor in dynamic_floors for room in floor["rooms"])
 
     # 4. Construct JSON Response representing Diffusion/GAN output
-    # Calculate total gross floor area for accurate material estimation
-    total_area = b_width * b_length * num_floors
+    # Calculate architectural metrics
+    total_gea = b_width * b_length * num_floors
+    total_nia = sum(room["area"] for floor in dynamic_floors for room in floor["rooms"])
+    circulation_area = sum(room["area"] for floor in dynamic_floors for room in floor["rooms"] if "core" in room["name"].lower() or "corridor" in room["name"].lower())
+    circ_ratio = (circulation_area / total_nia * 100) if total_nia > 0 else 0
     
     return {
       "project": {
         "name": f"{building_type.title()} Project",
         "type": building_type,
         "style": "contemporary",
-        "climate": "hot_humid" if "hot" in prompt_lower else "temperate"
+        "climate": climate
+      },
+      "metrics": {
+          "GEA_sqm": total_gea,
+          "NIA_sqm": total_nia,
+          "circulation_ratio": round(circ_ratio, 1)
       },
       "building_width": b_width,
       "building_length": b_length,

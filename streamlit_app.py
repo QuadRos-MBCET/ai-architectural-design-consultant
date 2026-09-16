@@ -268,131 +268,113 @@ app_mode = st.sidebar.radio("Navigation", ["Generative 3D Design", "PDF Blueprin
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("📐 Parametric Controls")
-b_width_override = st.sidebar.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
-b_length_override = st.sidebar.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
-ceiling_height = st.sidebar.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
-target_wwr = st.sidebar.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
 
 if app_mode == "Generative 3D Design":
-    col1, col2 = st.columns([1, 2])
+    # 1. Left Panel (Sidebar Controls)
+    prompt = st.sidebar.text_area("Architectural Prompt", value=st.session_state.current_prompt, height=100)
+    b_width_override = st.sidebar.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
+    b_length_override = st.sidebar.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
+    ceiling_height = st.sidebar.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
+    target_wwr = st.sidebar.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
     
-    with col1:
-        st.header("Project Requirements")
-        prompt = st.text_area("Describe the architectural project...", value=st.session_state.current_prompt, height=100)
+    if st.sidebar.button("Generate Multi-Story Design", type="primary", use_container_width=True):
+        st.session_state.current_prompt = prompt
+        generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
+        st.rerun()
         
-        if st.button("Generate Multi-Story Design", type="primary", use_container_width=True):
-            st.session_state.current_prompt = prompt
-            generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
-            st.rerun()
+    st.sidebar.divider()
+    st.sidebar.subheader("💬 AI Consultant Chat")
+    chat_container = st.sidebar.container(height=300)
+    with chat_container:
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+                
+    if chat_input := st.sidebar.chat_input("Ask me to add a floor..."):
+        st.session_state.messages.append({"role": "user", "content": chat_input})
+        new_prompt, bot_reply = process_simulated_chat(chat_input, st.session_state.current_prompt)
+        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+        if new_prompt != st.session_state.current_prompt:
+            st.session_state.current_prompt = new_prompt
+            generate_assets(st.session_state.current_prompt)
+        st.rerun()
 
-        if st.session_state.report_data:
-            rd = st.session_state.report_data
-            b_type = rd.get("project", {}).get("type", "building")
-            num_floors = len(rd.get("floors", []))
-            b_w = rd.get("building_width", 0)
-            b_l = rd.get("building_length", 0)
-            
-            with st.expander("🧠 View Live AI Data Flow"):
-                st.markdown(f"""
-                **1. User Prompt Processing**  
-                Detected request for a **{num_floors}-story {b_type.title()}**.
-                
-                ⬇️
-                
-                **2. RAG Context Retrieval**  
-                Successfully queried vector database for `{b_type}_design_standards` to ground the architecture.
-                
-                ⬇️
-                
-                **3. VAE Latent Space Encoding**  
-                Calculated mathematical structural boundaries: **{b_w}m x {b_l}m footprint**.
-                
-                ⬇️
-                
-                **4. Stable Diffusion Extrusion**  
-                Iteratively denoising {num_floors} individual 2D floor plans into 3D massing meshes.
-                
-                ⬇️
-                
-                **5. GAN Render Output**  
-                Baked geometries into a final combined GLB file ready for the 3D viewport.
-                """)
-            
-        st.divider()
-        st.subheader("💬 Chat with R D Homes AI Consultant")
+    # 2. Main Panel Workspace
+    if st.session_state.gen3d_data and st.session_state.report_data:
+        tabs = st.tabs(["2D Floor Plans", "3D BIM Viewport", "Spatial Analytics & Schedule", "Export/Download"])
         
-        # Chat UI Container
-        chat_container = st.container(height=400)
-        with chat_container:
-            for msg in st.session_state.messages:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
-                    
-        if chat_input := st.chat_input("Ask me to add a floor or change the building..."):
-            # Append user message
-            st.session_state.messages.append({"role": "user", "content": chat_input})
-            
-            # Process logic
-            new_prompt, bot_reply = process_simulated_chat(chat_input, st.session_state.current_prompt)
-            
-            # Append bot reply
-            st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-            
-            # If the chatbot decided to modify the architecture prompt, trigger regeneration!
-            if new_prompt != st.session_state.current_prompt:
-                st.session_state.current_prompt = new_prompt
-                generate_assets(st.session_state.current_prompt)
+        floors_data = st.session_state.gen3d_data["floors"]
+        floor_names = [f["name"] for f in floors_data]
+        
+        # TAB 1: 2D Floor Plans
+        with tabs[0]:
+            colA, colB = st.columns([1, 4])
+            with colA:
+                selected_2d_floor = st.selectbox("Select Level (2D)", floor_names, key="sel_2d")
+            with colB:
+                floor_idx = floor_names.index(selected_2d_floor)
+                st.markdown(floors_data[floor_idx]['svg_content'], unsafe_allow_html=True)
                 
-            st.rerun()
-
-    with col2:
-        if st.session_state.gen3d_data and st.session_state.report_data:
-            # Create tabs dynamically based on floors + combined + materials
-            tab_names = ["Entire Building", "Bill of Materials"] + [f["name"] for f in st.session_state.gen3d_data["floors"]]
-            tabs = st.tabs(tab_names)
-            
+        # TAB 2: 3D BIM Viewport
+        with tabs[1]:
+            st.radio("View Mode", ["Entire Building", "Single Floor"], horizontal=True, key="view_mode")
             legend_html = """
             <div style='display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; background-color: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #334155;'>
                 <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #ADD8E6; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Window Glass</span></div>
                 <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #8B4513; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Solid Door</span></div>
             </div>
             """
+            st.markdown(legend_html, unsafe_allow_html=True)
             
-            with tabs[0]:
-                st.subheader("Multi-Story Building View")
-                st.markdown(legend_html, unsafe_allow_html=True)
+            if st.session_state.view_mode == "Entire Building":
                 render_model_viewer(st.session_state.gen3d_data["combined_glb"])
-                
+            else:
+                colA, colB = st.columns([1, 4])
+                with colA:
+                    selected_3d_floor = st.selectbox("Select Level (3D)", floor_names, key="sel_3d")
+                with colB:
+                    floor_idx = floor_names.index(selected_3d_floor)
+                    render_model_viewer(floors_data[floor_idx]['glb_base64'])
+                    
+        # TAB 3: Spatial Analytics & Schedule
+        with tabs[2]:
+            st.subheader("Architectural Metrics")
+            metrics = st.session_state.report_data.get("metrics", {})
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Gross External Area (GEA)", f"{metrics.get('GEA_sqm', 0):,} sqm")
+            m2.metric("Net Internal Area (NIA)", f"{metrics.get('NIA_sqm', 0):,} sqm")
+            m3.metric("Circulation Ratio", f"{metrics.get('circulation_ratio', 0)}%")
+            
+            st.subheader("Estimated Bill of Materials (INR)")
+            materials = st.session_state.report_data.get("materials_estimate", [])
+            df_data = []
+            for m in materials:
+                df_data.append({
+                    "Item": m["item"],
+                    "Qty": f"{m['quantity']} {m['unit']}",
+                    "Rate": f"₹{m['present_rate']:,.2f}",
+                    "Total Cost": f"₹{m['total_cost']:,.0f}"
+                })
+            st.dataframe(df_data, hide_index=True, use_container_width=True)
+            
+        # TAB 4: Export/Download
+        with tabs[3]:
+            st.subheader("BIM Exports")
+            colX, colY = st.columns(2)
+            with colX:
+                st.markdown("##### Full Project")
                 glb_bytes = base64.b64decode(st.session_state.gen3d_data["combined_glb"])
                 st.download_button("📥 Download Combined 3D Model (.glb)", data=glb_bytes, file_name="concept_combined.glb", mime="model/gltf-binary", use_container_width=True)
-                
-            with tabs[1]:
-                st.subheader("Estimated Bill of Materials (INR)")
-                materials = st.session_state.report_data.get("materials_estimate", [])
-                df_data = []
-                for m in materials:
-                    df_data.append({
-                        "Item": m["item"],
-                        "Qty": f"{m['quantity']} {m['unit']}",
-                        "Rate": f"₹{m['present_rate']:,.2f}",
-                        "Total Cost": f"₹{m['total_cost']:,.0f}"
-                    })
-                st.dataframe(df_data, hide_index=True, use_container_width=True)
-                
-            for idx, floor in enumerate(st.session_state.gen3d_data["floors"]):
-                with tabs[idx + 2]:
-                    st.subheader(f"2D Blueprint - {floor['name']}")
-                    st.markdown(floor['svg_content'], unsafe_allow_html=True)
-                    st.download_button(f"📥 Download 2D Blueprint (.svg)", data=floor['svg_content'], file_name=f"floor_{idx+1}.svg", mime="image/svg+xml", use_container_width=True, key=f"svg_dl_{idx}")
-                    
-                    st.subheader("3D CAD Rendering")
-                    st.markdown(legend_html, unsafe_allow_html=True)
-                    render_model_viewer(floor['glb_base64'])
-                    
-                    glb_bytes = base64.b64decode(floor['glb_base64'])
-                    st.download_button(f"📥 Download 3D Floor (.glb)", data=glb_bytes, file_name=f"floor_{idx+1}.glb", mime="model/gltf-binary", use_container_width=True, key=f"glb_dl_{idx}")
-        else:
-            st.info("Enter a prompt and click Generate to see visualizations here.")
+            
+            with colY:
+                st.markdown("##### Individual Floors")
+                selected_dl_floor = st.selectbox("Select Level to Export", floor_names, key="sel_dl")
+                dl_idx = floor_names.index(selected_dl_floor)
+                st.download_button(f"📥 Download {selected_dl_floor} SVG Blueprint", data=floors_data[dl_idx]['svg_content'], file_name=f"floor_{dl_idx+1}.svg", mime="image/svg+xml", use_container_width=True)
+                dl_glb_bytes = base64.b64decode(floors_data[dl_idx]['glb_base64'])
+                st.download_button(f"📥 Download {selected_dl_floor} 3D Mesh (.glb)", data=dl_glb_bytes, file_name=f"floor_{dl_idx+1}.glb", mime="model/gltf-binary", use_container_width=True)
+    else:
+        st.info("👈 Enter a prompt in the sidebar and click Generate to build the architectural model.")
             
 elif app_mode == "PDF Blueprint Analysis":
     st.header("📄 PDF Blueprint Analysis & Code Compliance")
