@@ -116,21 +116,20 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
     climate = "hot_humid" if "hot" in prompt_lower or "tropical" in prompt_lower else "temperate"
     is_hot = climate == "hot_humid"
 
-    # Default logic (can be overridden by AI)
-    building_type = "office"
+    # Default logic
     num_floors = 3
     if "house" in prompt_lower or "villa" in prompt_lower or "residential" in prompt_lower or "mansion" in prompt_lower: building_type = "house"
-    elif "mall" in prompt_lower: building_type = "mall"
-    elif "hospital" in prompt_lower or "clinic" in prompt_lower: building_type = "hospital"
+    elif "mall" in prompt_lower or "commercial" in prompt_lower: building_type = "commercial"
+    elif "hospital" in prompt_lower or "clinic" in prompt_lower or "healthcare" in prompt_lower: building_type = "healthcare"
     elif "museum" in prompt_lower: building_type = "museum"
     elif "library" in prompt_lower: building_type = "library"
+    elif "school" in prompt_lower or "educational" in prompt_lower: building_type = "educational"
     elif "pyramid" in prompt_lower: building_type = "pyramid"
     elif "skyscraper" in prompt_lower or "tower" in prompt_lower: building_type = "skyscraper"
     elif extracted:
-        # Fallback to the first non-trivial noun (risky if they start with 'create' or 'build')
         fallback = extracted[0]
         if fallback in ["create", "build", "make", "generate", "design"]:
-            building_type = extracted[1] if len(extracted) > 1 else "building"
+            building_type = extracted[1] if len(extracted) > 1 else "office"
         else:
             building_type = fallback
 
@@ -210,16 +209,30 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
         right_wing_x = (b_width // 2) + 5
         right_wing_w = b_width - right_wing_x
 
+        # Generalized Programmatic Budget Based on Typology
         if building_type == "library":
             left_rooms = ["Public Reading Room", "Digital Archives", "Study Pods"]
             right_rooms = ["Book Stacks", "Librarian Desk", "Public Restrooms"]
-        elif building_type in ["house", "residential", "villa", "mansion"]:
-            left_rooms = ["Living Room", "Kitchen"] if i == 0 else ["Master Bedroom", "En-Suite Bath"]
-            right_rooms = ["Dining Area", "Storage"] if i == 0 else ["Guest Room", "Balcony"]
-        else:
+        elif building_type == "house":
+            left_rooms = ["Living Room", "Kitchen", "Guest Bath"] if i == 0 else ["Master Bedroom", "En-Suite Bath", "Walk-in Closet"]
+            right_rooms = ["Dining Area", "Storage", "Garage"] if i == 0 else ["Guest Room", "Balcony", "Laundry"]
+        elif building_type == "healthcare":
+            left_rooms = ["Patient Ward A", "Patient Ward B", "Nurse Station"]
+            right_rooms = ["Operating Theater", "Recovery Room", "Restrooms"]
+        elif building_type == "educational":
+            left_rooms = ["Classroom A", "Classroom B", "Storage"]
+            right_rooms = ["Science Lab", "Faculty Lounge", "Restrooms"]
+        elif building_type == "commercial":
+            left_rooms = ["Retail Anchor A", "Kiosks", "Storage"]
+            right_rooms = ["Retail Anchor B", "Food Court", "Public Restrooms"]
+        elif building_type == "office":
             left_rooms = ["Open Workspace", "Meeting Room A", "Admin Storage"]
             right_rooms = ["Executive Office", "Meeting Room B", "Public Restrooms"]
-            
+        else:
+            # Fully dynamic generation based on whatever weird prompt they typed
+            b_name = building_type.title()
+            left_rooms = [f"Primary {b_name} Zone A", f"Primary {b_name} Zone B", "Secondary Storage"]
+            right_rooms = [f"Executive {b_name} Suite", "Conference/Meeting Room", "Communal Restrooms"]
         floor_rooms.extend(bsp_pack(0, foyer_h if i==0 else 0, left_wing_w, b_length - (foyer_h if i==0 else 0), left_rooms, is_hot))
         floor_rooms.extend(bsp_pack(right_wing_x, foyer_h if i==0 else 0, right_wing_w, b_length - (foyer_h if i==0 else 0), right_rooms, is_hot))
 
