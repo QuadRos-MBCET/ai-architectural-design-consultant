@@ -114,8 +114,15 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
     elif "hospital" in prompt_lower or "clinic" in prompt_lower: building_type = "hospital"
     elif "museum" in prompt_lower: building_type = "museum"
     elif "library" in prompt_lower: building_type = "library"
+    elif "pyramid" in prompt_lower: building_type = "pyramid"
+    elif "skyscraper" in prompt_lower or "tower" in prompt_lower: building_type = "skyscraper"
     elif extracted:
-        building_type = extracted[0]
+        # Fallback to the first non-trivial noun (risky if they start with 'create' or 'build')
+        fallback = extracted[0]
+        if fallback in ["create", "build", "make", "generate", "design"]:
+            building_type = extracted[1] if len(extracted) > 1 else "building"
+        else:
+            building_type = fallback
 
     match = re.search(r'(\d+)\s*(?:story|storey|floor)', prompt_lower)
     if match: 
