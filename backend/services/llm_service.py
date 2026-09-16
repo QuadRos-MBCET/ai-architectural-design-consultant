@@ -4,32 +4,19 @@ import os
 
 def mock_rag_retrieval(building_type: str) -> str:
     """
-    Simulated RAG Retrieval: Reads directly from our local knowledge base
+    Simulated RAG Retrieval: Reads directly from our new JSON knowledge base
     to ground the generation in architectural context.
     """
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    research_dir = os.path.join(base_dir, "research papers")
+    db_path = os.path.join(base_dir, "data", "typology_database.json")
     
-    context = ""
-    # Pull generative AI knowledge
-    ai_file = os.path.join(research_dir, "generative_ai_architecture.txt")
-    if os.path.exists(ai_file):
-        with open(ai_file, "r") as f:
-            context += f.read() + "\n\n"
+    if os.path.exists(db_path):
+        with open(db_path, "r") as f:
+            db = json.load(f)
+        if building_type in db:
+            return db[building_type].get("description", "A generalized architectural structure.")
             
-    # Pull specific building type knowledge
-    if "mall" in building_type:
-        target = os.path.join(research_dir, "malls_design.txt")
-    elif "hospital" in building_type:
-        target = os.path.join(research_dir, "hospitals_design.txt")
-    else:
-        target = os.path.join(research_dir, "public_buildings.txt")
-        
-    if os.path.exists(target):
-        with open(target, "r") as f:
-            context += f.read()
-            
-    return context
+    return "A generalized architectural structure."
 
 import uuid
 
@@ -209,27 +196,20 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
         right_wing_x = (b_width // 2) + 5
         right_wing_w = b_width - right_wing_x
 
-        # Generalized Programmatic Budget Based on Typology
-        if building_type == "library":
-            left_rooms = ["Public Reading Room", "Digital Archives", "Study Pods"]
-            right_rooms = ["Book Stacks", "Librarian Desk", "Public Restrooms"]
-        elif building_type == "house":
-            left_rooms = ["Living Room", "Kitchen", "Guest Bath"] if i == 0 else ["Master Bedroom", "En-Suite Bath", "Walk-in Closet"]
-            right_rooms = ["Dining Area", "Storage", "Garage"] if i == 0 else ["Guest Room", "Balcony", "Laundry"]
-        elif building_type == "healthcare":
-            left_rooms = ["Patient Ward A", "Patient Ward B", "Nurse Station"]
-            right_rooms = ["Operating Theater", "Recovery Room", "Restrooms"]
-        elif building_type == "educational":
-            left_rooms = ["Classroom A", "Classroom B", "Storage"]
-            right_rooms = ["Science Lab", "Faculty Lounge", "Restrooms"]
-        elif building_type == "commercial":
-            left_rooms = ["Retail Anchor A", "Kiosks", "Storage"]
-            right_rooms = ["Retail Anchor B", "Food Court", "Public Restrooms"]
-        elif building_type == "office":
-            left_rooms = ["Open Workspace", "Meeting Room A", "Admin Storage"]
-            right_rooms = ["Executive Office", "Meeting Room B", "Public Restrooms"]
-        else:
-            # Fully dynamic generation based on whatever weird prompt they typed
+        # Generalized Programmatic Budget Based on JSON Database
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        db_path = os.path.join(base_dir, "data", "typology_database.json")
+        
+        left_rooms, right_rooms = [], []
+        if os.path.exists(db_path):
+            with open(db_path, "r") as f:
+                db = json.load(f)
+            if building_type in db:
+                left_rooms = db[building_type].get("left_rooms", [])
+                right_rooms = db[building_type].get("right_rooms", [])
+                
+        # Fully dynamic fallback if not found in database
+        if not left_rooms or not right_rooms:
             b_name = building_type.title()
             left_rooms = [f"Primary {b_name} Zone A", f"Primary {b_name} Zone B", "Secondary Storage"]
             right_rooms = [f"Executive {b_name} Suite", "Conference/Meeting Room", "Communal Restrooms"]

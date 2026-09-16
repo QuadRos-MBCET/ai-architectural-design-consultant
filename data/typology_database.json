@@ -1,0 +1,52 @@
+{
+  "office": {
+    "description": "A workspace building focused on productivity, collaboration, and administrative tasks.",
+    "left_rooms": ["Open Workspace", "Meeting Room A", "Admin Storage"],
+    "right_rooms": ["Executive Office", "Meeting Room B", "Public Restrooms"]
+  },
+  "house": {
+    "description": "A residential dwelling designed for private living, family activities, and rest.",
+    "left_rooms": ["Living Room", "Kitchen", "Guest Bath"],
+    "right_rooms": ["Master Bedroom", "En-Suite Bath", "Walk-in Closet"]
+  },
+  "hospital": {
+    "description": "A healthcare facility providing medical treatment, patient care, and emergency services.",
+    "left_rooms": ["Patient Ward A", "Patient Ward B", "Nurse Station"],
+    "right_rooms": ["Operating Theater", "Recovery Room", "Restrooms"]
+  },
+  "library": {
+    "description": "A public or academic building for reading, studying, and archiving physical and digital media.",
+    "left_rooms": ["Public Reading Room", "Digital Archives", "Study Pods"],
+    "right_rooms": ["Book Stacks", "Librarian Desk", "Public Restrooms"]
+  },
+  "school": {
+    "description": "An educational institution designed for teaching, learning, and student collaboration.",
+    "left_rooms": ["Classroom A", "Classroom B", "Storage"],
+    "right_rooms": ["Science Lab", "Faculty Lounge", "Restrooms"]
+  },
+  "mall": {
+    "description": "A large commercial retail complex featuring multiple shops, food courts, and entertainment zones.",
+    "left_rooms": ["Retail Anchor A", "Kiosks", "Storage"],
+    "right_rooms": ["Retail Anchor B", "Food Court", "Public Restrooms"]
+  },
+  "museum": {
+    "description": "A cultural institution dedicated to preserving and exhibiting artifacts of historical, scientific, or artistic significance.",
+    "left_rooms": ["Main Exhibition Hall", "Curator Office", "Storage"],
+    "right_rooms": ["Rotating Gallery", "Gift Shop", "Public Restrooms"]
+  },
+  "warehouse": {
+    "description": "A large industrial facility used for storage, logistics, and goods distribution.",
+    "left_rooms": ["Pallet Storage Zone", "Forklift Charging", "Loading Dock"],
+    "right_rooms": ["Dispatch Office", "Inventory Room", "Restrooms"]
+  },
+  "hotel": {
+    "description": "A commercial hospitality building providing lodging, dining, and guest services.",
+    "left_rooms": ["Standard Room A", "Standard Room B", "Housekeeping"],
+    "right_rooms": ["Luxury Suite", "Gym/Spa", "Elevator Core"]
+  },
+  "restaurant": {
+    "description": "A commercial establishment where meals and drinks are prepared and served to customers.",
+    "left_rooms": ["Main Dining Area", "Bar Seating", "Waiter Station"],
+    "right_rooms": ["Commercial Kitchen", "Cold Storage", "Restrooms"]
+  }
+}
