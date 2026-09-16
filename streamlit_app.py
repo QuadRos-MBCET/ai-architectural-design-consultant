@@ -189,6 +189,18 @@ def render_model_viewer(glb_base64):
     """
     components.html(html_code, height=520)
 
+@st.dialog("🤖 AI Consultant Intervention")
+def ai_intervention_popup(err_msg):
+    st.markdown(f"**{err_msg}**")
+    user_clarification = st.text_area("Describe the required rooms and layout:")
+    if st.button("Submit Program", type="primary"):
+        st.session_state.messages.append({"role": "user", "content": f"The building requires: {user_clarification}"})
+        new_prompt, bot_reply = process_simulated_chat(user_clarification, st.session_state.current_prompt)
+        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+        if new_prompt != st.session_state.current_prompt:
+            st.session_state.current_prompt = new_prompt
+        st.rerun()
+
 def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40):
     with st.spinner("Analyzing geometry & generating blueprints..."):
         try:
@@ -197,7 +209,7 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
             if "Unknown Typology:" in str(e):
                 err_msg = str(e).replace("Unknown Typology: ", "")
                 st.session_state.messages.append({"role": "assistant", "content": err_msg})
-                st.warning("⚠️ Unknown Building Type detected! I have sent you a message in the AI Consultant Chat in the sidebar.")
+                ai_intervention_popup(err_msg)
             else:
                 st.error(str(e))
             st.session_state.report_data = None
