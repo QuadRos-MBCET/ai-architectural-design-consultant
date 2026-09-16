@@ -198,6 +198,7 @@ def extract_requirements(user_prompt: str) -> dict:
                     {"name": "Gym / Studio", "x": 15, "y": 20, "width": 15, "length": 10}
                 ]
         else:
+            bt_title = building_type.title()
             if i == 0:
                 name = f"{bt_title} Ground (Lobby and Reception)"
                 rooms = [
