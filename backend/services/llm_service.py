@@ -84,6 +84,25 @@ def extract_requirements(user_prompt: str) -> dict:
     
     # Generate completely dynamic generic layouts based on ANY building type!
     for i in range(num_floors):
+        # 1. Check for dynamic override tags in the prompt
+        mod_match = re.search(rf'\[MOD: Floor {i+1} = (.*?)\]', prompt_lower, re.IGNORECASE)
+        if mod_match:
+            custom_name = mod_match.group(1).title()
+            name = f"Level {i+1} ({custom_name})"
+            rooms = [
+                {"name": f"Main {custom_name} Area", "x": 0, "y": 0, "width": 30, "length": 20},
+                {"name": "Auxiliary Space", "x": 15, "y": 20, "width": 15, "length": 10, "is_nested": True},
+                {"name": "Lounge / Waiting", "x": 0, "y": 20, "width": 15, "length": 10}
+            ]
+            
+            # Check for Add tags
+            add_matches = re.findall(r'\[ADD: (.*?)\]', prompt_lower, re.IGNORECASE)
+            for idx, add_room in enumerate(add_matches):
+                rooms.append({"name": f"New {add_room.title()}", "x": (idx * 5) % 30, "y": (idx * 5) % 30, "width": 6, "length": 6, "is_nested": True})
+                
+            dynamic_floors.append({"level": i + 1, "name": name, "rooms": rooms})
+            continue
+
         # We handle the specific ones we already made for high quality
         if building_type == "pyramid":
             # Pyramid logic: Base is wide, shrinks rapidly at each floor
@@ -162,29 +181,28 @@ def extract_requirements(user_prompt: str) -> dict:
             elif i == 1:
                 name = "First Floor (Master Suite)"
                 rooms = [
-                    {"name": "Master Bedroom", "x": 0, "y": 0, "width": 20, "length": 20},
-                    {"name": "En-suite Bathroom", "x": 20, "y": 0, "width": 10, "length": 15},
-                    {"name": "Walk-in Closet", "x": 20, "y": 15, "width": 10, "length": 15},
-                    {"name": "Balcony Lounge", "x": 0, "y": 20, "width": 20, "length": 10}
+                    {"name": "Master Bedroom", "x": 0, "y": 0, "width": 30, "length": 20},
+                    {"name": "En-suite Bathroom", "x": 20, "y": 0, "width": 10, "length": 10, "is_nested": True},
+                    {"name": "Wardrobe / Dress Closet", "x": 20, "y": 10, "width": 10, "length": 10, "is_nested": True},
+                    {"name": "Balcony Lounge", "x": 0, "y": 20, "width": 30, "length": 10}
                 ]
             elif i == 2:
                 name = "Second Floor (Family & Bedrooms)"
                 rooms = [
-                    {"name": "Bedroom 2", "x": 0, "y": 0, "width": 15, "length": 15},
-                    {"name": "Bedroom 3", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": "Shared Bathroom", "x": 15, "y": 15, "width": 15, "length": 15},
-                    {"name": "Family Room", "x": 0, "y": 15, "width": 15, "length": 15}
+                    {"name": "Bedroom 2", "x": 0, "y": 0, "width": 15, "length": 20},
+                    {"name": "En-suite Bath 2", "x": 0, "y": 0, "width": 7, "length": 10, "is_nested": True},
+                    {"name": "Bedroom 3", "x": 15, "y": 0, "width": 15, "length": 20},
+                    {"name": "En-suite Bath 3", "x": 15, "y": 0, "width": 7, "length": 10, "is_nested": True},
+                    {"name": "Family Room", "x": 0, "y": 20, "width": 30, "length": 10}
                 ]
             else:
                 name = f"Level {i+1} (Terrace & Amenities)"
                 rooms = [
-                    {"name": "Home Office", "x": 0, "y": 0, "width": 15, "length": 15},
-                    {"name": "Home Gym", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": "Roof Garden", "x": 0, "y": 15, "width": 30, "length": 15}
+                    {"name": "Rooftop Terrace", "x": 0, "y": 0, "width": 30, "length": 20},
+                    {"name": "Covered Lounge", "x": 0, "y": 20, "width": 15, "length": 10},
+                    {"name": "Gym / Studio", "x": 15, "y": 20, "width": 15, "length": 10}
                 ]
         else:
-            # TRUE DYNAMIC FALLBACK: Perfectly balanced 30x30 procedural grids
-            bt_title = building_type.title()
             if i == 0:
                 name = f"{bt_title} Ground (Lobby and Reception)"
                 rooms = [
