@@ -137,7 +137,15 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
         if building_type == "pyramid":
             size = max(10, b_width - (i * (b_width // num_floors)))
             offset = (b_width - size) // 2
-            floor_rooms.extend(bsp_pack(offset, offset, size, size, ["Living Quarters", "Restrooms", "Storage"], is_hot))
+            
+            if i == 0:
+                pyr_rooms = ["Grand Foyer", "Dining Hall", "Kitchen", "Communal Restrooms"]
+            elif i == num_floors - 1:
+                pyr_rooms = ["Master Suite", "Private Bath", "Observation Lounge"]
+            else:
+                pyr_rooms = [f"Living Quarters {i}A", f"Living Quarters {i}B", "Storage"]
+                
+            floor_rooms.extend(bsp_pack(offset, offset, size, size, pyr_rooms, is_hot))
             dynamic_floors.append({"level": i + 1, "name": f"Level {i+1} (Pyramid Tier)", "rooms": floor_rooms})
             continue
             
@@ -145,8 +153,14 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
             size = max(10, b_width - (i * 2))
             offset = (b_width - size) // 2
             floor_rooms.append({"name": "Elevator Core", "x": offset + size//3, "y": offset + size//3, "width": size//3, "length": size//3, "is_nested": True})
-            floor_rooms.extend(bsp_pack(offset, offset, size//3, size, ["Office A", "Office B"], is_hot))
-            floor_rooms.extend(bsp_pack(offset + (size//3)*2, offset, size//3, size, ["Office C", "Office D"], is_hot))
+            
+            if i == 0:
+                floor_rooms.extend(bsp_pack(offset, offset, size//3, size, ["Lobby", "Security"], is_hot))
+                floor_rooms.extend(bsp_pack(offset + (size//3)*2, offset, size//3, size, ["Cafeteria", "Restrooms"], is_hot))
+            else:
+                floor_rooms.extend(bsp_pack(offset, offset, size//3, size, [f"Office {i}A", f"Office {i}B"], is_hot))
+                floor_rooms.extend(bsp_pack(offset + (size//3)*2, offset, size//3, size, [f"Meeting Room {i}", "Restrooms"], is_hot))
+                
             dynamic_floors.append({"level": i + 1, "name": f"Level {i+1} (Tower Floor)", "rooms": floor_rooms})
             continue
             
