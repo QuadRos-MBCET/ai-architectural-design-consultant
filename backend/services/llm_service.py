@@ -160,13 +160,28 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
             dynamic_floors.append({"level": i + 1, "name": f"Level {i+1} (Tower Floor)", "rooms": floor_rooms})
             continue
             
-        # 1. Mandatory Core & Lightwell Constraints for Standard Buildings
-        core_w, core_h = 6, 6
+        # 1. Dynamic Core & Atrium Constraints based on Typology
+        central_features = {
+            "house": {"core": "Main Staircase", "atrium": "Interior Courtyard", "foyer": "Entrance Vestibule", "core_dim": 4},
+            "hospital": {"core": "Hospital Elevators", "atrium": "Waiting Atrium", "foyer": "Main Reception", "core_dim": 6},
+            "mall": {"core": "Escalator Bank", "atrium": "Shopping Atrium", "foyer": "Grand Entrance", "core_dim": 8},
+            "warehouse": {"core": "Freight Elevators", "atrium": "Sorting Area", "foyer": "Loading Reception", "core_dim": 8},
+            "school": {"core": "Main Stairwell", "atrium": "Assembly Area", "foyer": "School Entrance", "core_dim": 6},
+            "museum": {"core": "Public Elevators", "atrium": "Grand Exhibition Atrium", "foyer": "Ticketing Hall", "core_dim": 6},
+            "hotel": {"core": "Guest Elevators", "atrium": "Lobby Lounge Atrium", "foyer": "Hotel Grand Foyer", "core_dim": 6},
+            "library": {"core": "Central Staircase", "atrium": "Reading Atrium", "foyer": "Library Entrance", "core_dim": 6},
+            "restaurant": {"core": "Service Core", "atrium": "Dining Atrium", "foyer": "Host Vestibule", "core_dim": 4},
+            "office": {"core": "Circulation Core", "atrium": "Central Lightwell", "foyer": "Main Entrance Foyer", "core_dim": 6}
+        }
+        
+        c_names = central_features.get(building_type, central_features["office"])
+        
+        core_w = core_h = c_names["core_dim"]
         core_x = (b_width // 2) - (core_w // 2)
         core_y = b_length - core_h - 2
         
         floor_rooms.append({
-            "name": "Circulation Core (Stairs/Elevator)",
+            "name": c_names["core"],
             "x": core_x, "y": core_y, "width": core_w, "length": core_h,
             "is_nested": True
         })
@@ -174,7 +189,7 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
         if b_width >= 30 and b_length >= 30:
             atrium_size = 10
             floor_rooms.append({
-                "name": "Central Lightwell (Stack Vent)",
+                "name": c_names["atrium"],
                 "x": (b_width // 2) - (atrium_size // 2), 
                 "y": (b_length // 2) - (atrium_size // 2),
                 "width": atrium_size, "length": atrium_size,
@@ -185,8 +200,8 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
         foyer_h = 6
         if i == 0:
             floor_rooms.append({
-                "name": "Main Entrance Foyer",
-                "x": (b_width // 2) - 4, "y": 0, "width": 8, "length": foyer_h,
+                "name": c_names["foyer"],
+                "x": (b_width // 2) - (c_names["core_dim"] // 2), "y": 0, "width": c_names["core_dim"], "length": foyer_h,
                 "is_nested": True
             })
 
