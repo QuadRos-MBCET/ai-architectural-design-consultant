@@ -62,7 +62,15 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
                 create_wall(window_width, wall_thick, window_x, window_z, h=1.0, elevation_offset=3.0)
                 create_wall(window_width, wall_thick * 0.2, window_x, window_z + (wall_thick*0.4), h=2.0, elevation_offset=1.0, custom_color=[173, 216, 230, 200])
             else:
-                create_wall(rw, wall_thick, rx, ry + rl - wall_thick)
+                # High ventilation window for nested rooms (bathrooms/closets)
+                window_width = 1.5
+                create_wall((rw - window_width)/2, wall_thick, rx, ry + rl - wall_thick)
+                create_wall((rw - window_width)/2, wall_thick, rx + (rw + window_width)/2, ry + rl - wall_thick)
+                window_x = rx + (rw - window_width)/2
+                window_z = ry + rl - wall_thick
+                create_wall(window_width, wall_thick, window_x, window_z, h=2.0, elevation_offset=0) # High Sill
+                create_wall(window_width, wall_thick, window_x, window_z, h=0.5, elevation_offset=3.5) # Header
+                create_wall(window_width, wall_thick * 0.2, window_x, window_z + (wall_thick*0.4), h=1.5, elevation_offset=2.0, custom_color=[173, 216, 230, 200]) # Glass
                 
             # Left Wall
             if is_nested:

@@ -94,12 +94,7 @@ def extract_requirements(user_prompt: str) -> dict:
                 {"name": "Auxiliary Space", "x": 15, "y": 20, "width": 15, "length": 10, "is_nested": True},
                 {"name": "Lounge / Waiting", "x": 0, "y": 20, "width": 15, "length": 10}
             ]
-            
-            # Check for Add tags
-            add_matches = re.findall(r'\[ADD: (.*?)\]', prompt_lower, re.IGNORECASE)
-            for idx, add_room in enumerate(add_matches):
-                rooms.append({"name": f"New {add_room.title()}", "x": (idx * 5) % 30, "y": (idx * 5) % 30, "width": 6, "length": 6, "is_nested": True})
-                
+
             dynamic_floors.append({"level": i + 1, "name": name, "rooms": rooms})
             continue
 
@@ -241,6 +236,29 @@ def extract_requirements(user_prompt: str) -> dict:
                     {"name": "Utilities", "x": 0, "y": 15, "width": 30, "length": 15}
                 ]
         
+        # Dynamically append any new requested rooms to the standard floor layout
+        add_matches = re.findall(r'\[ADD: (.*?)\]', prompt_lower, re.IGNORECASE)
+        for idx, add_room in enumerate(add_matches):
+            rooms.append({
+                "name": f"New {add_room.title()}",
+                "x": (idx * 5) % 30,
+                "y": (idx * 5) % 30,
+                "width": 6,
+                "length": 6,
+                "is_nested": True
+            })
+
+        # Add common washrooms to public buildings
+        if building_type not in ["pyramid", "house", "villa", "home", "residential", "mansion", "skyscraper"]:
+            rooms.append({
+                "name": "Public Restrooms",
+                "x": 20,
+                "y": 5,
+                "width": 10,
+                "length": 10,
+                "is_nested": True
+            })
+            
         dynamic_floors.append({
             "level": i + 1,
             "name": name,

@@ -48,6 +48,12 @@ def generate_svg_floorplan(b_width: int, b_length: int, floor: Dict[str, Any], o
             
             # Room Label
             svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2}" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{name.upper()}</text>')
+            
+            if "RECEPTION" in name.upper() or "LOBBY" in name.upper():
+                arrow_x = rx + (rw / 2)
+                arrow_y = ry + rh + 45
+                svg_content.append(f'<path d="M {arrow_x} {arrow_y} L {arrow_x} {arrow_y - 30} L {arrow_x - 8} {arrow_y - 20} M {arrow_x} {arrow_y - 30} L {arrow_x + 8} {arrow_y - 20}" fill="none" stroke="#dc2626" stroke-width="5"/>')
+                svg_content.append(f'<text x="{arrow_x}" y="{arrow_y + 15}" font-family="sans-serif" font-size="14" font-weight="bold" fill="#dc2626" text-anchor="middle">ENTRANCE</text>')
             # Dimensions
             svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2 + 20}" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">{room.get("width")}m x {room.get("length")}m</text>')
 
