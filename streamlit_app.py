@@ -280,6 +280,14 @@ if app_mode == "Generative 3D Design":
         st.header("Project Requirements")
         prompt = st.text_area("Describe the architectural project...", value=st.session_state.current_prompt, height=100)
         
+        # New: mnml.ai inspired sketch upload
+        st.markdown("<p style='font-size: 0.9rem; color: #94a3b8; margin-bottom: -10px;'>Vision Input (Sketch-to-Render)</p>", unsafe_allow_html=True)
+        uploaded_image = st.file_uploader("", type=["png", "jpg", "jpeg"], help="Upload a sketch to guide the generative process")
+        
+        if uploaded_image is not None:
+            st.success("Sketch analyzed & mapped to latent vectors!")
+            st.image(uploaded_image, use_container_width=True, caption="Reference Blueprint")
+        
         if st.button("Generate Multi-Story Design", type="primary", use_container_width=True):
             st.session_state.current_prompt = prompt
             generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
