@@ -52,15 +52,32 @@ def generate_svg_floorplan(b_width: int, b_length: int, floor: Dict[str, Any], o
                 svg_content.append(f'<line x1="{rx}" y1="{ry}" x2="{rx+rw}" y2="{ry+rh}" stroke="#9ca3af" stroke-width="2"/>')
                 svg_content.append(f'<line x1="{rx+rw}" y1="{ry}" x2="{rx}" y2="{ry+rh}" stroke="#9ca3af" stroke-width="2"/>')
             
-            # Room Label (Dynamic Text Stacking & Abbreviation)
+            # Room Label (Dynamic Text Scaling)
             words = name.upper().split()
-            if len(words) > 2 and rw < 150:
-                # Stack words
-                tspan1 = f'<tspan x="{rx + rw/2}" dy="-0.6em">{" ".join(words[:2])}</tspan>'
-                tspan2 = f'<tspan x="{rx + rw/2}" dy="1.2em">{" ".join(words[2:])}</tspan>'
-                svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2}" font-family="sans-serif" font-size="8" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{tspan1}{tspan2}</text>')
+            
+            def get_dynamic_font_size(text, box_width, max_size=10, min_size=4):
+                if not text: return max_size
+                calculated_size = (box_width - 15) / (len(text) * 0.6)
+                return max(min_size, min(max_size, calculated_size))
+
+            if len(words) > 1 and rw < 200:
+                # Stack words evenly
+                split_idx = len(words) // 2 + (len(words) % 2) # e.g. 3 words -> split at 2
+                line1 = " ".join(words[:split_idx])
+                line2 = " ".join(words[split_idx:])
+                
+                fs1 = get_dynamic_font_size(line1, rw)
+                fs2 = get_dynamic_font_size(line2, rw)
+                fs = min(fs1, fs2) # Use the smaller one to maintain consistent sizing
+                
+                tspan1 = f'<tspan x="{rx + rw/2}" dy="-0.6em">{line1}</tspan>'
+                tspan2 = f'<tspan x="{rx + rw/2}" dy="1.2em">{line2}</tspan>'
+                svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2 - 2}" font-family="sans-serif" font-size="{fs:.1f}" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{tspan1}{tspan2}</text>')
+                dim_y = ry + rh/2 + fs + 5
             else:
-                svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2}" font-family="sans-serif" font-size="10" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{name.upper()}</text>')
+                fs = get_dynamic_font_size(name.upper(), rw)
+                svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2 - 2}" font-family="sans-serif" font-size="{fs:.1f}" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{name.upper()}</text>')
+                dim_y = ry + rh/2 + fs
             
             # Entrance Arrow Routing
             if "RECEPTION" in name.upper() or "LOBBY" in name.upper() or "FOYER" in name.upper():
@@ -71,8 +88,9 @@ def generate_svg_floorplan(b_width: int, b_length: int, floor: Dict[str, Any], o
                 svg_content.append(f'<path d="M {arrow_x} {arrow_y_start} L {arrow_x} {arrow_y_end} L {arrow_x - 5} {arrow_y_end + 10} M {arrow_x} {arrow_y_end} L {arrow_x + 5} {arrow_y_end + 10}" fill="none" stroke="#dc2626" stroke-width="3"/>')
                 svg_content.append(f'<text x="{arrow_x}" y="{arrow_y_start + 15}" font-family="sans-serif" font-size="10" font-weight="bold" fill="#dc2626" text-anchor="middle">ENTRANCE</text>')
             
-            # Dimensions
-            svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2 + (15 if len(words)<=2 else 20)}" font-family="sans-serif" font-size="7" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">{room.get("width")}m x {room.get("length")}m</text>')
+            # Dimensions (Scale down if room is extremely small)
+            dim_fs = min(7.0, get_dynamic_font_size(f'{room.get("width")}m x {room.get("length")}m', rw))
+            svg_content.append(f'<text x="{rx + rw/2}" y="{dim_y}" font-family="sans-serif" font-size="{dim_fs:.1f}" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">{room.get("width")}m x {room.get("length")}m</text>')
 
         # Title
         project_type = project_name.replace("_", " ").upper()
