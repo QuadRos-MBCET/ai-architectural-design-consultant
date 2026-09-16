@@ -46,16 +46,33 @@ def generate_svg_floorplan(b_width: int, b_length: int, floor: Dict[str, Any], o
             # Door swing arc
             svg_content.append(f'<path d="M {dx+3} {dy} A 30 30 0 0 1 {dx+33} {dy+30} L {dx+3} {dy+30} Z" fill="none" stroke="#9ca3af" stroke-width="1"/>')
             
-            # Room Label
-            svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2}" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{name.upper()}</text>')
+            # Clean Voiding for Atriums
+            if "Lightwell" in name or "Atrium" in name:
+                svg_content.append(f'<rect x="{rx}" y="{ry}" width="{rw}" height="{rh}" fill="#e5e7eb"/>')
+                svg_content.append(f'<line x1="{rx}" y1="{ry}" x2="{rx+rw}" y2="{ry+rh}" stroke="#9ca3af" stroke-width="2"/>')
+                svg_content.append(f'<line x1="{rx+rw}" y1="{ry}" x2="{rx}" y2="{ry+rh}" stroke="#9ca3af" stroke-width="2"/>')
             
-            if "RECEPTION" in name.upper() or "LOBBY" in name.upper():
+            # Room Label (Dynamic Text Stacking & Abbreviation)
+            words = name.upper().split()
+            if len(words) > 2 and rw < 150:
+                # Stack words
+                tspan1 = f'<tspan x="{rx + rw/2}" dy="-0.6em">{" ".join(words[:2])}</tspan>'
+                tspan2 = f'<tspan x="{rx + rw/2}" dy="1.2em">{" ".join(words[2:])}</tspan>'
+                svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2}" font-family="sans-serif" font-size="8" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{tspan1}{tspan2}</text>')
+            else:
+                svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2}" font-family="sans-serif" font-size="10" font-weight="bold" fill="#1f2937" text-anchor="middle" dominant-baseline="middle">{name.upper()}</text>')
+            
+            # Entrance Arrow Routing
+            if "RECEPTION" in name.upper() or "LOBBY" in name.upper() or "FOYER" in name.upper():
                 arrow_x = rx + (rw / 2)
-                arrow_y = ry + rh + 45
-                svg_content.append(f'<path d="M {arrow_x} {arrow_y} L {arrow_x} {arrow_y - 30} L {arrow_x - 8} {arrow_y - 20} M {arrow_x} {arrow_y - 30} L {arrow_x + 8} {arrow_y - 20}" fill="none" stroke="#dc2626" stroke-width="5"/>')
-                svg_content.append(f'<text x="{arrow_x}" y="{arrow_y + 15}" font-family="sans-serif" font-size="14" font-weight="bold" fill="#dc2626" text-anchor="middle">ENTRANCE</text>')
+                # Point from outside (below the room) inwards
+                arrow_y_start = ry + rh + 35
+                arrow_y_end = ry + rh + 5
+                svg_content.append(f'<path d="M {arrow_x} {arrow_y_start} L {arrow_x} {arrow_y_end} L {arrow_x - 5} {arrow_y_end + 10} M {arrow_x} {arrow_y_end} L {arrow_x + 5} {arrow_y_end + 10}" fill="none" stroke="#dc2626" stroke-width="3"/>')
+                svg_content.append(f'<text x="{arrow_x}" y="{arrow_y_start + 15}" font-family="sans-serif" font-size="10" font-weight="bold" fill="#dc2626" text-anchor="middle">ENTRANCE</text>')
+            
             # Dimensions
-            svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2 + 20}" font-family="sans-serif" font-size="10" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">{room.get("width")}m x {room.get("length")}m</text>')
+            svg_content.append(f'<text x="{rx + rw/2}" y="{ry + rh/2 + (15 if len(words)<=2 else 20)}" font-family="sans-serif" font-size="7" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">{room.get("width")}m x {room.get("length")}m</text>')
 
         # Title
         project_type = project_name.replace("_", " ").upper()

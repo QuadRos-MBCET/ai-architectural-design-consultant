@@ -28,10 +28,11 @@ def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any],
         floor_color = colors[(level - 1) % len(colors)]
         
         for idx, room in enumerate(rooms):
-            rw = room.get("width", 5)
-            rl = room.get("length", 5)
-            rx = room.get("x", 0)
-            ry = room.get("y", 0)
+            # Epsilon shrinkage to prevent z-fighting on shared party walls
+            rx = room.get("x", 0) + 0.05
+            ry = room.get("y", 0) + 0.05
+            rw = room.get("width", 10) - 0.1
+            rl = room.get("length", 10) - 0.1
             
             color = floor_color
             

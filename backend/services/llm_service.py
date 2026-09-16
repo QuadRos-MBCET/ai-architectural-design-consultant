@@ -75,235 +75,94 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
     rag_context = mock_rag_retrieval(building_type)
     
     # 2. Heuristic Latent Space Generation (Simulating VAE)
-    floor_match = re.search(r'(\d+)\s*floor', prompt_lower)
-    num_floors = int(floor_match.group(1)) if floor_match else 3
-    
-    # NLP Semantic Override for Specific Geometries
-    if "pyramid" in prompt_lower:
-        building_type = "pyramid"
-        num_floors = max(5, num_floors)
-    elif "skyscraper" in prompt_lower or "burj" in prompt_lower or "tower" in prompt_lower:
-        building_type = "skyscraper"
-        num_floors = max(8, num_floors)
-    
+    # Determine Climate for Passive Zoning
+    climate = "hot_humid" if "hot" in prompt_lower or "tropical" in prompt_lower else "temperate"
+    is_hot = climate == "hot_humid"
+
+    # Default logic (can be overridden by AI)
+    building_type = "office"
+    num_floors = 3
+    if "house" in prompt_lower or "villa" in prompt_lower or "residential" in prompt_lower or "mansion" in prompt_lower: building_type = "house"
+    elif "mall" in prompt_lower: building_type = "mall"
+    elif "hospital" in prompt_lower or "clinic" in prompt_lower: building_type = "hospital"
+    elif "museum" in prompt_lower: building_type = "museum"
+    elif "library" in prompt_lower: building_type = "library"
+    elif extracted:
+        building_type = extracted[0]
+
+    match = re.search(r'(\d+)\s*(?:story|storey|floor)', prompt_lower)
+    if match: 
+        num_floors = int(match.group(1))
+
     dynamic_floors = []
     
-    # Generate completely dynamic generic layouts based on ANY building type!
     for i in range(num_floors):
-        # 1. Check for dynamic override tags in the prompt
-        mod_match = re.search(rf'\[MOD: Floor {i+1} = (.*?)\]', prompt_lower, re.IGNORECASE)
-        if mod_match:
-            custom_name = mod_match.group(1).title()
-            name = f"Level {i+1} ({custom_name})"
-            rooms = [
-                {"name": f"Main {custom_name} Area", "x": 0, "y": 0, "width": 30, "length": 20},
-                {"name": "Auxiliary Space", "x": 15, "y": 20, "width": 15, "length": 10, "is_nested": True},
-                {"name": "Lounge / Waiting", "x": 0, "y": 20, "width": 15, "length": 10}
-            ]
-
-            dynamic_floors.append({"level": i + 1, "name": name, "rooms": rooms})
-            continue
-
-        # We handle the specific ones we already made for high quality
-        if building_type == "pyramid":
-            # Pyramid logic: Base is wide, shrinks rapidly at each floor
-            size = max(5, 30 - (i * 6))
-            offset = (30 - size) // 2
-            name = f"Level {i+1} (Pyramid Tier)"
-            rooms = [
-                {"name": "Core Chamber", "x": offset, "y": offset, "width": size, "length": size}
-            ]
-        elif building_type == "skyscraper":
-            # Skyscraper logic: Tapering floors as it gets taller
-            size = max(10, 30 - (i * 2))
-            offset = (30 - size) // 2
-            name = f"Level {i+1} (Tower Floor)"
-            rooms = [
-                {"name": "Elevator Core", "x": offset + size//3, "y": offset + size//3, "width": size//3, "length": size//3},
-                {"name": "Office Space A", "x": offset, "y": offset, "width": size//3, "length": size},
-                {"name": "Office Space B", "x": offset + (size//3)*2, "y": offset, "width": size//3, "length": size}
-            ]
-        elif building_type == "mall":
-            if i == 0:
-                name = "Mall Ground Level (Main Atrium)"
-                rooms = [{"name": "Anchor Store A", "x": 0, "y": 0, "width": 15, "length": 25}, {"name": "Boutique Retail", "x": 15, "y": 0, "width": 10, "length": 10}, {"name": "Food Court", "x": 15, "y": 10, "width": 10, "length": 15}, {"name": "Anchor Store B", "x": 25, "y": 0, "width": 15, "length": 25}]
-            elif i == 1:
-                name = f"Mall Level {i+1} (Entertainment)"
-                rooms = [{"name": "Multiplex Cinema", "x": 0, "y": 0, "width": 25, "length": 25}, {"name": "Arcade", "x": 25, "y": 0, "width": 15, "length": 15}, {"name": "Dining Terrace", "x": 25, "y": 15, "width": 15, "length": 10}]
-            elif i == 2:
-                name = f"Mall Level {i+1} (Fashion and Apparel)"
-                rooms = [{"name": "Designer Brands", "x": 0, "y": 0, "width": 20, "length": 15}, {"name": "Shoe Stores", "x": 20, "y": 0, "width": 15, "length": 15}, {"name": "Jewelry", "x": 15, "y": 15, "width": 20, "length": 10}]
-            elif i == 3:
-                name = f"Mall Level {i+1} (Tech and Lifestyle)"
-                rooms = [{"name": "Electronics Hub", "x": 0, "y": 0, "width": 20, "length": 20}, {"name": "Home Goods", "x": 20, "y": 0, "width": 15, "length": 20}, {"name": "Cafes", "x": 10, "y": 20, "width": 15, "length": 5}]
-            else:
-                name = f"Mall Level {i+1} (Mixed Expansion)"
-                rooms = [{"name": f"Retail Wing {i}A", "x": 0, "y": 0, "width": 15 + (i%3)*2, "length": 20}, {"name": f"Retail Wing {i}B", "x": 15 + (i%3)*2, "y": 0, "width": 15, "length": 15}, {"name": f"Kiosks {i}", "x": 15 + (i%3)*2, "y": 15, "width": 15, "length": 5}]
-        elif building_type == "hospital":
-            if i == 0:
-                name = "Hospital Ground (Emergency)"
-                rooms = [{"name": "ER Triage", "x": 0, "y": 0, "width": 15, "length": 15}, {"name": "Trauma Bays", "x": 15, "y": 0, "width": 15, "length": 15}, {"name": "Imaging", "x": 0, "y": 15, "width": 20, "length": 10}, {"name": "Pharmacy", "x": 20, "y": 15, "width": 10, "length": 10}]
-            elif i == 1:
-                name = f"Hospital Level {i+1} (Patient Wards)"
-                rooms = [{"name": "Patient Wards", "x": 0, "y": 0, "width": 20, "length": 10}, {"name": "Surgical ICU", "x": 0, "y": 10, "width": 20, "length": 10}, {"name": "Sterile Corridors", "x": 20, "y": 0, "width": 5, "length": 20}, {"name": "Staff", "x": 25, "y": 0, "width": 10, "length": 20}]
-            elif i == 2:
-                name = f"Hospital Level {i+1} (Maternity and Peds)"
-                rooms = [{"name": "Labor and Delivery", "x": 0, "y": 0, "width": 15, "length": 20}, {"name": "NICU", "x": 15, "y": 0, "width": 15, "length": 10}, {"name": "Pediatric Wards", "x": 15, "y": 10, "width": 15, "length": 10}]
-            elif i == 3:
-                name = f"Hospital Level {i+1} (Specialty Clinics)"
-                rooms = [{"name": "Cardiology", "x": 0, "y": 0, "width": 15, "length": 15}, {"name": "Neurology", "x": 15, "y": 0, "width": 15, "length": 15}, {"name": "Therapy", "x": 0, "y": 15, "width": 30, "length": 10}]
-            else:
-                name = f"Hospital Level {i+1} (Advanced Care)"
-                rooms = [{"name": f"Research Lab {i}", "x": 0, "y": 0, "width": 20 - (i%4), "length": 15}, {"name": f"Testing Unit {i}", "x": 20 - (i%4), "y": 0, "width": 15, "length": 10}, {"name": "Observation", "x": 20 - (i%4), "y": 10, "width": 15, "length": 5}]
-        elif building_type == "museum":
-            if i == 0:
-                name = "Museum Ground (Grand Foyer)"
-                rooms = [{"name": "Grand Foyer", "x": 0, "y": 0, "width": 20, "length": 15}, {"name": "Ticketing", "x": 20, "y": 0, "width": 10, "length": 15}, {"name": "Exhibits", "x": 0, "y": 15, "width": 20, "length": 15}, {"name": "Gift Shop", "x": 20, "y": 15, "width": 10, "length": 15}]
-            elif i == 1:
-                name = f"Museum Level {i+1} (Collections)"
-                rooms = [{"name": "Permanent Galleries", "x": 0, "y": 0, "width": 20, "length": 20}, {"name": "Interactive", "x": 20, "y": 0, "width": 15, "length": 10}, {"name": "Restoration", "x": 20, "y": 10, "width": 15, "length": 10}, {"name": "Offices", "x": 20, "y": 20, "width": 15, "length": 10}]
-            elif i == 2:
-                name = f"Museum Level {i+1} (Modern Art)"
-                rooms = [{"name": "Sculpture Garden", "x": 0, "y": 0, "width": 15, "length": 25}, {"name": "Abstract Exhibits", "x": 15, "y": 0, "width": 20, "length": 15}, {"name": "Audio Visual Room", "x": 15, "y": 15, "width": 20, "length": 10}]
-            elif i == 3:
-                name = f"Museum Level {i+1} (Natural History)"
-                rooms = [{"name": "Dinosaur Fossils", "x": 0, "y": 0, "width": 25, "length": 20}, {"name": "Gems and Minerals", "x": 25, "y": 0, "width": 10, "length": 20}, {"name": "Theater", "x": 0, "y": 20, "width": 35, "length": 10}]
-            else:
-                name = f"Museum Level {i+1} (Private Collections)"
-                rooms = [{"name": f"Exhibition Hall {i}", "x": 0, "y": 0, "width": 15 + (i%5), "length": 25}, {"name": "Curator Study", "x": 15 + (i%5), "y": 0, "width": 15, "length": 15}, {"name": "Storage", "x": 15 + (i%5), "y": 15, "width": 15, "length": 10}]
-        elif any(word in prompt_lower for word in ["house", "home", "villa", "residential", "mansion"]):
-            if i == 0:
-                name = "Ground Floor (Living and Services)"
-                rooms = [
-                    {"name": "Foyer and Living Room", "x": 0, "y": 0, "width": 15, "length": 30},
-                    {"name": "Open Kitchen", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": "Dining Area", "x": 15, "y": 15, "width": 15, "length": 15}
-                ]
-            elif i == 1:
-                name = "First Floor (Master Suite)"
-                rooms = [
-                    {"name": "Master Bedroom", "x": 0, "y": 0, "width": 30, "length": 20},
-                    {"name": "En-suite Bathroom", "x": 20, "y": 0, "width": 10, "length": 10, "is_nested": True},
-                    {"name": "Wardrobe / Dress Closet", "x": 20, "y": 10, "width": 10, "length": 10, "is_nested": True},
-                    {"name": "Balcony Lounge", "x": 0, "y": 20, "width": 30, "length": 10}
-                ]
-            elif i == 2:
-                name = "Second Floor (Family & Bedrooms)"
-                rooms = [
-                    {"name": "Bedroom 2", "x": 0, "y": 0, "width": 15, "length": 20},
-                    {"name": "En-suite Bath 2", "x": 0, "y": 0, "width": 7, "length": 10, "is_nested": True},
-                    {"name": "Bedroom 3", "x": 15, "y": 0, "width": 15, "length": 20},
-                    {"name": "En-suite Bath 3", "x": 15, "y": 0, "width": 7, "length": 10, "is_nested": True},
-                    {"name": "Family Room", "x": 0, "y": 20, "width": 30, "length": 10}
-                ]
-            else:
-                name = f"Level {i+1} (Terrace & Amenities)"
-                rooms = [
-                    {"name": "Rooftop Terrace", "x": 0, "y": 0, "width": 30, "length": 20},
-                    {"name": "Covered Lounge", "x": 0, "y": 20, "width": 15, "length": 10},
-                    {"name": "Gym / Studio", "x": 15, "y": 20, "width": 15, "length": 10}
-                ]
-        else:
-            bt_title = building_type.title()
-            if i == 0:
-                name = f"{bt_title} Ground (Lobby and Reception)"
-                rooms = [
-                    {"name": f"Main Reception", "x": 0, "y": 0, "width": 15, "length": 15},
-                    {"name": f"Public Waiting Area", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": f"Security and Control", "x": 0, "y": 15, "width": 15, "length": 15},
-                    {"name": f"{bt_title} Facilities", "x": 15, "y": 15, "width": 15, "length": 15}
-                ]
-            elif i == 1:
-                name = f"{bt_title} Level {i+1} (Operations)"
-                rooms = [
-                    {"name": f"Core {bt_title} Space", "x": 0, "y": 0, "width": 20, "length": 30},
-                    {"name": f"Secondary Zones", "x": 20, "y": 0, "width": 10, "length": 15},
-                    {"name": "Admin Offices", "x": 20, "y": 15, "width": 10, "length": 15}
-                ]
-            elif i == 2:
-                name = f"{bt_title} Level {i+1} (Specialty Space)"
-                rooms = [
-                    {"name": f"Specialty Area A", "x": 0, "y": 0, "width": 15, "length": 20},
-                    {"name": f"Specialty Area B", "x": 15, "y": 0, "width": 15, "length": 20},
-                    {"name": "Shared Lounge", "x": 0, "y": 20, "width": 30, "length": 10}
-                ]
-            elif i == 3:
-                name = f"{bt_title} Level {i+1} (Executive Hub)"
-                rooms = [
-                    {"name": "Executive Offices", "x": 0, "y": 0, "width": 15, "length": 15},
-                    {"name": "Boardroom", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": "Archive Room", "x": 0, "y": 15, "width": 15, "length": 15},
-                    {"name": "R and D Space", "x": 15, "y": 15, "width": 15, "length": 15}
-                ]
-            else:
-                name = f"{bt_title} Level {i+1} (Extended Wing)"
-                rooms = [
-                    {"name": f"Expansion Zone {i}", "x": 0, "y": 0, "width": 15, "length": 15},
-                    {"name": f"Flex Space {i}", "x": 15, "y": 0, "width": 15, "length": 15},
-                    {"name": "Utilities", "x": 0, "y": 15, "width": 30, "length": 15}
-                ]
+        floor_rooms = []
         
-        # Dynamically append any new requested rooms to the standard floor layout
+        # 1. Mandatory Core & Lightwell Constraints
+        core_w, core_h = 6, 6
+        core_x = (b_width // 2) - (core_w // 2)
+        core_y = b_length - core_h - 2
+        
+        floor_rooms.append({
+            "name": "Circulation Core (Stairs/Elevator)",
+            "x": core_x, "y": core_y, "width": core_w, "length": core_h,
+            "is_nested": True
+        })
+        
+        if b_width >= 30 and b_length >= 30:
+            atrium_size = 10
+            floor_rooms.append({
+                "name": "Central Lightwell (Stack Vent)",
+                "x": (b_width // 2) - (atrium_size // 2), 
+                "y": (b_length // 2) - (atrium_size // 2),
+                "width": atrium_size, "length": atrium_size,
+                "is_nested": True
+            })
+
+        # 2. Main Entrance Foyer on Ground
+        foyer_h = 6
+        if i == 0:
+            floor_rooms.append({
+                "name": "Main Entrance Foyer",
+                "x": (b_width // 2) - 4, "y": 0, "width": 8, "length": foyer_h,
+                "is_nested": True
+            })
+
+        # 3. BSP Packing for Remaining Zones
+        # We will pack rooms into the left and right wings to avoid the central core/atrium
+        left_wing_w = (b_width // 2) - 5
+        right_wing_x = (b_width // 2) + 5
+        right_wing_w = b_width - right_wing_x
+
+        if building_type == "library":
+            left_rooms = ["Public Reading Room", "Digital Archives", "Study Pods"]
+            right_rooms = ["Book Stacks", "Librarian Desk", "Public Restrooms"]
+        elif building_type in ["house", "residential", "villa", "mansion"]:
+            left_rooms = ["Living Room", "Kitchen"] if i == 0 else ["Master Bedroom", "En-Suite Bath"]
+            right_rooms = ["Dining Area", "Storage"] if i == 0 else ["Guest Room", "Balcony"]
+        else:
+            left_rooms = ["Open Workspace", "Meeting Room A", "Admin Storage"]
+            right_rooms = ["Executive Office", "Meeting Room B", "Public Restrooms"]
+            
+        floor_rooms.extend(bsp_pack(0, foyer_h if i==0 else 0, left_wing_w, b_length - (foyer_h if i==0 else 0), left_rooms, is_hot))
+        floor_rooms.extend(bsp_pack(right_wing_x, foyer_h if i==0 else 0, right_wing_w, b_length - (foyer_h if i==0 else 0), right_rooms, is_hot))
+
+        # Dynamically append any [ADD: ] requested rooms
         add_matches = re.findall(r'\[ADD: (.*?)\]', prompt_lower, re.IGNORECASE)
         for idx, add_room in enumerate(add_matches):
-            rooms.append({
+            floor_rooms.append({
                 "name": f"New {add_room.title()}",
-                "x": (idx * 5) % 30,
                 "y": (idx * 5) % 30,
                 "width": 6,
                 "length": 6,
                 "is_nested": True
             })
 
-        # Add common washrooms to public buildings
-        if building_type not in ["pyramid", "house", "villa", "home", "residential", "mansion", "skyscraper"]:
-            rooms.append({
-                "name": "Public Restrooms",
-                "x": b_width - 8,
-                "y": b_length // 2,
-                "width": 4,
-                "length": 6,
-                "is_nested": True
-            })
-            
-        # Mandatory Vertical Circulation Core
-        rooms.append({
-            "name": "Circulation Core (Stairs & Elevator)",
-            "x": (b_width // 2) - 3,
-            "y": b_length - 6,
-            "width": 6,
-            "length": 6,
-            "is_nested": True
-        })
-        
-        # Passive Design: Central Lightwell / Atrium
-        if b_width >= 30 and b_length >= 30:
-            rooms.append({
-                "name": "Central Lightwell (Stack Ventilation)",
-                "x": (b_width // 2) - 5,
-                "y": (b_length // 2) - 5,
-                "width": 10,
-                "length": 10,
-                "is_nested": True
-            })
-            
-        # Ensure Entrance Foyer on Ground Floor
-        if i == 0:
-            has_foyer = any("reception" in r["name"].lower() or "lobby" in r["name"].lower() or "foyer" in r["name"].lower() for r in rooms)
-            if not has_foyer:
-                rooms.append({
-                    "name": "Main Entrance Foyer",
-                    "x": (b_width // 2) - 4,
-                    "y": 0,
-                    "width": 8,
-                    "length": 6,
-                    "is_nested": True
-                })
-            
         dynamic_floors.append({
             "level": i + 1,
-            "name": name,
-            "rooms": rooms
+            "name": f"Level {i+1} ({building_type.title()})",
+            "rooms": floor_rooms
         })
 
     # 3. Build dynamic Mermaid diagram matching Eraser.io
