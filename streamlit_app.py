@@ -266,21 +266,12 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
 
 app_mode = st.sidebar.radio("Navigation", ["Generative 3D Design", "PDF Blueprint Analysis"])
 
-st.sidebar.markdown("---")
-st.sidebar.subheader("📐 Parametric Controls")
-
 if app_mode == "Generative 3D Design":
     # 1. Left Panel (Sidebar Controls)
-    prompt = st.sidebar.text_area("Architectural Prompt", value=st.session_state.current_prompt, height=100)
     b_width_override = st.sidebar.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
     b_length_override = st.sidebar.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
     ceiling_height = st.sidebar.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
     target_wwr = st.sidebar.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
-    
-    if st.sidebar.button("Generate Multi-Story Design", type="primary", use_container_width=True):
-        st.session_state.current_prompt = prompt
-        generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
-        st.rerun()
         
     st.sidebar.divider()
     st.sidebar.subheader("💬 AI Consultant Chat")
@@ -300,6 +291,16 @@ if app_mode == "Generative 3D Design":
         st.rerun()
 
     # 2. Main Panel Workspace
+    st.markdown("### 🏛️ Project Requirements")
+    prompt = st.text_area("", value=st.session_state.current_prompt, height=100, placeholder="Describe the architectural project... (e.g. A 4 story modern office building)")
+    
+    if st.button("✨ Generate Multi-Story Design", type="primary", use_container_width=True):
+        st.session_state.current_prompt = prompt
+        generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
+        st.rerun()
+        
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     if st.session_state.gen3d_data and st.session_state.report_data:
         tabs = st.tabs(["2D Floor Plans", "3D BIM Viewport", "Spatial Analytics & Schedule", "Export/Download"])
         
@@ -374,7 +375,7 @@ if app_mode == "Generative 3D Design":
                 dl_glb_bytes = base64.b64decode(floors_data[dl_idx]['glb_base64'])
                 st.download_button(f"📥 Download {selected_dl_floor} 3D Mesh (.glb)", data=dl_glb_bytes, file_name=f"floor_{dl_idx+1}.glb", mime="model/gltf-binary", use_container_width=True)
     else:
-        st.info("👈 Enter a prompt in the sidebar and click Generate to build the architectural model.")
+        st.info("👈 Use the parameters in the sidebar, enter your prompt above, and click Generate to build the architectural model!")
             
 elif app_mode == "PDF Blueprint Analysis":
     st.header("📄 PDF Blueprint Analysis & Code Compliance")
