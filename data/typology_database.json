@@ -1,52 +1,52 @@
 {
   "office": {
     "description": "A workspace building focused on productivity, collaboration, and administrative tasks.",
-    "left_rooms": ["Open Workspace", "Meeting Room A", "Admin Storage"],
-    "right_rooms": ["Executive Office", "Meeting Room B", "Public Restrooms"]
+    "left_rooms": ["Open Plan Workspace", "Private Cubicles", "Meeting Room A", "Meeting Room B", "IT Server Room"],
+    "right_rooms": ["Executive Boardroom", "CEO Suite", "Manager Office", "Break Room / Kitchenette", "Public Restrooms"]
   },
   "house": {
     "description": "A residential dwelling designed for private living, family activities, and rest.",
-    "left_rooms": ["Living Room", "Kitchen", "Guest Bath"],
-    "right_rooms": ["Master Bedroom", "En-Suite Bath", "Walk-in Closet"]
+    "left_rooms": ["Living Room", "Dining Room", "Modern Kitchen", "Pantry", "Guest Bathroom", "Home Office"],
+    "right_rooms": ["Master Bedroom", "En-Suite Bath", "Walk-in Closet", "Guest Bedroom", "Kids Room", "Laundry Room"]
   },
   "hospital": {
     "description": "A healthcare facility providing medical treatment, patient care, and emergency services.",
-    "left_rooms": ["Patient Ward A", "Patient Ward B", "Nurse Station"],
-    "right_rooms": ["Operating Theater", "Recovery Room", "Restrooms"]
+    "left_rooms": ["General Ward", "Patient Room A", "Patient Room B", "Nurse Station", "Outpatient (OP) Clinic", "Waiting Area"],
+    "right_rooms": ["Operating Theater (OP)", "Doctor Consulting Room", "Intensive Care Unit (ICU)", "Pharmacist Dispensary", "Reception", "Emergency Triage"]
   },
   "library": {
     "description": "A public or academic building for reading, studying, and archiving physical and digital media.",
-    "left_rooms": ["Public Reading Room", "Digital Archives", "Study Pods"],
-    "right_rooms": ["Book Stacks", "Librarian Desk", "Public Restrooms"]
+    "left_rooms": ["Main Reading Hall", "Digital Archives", "Quiet Study Pods", "Fiction Section", "Children's Corner"],
+    "right_rooms": ["Non-Fiction Stacks", "Reference Desk", "Librarian Office", "Community Meeting Room", "Public Restrooms"]
   },
   "school": {
     "description": "An educational institution designed for teaching, learning, and student collaboration.",
-    "left_rooms": ["Classroom A", "Classroom B", "Storage"],
-    "right_rooms": ["Science Lab", "Faculty Lounge", "Restrooms"]
+    "left_rooms": ["Classroom A", "Classroom B", "Classroom C", "Computer Lab", "Student Lockers", "Janitorial Closet"],
+    "right_rooms": ["Science Laboratory", "Principal's Office", "Teachers / Faculty Lounge", "Library Annex", "Student Restrooms"]
   },
   "mall": {
     "description": "A large commercial retail complex featuring multiple shops, food courts, and entertainment zones.",
-    "left_rooms": ["Retail Anchor A", "Kiosks", "Storage"],
-    "right_rooms": ["Retail Anchor B", "Food Court", "Public Restrooms"]
+    "left_rooms": ["Retail Anchor Store", "Boutique Shops", "Apparel Kiosks", "Electronics Store", "Mall Security Office"],
+    "right_rooms": ["Multiplex Cinema", "Food Court", "Dining Atrium", "Customer Service Desk", "Public Restrooms"]
   },
   "museum": {
     "description": "A cultural institution dedicated to preserving and exhibiting artifacts of historical, scientific, or artistic significance.",
-    "left_rooms": ["Main Exhibition Hall", "Curator Office", "Storage"],
-    "right_rooms": ["Rotating Gallery", "Gift Shop", "Public Restrooms"]
+    "left_rooms": ["Main Exhibition Hall", "Classical Antiquities", "Modern Art Wing", "Interactive Displays", "Coat Check"],
+    "right_rooms": ["Rotating Guest Gallery", "Curator's Office", "Artifact Storage", "Museum Gift Shop", "Cafeteria"]
   },
   "warehouse": {
     "description": "A large industrial facility used for storage, logistics, and goods distribution.",
-    "left_rooms": ["Pallet Storage Zone", "Forklift Charging", "Loading Dock"],
-    "right_rooms": ["Dispatch Office", "Inventory Room", "Restrooms"]
+    "left_rooms": ["Heavy Pallet Storage", "Racking Aisles", "Forklift Charging Station", "Hazardous Material Zone", "Packing Station"],
+    "right_rooms": ["Loading Dock", "Dispatch Office", "Quality Control Room", "Inventory Management", "Staff Restrooms"]
   },
   "hotel": {
     "description": "A commercial hospitality building providing lodging, dining, and guest services.",
-    "left_rooms": ["Standard Room A", "Standard Room B", "Housekeeping"],
-    "right_rooms": ["Luxury Suite", "Gym/Spa", "Elevator Core"]
+    "left_rooms": ["Standard Room 101", "Standard Room 102", "Deluxe Room", "Housekeeping Storage", "Linen Closet"],
+    "right_rooms": ["Luxury Suite", "Presidential Suite", "Fitness Center / Gym", "Hotel Restaurant", "Main Reception Lobby"]
   },
   "restaurant": {
     "description": "A commercial establishment where meals and drinks are prepared and served to customers.",
-    "left_rooms": ["Main Dining Area", "Bar Seating", "Waiter Station"],
-    "right_rooms": ["Commercial Kitchen", "Cold Storage", "Restrooms"]
+    "left_rooms": ["Main Dining Hall", "Private Dining Room", "Bar & Lounge Seating", "Host/Hostess Station", "Customer Restrooms"],
+    "right_rooms": ["Commercial Kitchen", "Cold Storage / Freezer", "Pantry", "Dishwashing Station", "Manager Office"]
   }
 }
