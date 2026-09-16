@@ -31,6 +31,33 @@ def mock_rag_retrieval(building_type: str) -> str:
             
     return context
 
+def bsp_pack(x, y, w, h, room_names, is_hot=False):
+    """Recursive Binary Space Partitioning for Room Layouts"""
+    if not room_names:
+        return []
+    if len(room_names) == 1:
+        return [{"name": room_names[0], "x": x, "y": y, "width": w, "length": h}]
+    
+    # Sort buffers to sides if hot climate
+    if is_hot:
+        buffers = [r for r in room_names if "restroom" in r.lower() or "storage" in r.lower() or "stair" in r.lower()]
+        primaries = [r for r in room_names if r not in buffers]
+        room_names = buffers + primaries
+
+    half = len(room_names) // 2
+    rooms1 = room_names[:half]
+    rooms2 = room_names[half:]
+    
+    # Split along the longest axis
+    if w > h:
+        w1 = w // 2
+        w2 = w - w1
+        return bsp_pack(x, y, w1, h, rooms1, is_hot) + bsp_pack(x + w1, y, w2, h, rooms2, is_hot)
+    else:
+        h1 = h // 2
+        h2 = h - h1
+        return bsp_pack(x, y, w, h1, rooms1, is_hot) + bsp_pack(x, y + h1, w, h2, rooms2, is_hot)
+
 def extract_requirements(user_prompt: str, **kwargs) -> dict:
     """
     Simulated VAE/Diffusion RAG Pipeline for Mini Project Presentation.
