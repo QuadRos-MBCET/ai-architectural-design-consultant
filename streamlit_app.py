@@ -331,6 +331,13 @@ if app_mode == "Generative 3D Design":
         st.markdown("### 🖥️ Viewport Canvas")
         
         if st.session_state.gen3d_data and st.session_state.report_data:
+            ai_arch = st.session_state.report_data.get("ai_architecture", {})
+            if ai_arch:
+                with st.expander("🪄 View AI Generation Pipeline (VAE / GAN / Diffusion)"):
+                    st.markdown(f"**🧠 VAE (Latent Boundary Setup):** {ai_arch.get('vae', '')}")
+                    st.markdown(f"**⚖️ GAN (Spatial Packing):** {ai_arch.get('gan', '')}")
+                    st.markdown(f"**☁️ Diffusion (3D Extrusion):** {ai_arch.get('diffusion', '')}")
+                    
             tabs = st.tabs(["3D BIM Viewer", "2D Blueprints", "Analytics & Schedule", "Export"])
             
             floors_data = st.session_state.gen3d_data["floors"]
