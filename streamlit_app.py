@@ -19,109 +19,107 @@ st.set_page_config(page_title="R D Homes | AI Architecture", layout="wide", init
 # Inject Custom Premium CSS Styling
 st.markdown("""
 <style>
-    /* Import modern Google Font */
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+    /* Import modern Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap');
 
     /* Global Typography & Background */
     html, body, [class*="css"] {
-        font-family: 'Outfit', sans-serif !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+    
+    h1, h2, h3 {
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 700 !important;
+        color: #f8fafc !important;
     }
     
     .stApp {
-        background-color: #0b0f19;
-        background-image: radial-gradient(circle at 15% 50%, rgba(20, 30, 48, 1), rgba(11, 15, 25, 1));
-    }
-
-    /* Primary Headers */
-    h1, h2, h3 {
-        color: #f8fafc !important;
-        font-weight: 800 !important;
-        letter-spacing: -0.02em;
-    }
-    
-    h1 {
-        background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0rem;
+        background-color: #0d1117;
+        background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08), rgba(13, 17, 23, 1) 70%);
     }
 
     /* Style the Sidebar */
     [data-testid="stSidebar"] {
-        background-color: rgba(15, 23, 42, 0.6) !important;
-        backdrop-filter: blur(12px) !important;
+        background-color: rgba(15, 23, 42, 0.7) !important;
+        backdrop-filter: blur(16px) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05);
     }
     
     /* Buttons */
-    .stButton > button {
-        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
         color: white;
-        font-weight: 600;
-        border: none;
-        border-radius: 8px;
-        padding: 0.6rem 1.2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 6px;
+        padding: 0.8rem 1.2rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
+        box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
     }
     
-    .stButton > button:hover {
+    .stButton > button[kind="primary"]:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+        box-shadow: 0 0 25px rgba(14, 165, 233, 0.6);
+        border: 1px solid rgba(255,255,255,0.5);
+    }
+    
+    .stButton > button[kind="secondary"] {
+        background: rgba(30, 41, 59, 0.5);
+        color: #cbd5e1;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+    .stButton > button[kind="secondary"]:hover {
+        border-color: #0ea5e9;
         color: white;
     }
 
     /* Text Inputs and Text Areas */
     .stTextArea textarea, .stTextInput input {
-        background-color: rgba(30, 41, 59, 0.7) !important;
+        background-color: rgba(30, 41, 59, 0.5) !important;
         border: 1px solid rgba(148, 163, 184, 0.2) !important;
         color: #f1f5f9 !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
+        font-family: 'Space Grotesk', monospace !important;
     }
     .stTextArea textarea:focus, .stTextInput input:focus {
-        border-color: #8b5cf6 !important;
-        box-shadow: 0 0 0 1px #8b5cf6 !important;
+        border-color: #0ea5e9 !important;
+        box-shadow: 0 0 0 1px #0ea5e9 !important;
     }
 
-    /* Expanders and Chat Bubbles */
-    .streamlit-expanderHeader {
-        background-color: rgba(30, 41, 59, 0.5) !important;
-        border-radius: 8px !important;
-    }
-    
-    [data-testid="stChatMessage"] {
-        background-color: rgba(30, 41, 59, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
-    }
-    
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 2px;
+        background-color: rgba(15, 23, 42, 0.5);
+        border-radius: 8px 8px 0 0;
+        padding: 5px 5px 0 5px;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        white-space: pre-wrap;
-        background-color: rgba(30, 41, 59, 0.5);
-        border-radius: 8px 8px 0px 0px;
+        height: 45px;
+        background-color: transparent;
         padding: 10px 20px;
-        color: #94a3b8;
+        color: #64748b;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        border: none;
     }
     .stTabs [aria-selected="true"] {
-        background-color: rgba(59, 130, 246, 0.1) !important;
-        color: #38bdf8 !important;
-        border-bottom: 2px solid #38bdf8;
+        background-color: rgba(30, 41, 59, 0.8) !important;
+        color: #0ea5e9 !important;
+        border-top: 2px solid #0ea5e9;
+        border-radius: 6px 6px 0 0;
     }
 </style>
 """, unsafe_allow_html=True)
 
+# Modern Header & Branding (CAD Style)
 st.markdown("""
-<div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 40px; margin-top: 10px;">
+<div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 25px; padding: 20px 30px; background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; backdrop-filter: blur(12px); background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 20px 20px;">
     <div style="display: flex; align-items: center; gap: 20px;">
-        <div style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 16px; border-radius: 16px; box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center;">
-            <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.5); padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter">
                 <path d="M3 21h18"></path>
                 <path d="M9 8h1"></path>
                 <path d="M9 12h1"></path>
@@ -133,10 +131,10 @@ st.markdown("""
             </svg>
         </div>
         <div>
-            <h1 style="font-size: 3.8rem; font-weight: 900; letter-spacing: -0.04em; margin: 0; line-height: 1.1; background: -webkit-linear-gradient(45deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                R D <span style="background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Homes</span>
+            <h1 style="font-size: 2.2rem; font-weight: 700; letter-spacing: 0.02em; margin: 0; line-height: 1.1; color: #f1f5f9; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
+                R D <span style="color: #0ea5e9;">Homes</span>
             </h1>
-            <p style="font-size: 1.2rem; color: #94a3b8; margin: 0; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;">AI Architectural Studio</p>
+            <p style="font-size: 0.9rem; color: #94a3b8; margin: 0; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;">AI Architectural CAD Studio</p>
         </div>
     </div>
 </div>
@@ -149,34 +147,15 @@ if "gen3d_data" not in st.session_state:
     st.session_state.gen3d_data = None
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Welcome to R D Homes! Describe a building you want our AI to design, or click Generate. Once it's built, you can ask me to **add a floor**, **remove a floor**, or **change the building type**!"}
+        {"role": "assistant", "content": "Welcome to the Studio! Configure parameters in the left panel or ask me to modify your design directly via this chat."}
     ]
 if "current_prompt" not in st.session_state:
-    st.session_state.current_prompt = "design a 4 floor eco friendly public library for a hot climate"
-
-def render_mermaid(mermaid_code):
-    html_code = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <script type="module">
-            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-            mermaid.initialize({{ startOnLoad: true, theme: 'dark' }});
-        </script>
-    </head>
-    <body style="background-color: #1a202c; color: white; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px;">
-        <pre class="mermaid">
-{mermaid_code}
-        </pre>
-    </body>
-    </html>
-    """
-    components.html(html_code, height=600, scrolling=True)
+    st.session_state.current_prompt = "design a 4 story eco friendly public library"
 
 def render_model_viewer(glb_base64):
     html_code = f"""
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
-    <div style="width: 100%; height: 500px; background-color: #1a202c; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 100%; height: 600px; background-color: #0f172a; border-radius: 0 0 8px 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,0.05); border-top: none;">
         <model-viewer 
             src="data:model/gltf-binary;base64,{glb_base64}" 
             camera-controls 
@@ -187,7 +166,7 @@ def render_model_viewer(glb_base64):
         </model-viewer>
     </div>
     """
-    components.html(html_code, height=520)
+    components.html(html_code, height=620)
 
 @st.dialog("🤖 AI Consultant Intervention")
 def ai_intervention_popup(err_msg):
@@ -202,7 +181,8 @@ def ai_intervention_popup(err_msg):
         st.rerun()
 
 def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40):
-    with st.spinner("Analyzing geometry & generating blueprints..."):
+    with st.spinner("Synthesizing geometry & calculating structural grid..."):
+        time.sleep(0.5)
         try:
             json_spec = extract_requirements(prompt_text, width=p_width, length=p_length, height=p_height, wwr=p_wwr)
         except ValueError as e:
@@ -235,7 +215,7 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
         status_text = st.empty()
         
         for idx, floor in enumerate(floors):
-            status_text.text(f"Extruding Multi-Story Massing Model: Floor {idx+1}/{len(floors)}...")
+            status_text.text(f"Extruding BIM Level: Floor {idx+1}/{len(floors)}...")
             level = floor.get("level", idx + 1)
             name = floor.get("name", f"Floor {level}")
             
@@ -265,7 +245,7 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
             
             progress_bar.progress((idx + 1) / len(floors))
             
-        status_text.text("Merging combined 3D models...")
+        status_text.text("Merging multi-story CAD meshes...")
         combined_filename = "concept_combined.glb"
         combined_path = os.path.join(public_dir, combined_filename)
         export_combined_meshes(all_floor_meshes, combined_path)
@@ -282,119 +262,148 @@ def generate_assets(prompt_text, p_width=30, p_length=30, p_height=3.0, p_wwr=40
         status_text.empty()
         return True
 
+# --- LAYOUT DEFINITION ---
 app_mode = st.sidebar.radio("Navigation", ["Generative 3D Design", "PDF Blueprint Analysis"])
 
-if app_mode == "Generative 3D Design":
-    # 1. Left Panel (Sidebar Controls)
-    b_width_override = st.sidebar.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
-    b_length_override = st.sidebar.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
-    ceiling_height = st.sidebar.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
-    target_wwr = st.sidebar.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
-        
-    st.sidebar.divider()
-    st.sidebar.subheader("💬 AI Consultant Chat")
-    chat_container = st.sidebar.container(height=300)
-    with chat_container:
-        for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-                
-    if chat_input := st.sidebar.chat_input("Ask me to add a floor..."):
-        st.session_state.messages.append({"role": "user", "content": chat_input})
-        new_prompt, bot_reply = process_simulated_chat(chat_input, st.session_state.current_prompt)
-        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-        if new_prompt != st.session_state.current_prompt:
-            st.session_state.current_prompt = new_prompt
-            generate_assets(st.session_state.current_prompt)
-        st.rerun()
-
-    # 2. Main Panel Workspace
-    st.markdown("### 🏛️ Project Requirements")
-    prompt = st.text_area("", value=st.session_state.current_prompt, height=100, placeholder="Describe the architectural project... (e.g. A 4 story modern office building)")
-    
-    if st.button("✨ Generate Multi-Story Design", type="primary", use_container_width=True):
-        st.session_state.current_prompt = prompt
-        success = generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
+# Sidebar AI Chat
+st.sidebar.divider()
+st.sidebar.subheader("💬 AI Consultant Chat")
+chat_container = st.sidebar.container(height=400)
+with chat_container:
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+            
+if chat_input := st.sidebar.chat_input("Ask me to add a floor..."):
+    st.session_state.messages.append({"role": "user", "content": chat_input})
+    new_prompt, bot_reply = process_simulated_chat(chat_input, st.session_state.current_prompt)
+    st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+    if new_prompt != st.session_state.current_prompt:
+        st.session_state.current_prompt = new_prompt
+        success = generate_assets(st.session_state.current_prompt)
         if success:
             st.rerun()
-        
-    st.markdown("<br>", unsafe_allow_html=True)
+    else:
+        st.rerun()
+
+if app_mode == "Generative 3D Design":
+    # SPLIT SCREEN LAYOUT
+    col_left, col_right = st.columns([1.2, 2.0], gap="large")
     
-    if st.session_state.gen3d_data and st.session_state.report_data:
-        tabs = st.tabs(["2D Floor Plans", "3D BIM Viewport", "Spatial Analytics & Schedule", "Export/Download"])
+    with col_left:
+        st.markdown("### 🏛️ Program Requirements")
         
-        floors_data = st.session_state.gen3d_data["floors"]
-        floor_names = [f["name"] for f in floors_data]
-        
-        # TAB 1: 2D Floor Plans
-        with tabs[0]:
-            colA, colB = st.columns([1, 4])
-            with colA:
-                selected_2d_floor = st.selectbox("Select Level (2D)", floor_names, key="sel_2d")
-            with colB:
-                floor_idx = floor_names.index(selected_2d_floor)
-                st.markdown(floors_data[floor_idx]['svg_content'], unsafe_allow_html=True)
-                
-        # TAB 2: 3D BIM Viewport
-        with tabs[1]:
-            st.radio("View Mode", ["Entire Building", "Single Floor"], horizontal=True, key="view_mode")
-            legend_html = """
-            <div style='display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; background-color: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #334155;'>
-                <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #ADD8E6; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Window Glass</span></div>
-                <div style='display: flex; align-items: center;'><div style='width: 16px; height: 16px; background-color: #8B4513; margin-right: 8px; border-radius: 4px; border: 1px solid #fff;'></div> <span style='color: #f1f5f9; font-size: 14px;'>Solid Door</span></div>
-            </div>
-            """
-            st.markdown(legend_html, unsafe_allow_html=True)
+        # Interactive Quick-Start Tags
+        st.markdown("<p style='font-size: 0.85rem; color: #94a3b8; margin-bottom: 5px; font-weight: 600;'>QUICK-START PRESETS</p>", unsafe_allow_html=True)
+        row1_col1, row1_col2 = st.columns(2)
+        if row1_col1.button("🏢 4-Story Eco Library", use_container_width=True):
+            st.session_state.current_prompt = "design a 4 story eco friendly public library"
+            st.rerun()
+        if row1_col2.button("🏡 Minimalist Villa", use_container_width=True):
+            st.session_state.current_prompt = "design a 2 story minimalist cantilever villa"
+            st.rerun()
             
-            if st.session_state.view_mode == "Entire Building":
-                render_model_viewer(st.session_state.gen3d_data["combined_glb"])
-            else:
-                colA, colB = st.columns([1, 4])
-                with colA:
-                    selected_3d_floor = st.selectbox("Select Level (3D)", floor_names, key="sel_3d")
-                with colB:
+        row2_col1, row2_col2 = st.columns(2)
+        if row2_col1.button("🏙️ Parametric Office", use_container_width=True):
+            st.session_state.current_prompt = "design a 10 story parametric office tower"
+            st.rerun()
+        if row2_col2.button("🌿 Courtyard Pavilion", use_container_width=True):
+            st.session_state.current_prompt = "design a 1 story courtyard pavilion museum"
+            st.rerun()
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        prompt = st.text_area("Custom Architectural Prompt", value=st.session_state.current_prompt, height=120)
+        
+        st.markdown("### 📐 Structural Parameters")
+        b_width_override = st.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
+        b_length_override = st.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
+        ceiling_height = st.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
+        target_wwr = st.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("✨ GENERATE CAD MODEL", type="primary", use_container_width=True):
+            st.session_state.current_prompt = prompt
+            success = generate_assets(st.session_state.current_prompt, b_width_override, b_length_override, ceiling_height, target_wwr)
+            if success:
+                st.rerun()
+
+    with col_right:
+        st.markdown("### 🖥️ Viewport Canvas")
+        
+        if st.session_state.gen3d_data and st.session_state.report_data:
+            tabs = st.tabs(["3D BIM Viewer", "2D Blueprints", "Analytics & Schedule", "Export"])
+            
+            floors_data = st.session_state.gen3d_data["floors"]
+            floor_names = [f["name"] for f in floors_data]
+            
+            with tabs[0]:
+                st.radio("Render Scope", ["Entire Project", "Single Level"], horizontal=True, key="view_mode")
+                if st.session_state.view_mode == "Entire Project":
+                    render_model_viewer(st.session_state.gen3d_data["combined_glb"])
+                else:
+                    selected_3d_floor = st.selectbox("Select Level", floor_names, key="sel_3d")
                     floor_idx = floor_names.index(selected_3d_floor)
                     render_model_viewer(floors_data[floor_idx]['glb_base64'])
                     
-        # TAB 3: Spatial Analytics & Schedule
-        with tabs[2]:
-            st.subheader("Architectural Metrics")
-            metrics = st.session_state.report_data.get("metrics", {})
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Gross External Area (GEA)", f"{metrics.get('GEA_sqm', 0):,} sqm")
-            m2.metric("Net Internal Area (NIA)", f"{metrics.get('NIA_sqm', 0):,} sqm")
-            m3.metric("Circulation Ratio", f"{metrics.get('circulation_ratio', 0)}%")
-            
-            st.subheader("Estimated Bill of Materials (INR)")
-            materials = st.session_state.report_data.get("materials_estimate", [])
-            df_data = []
-            for m in materials:
-                df_data.append({
-                    "Item": m["item"],
-                    "Qty": f"{m['quantity']} {m['unit']}",
-                    "Rate": f"₹{m['present_rate']:,.2f}",
-                    "Total Cost": f"₹{m['total_cost']:,.0f}"
-                })
-            st.dataframe(df_data, hide_index=True, use_container_width=True)
-            
-        # TAB 4: Export/Download
-        with tabs[3]:
-            st.subheader("BIM Exports")
-            colX, colY = st.columns(2)
-            with colX:
-                st.markdown("##### Full Project")
-                glb_bytes = base64.b64decode(st.session_state.gen3d_data["combined_glb"])
-                st.download_button("📥 Download Combined 3D Model (.glb)", data=glb_bytes, file_name="concept_combined.glb", mime="model/gltf-binary", use_container_width=True)
-            
-            with colY:
-                st.markdown("##### Individual Floors")
-                selected_dl_floor = st.selectbox("Select Level to Export", floor_names, key="sel_dl")
-                dl_idx = floor_names.index(selected_dl_floor)
-                st.download_button(f"📥 Download {selected_dl_floor} SVG Blueprint", data=floors_data[dl_idx]['svg_content'], file_name=f"floor_{dl_idx+1}.svg", mime="image/svg+xml", use_container_width=True)
-                dl_glb_bytes = base64.b64decode(floors_data[dl_idx]['glb_base64'])
-                st.download_button(f"📥 Download {selected_dl_floor} 3D Mesh (.glb)", data=dl_glb_bytes, file_name=f"floor_{dl_idx+1}.glb", mime="model/gltf-binary", use_container_width=True)
-    else:
-        st.info("👈 Use the parameters in the sidebar, enter your prompt above, and click Generate to build the architectural model!")
+            with tabs[1]:
+                selected_2d_floor = st.selectbox("Select Blueprint Level", floor_names, key="sel_2d")
+                floor_idx = floor_names.index(selected_2d_floor)
+                st.markdown("<div style='background: white; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
+                st.markdown(floors_data[floor_idx]['svg_content'], unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            with tabs[2]:
+                st.markdown("<div style='padding: 20px; background: rgba(30,41,59,0.3); border-radius: 0 0 8px 8px; border: 1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
+                st.subheader("Architectural Metrics")
+                metrics = st.session_state.report_data.get("metrics", {})
+                m1, m2, m3 = st.columns(3)
+                m1.metric("Gross External Area (GEA)", f"{metrics.get('GEA_sqm', 0):,} sqm")
+                m2.metric("Net Internal Area (NIA)", f"{metrics.get('NIA_sqm', 0):,} sqm")
+                m3.metric("Circulation Ratio", f"{metrics.get('circulation_ratio', 0)}%")
+                
+                st.subheader("Estimated Bill of Materials (INR)")
+                materials = st.session_state.report_data.get("materials_estimate", [])
+                df_data = []
+                for m in materials:
+                    df_data.append({
+                        "Item": m["item"],
+                        "Qty": f"{m['quantity']} {m['unit']}",
+                        "Rate": f"₹{m['present_rate']:,.2f}",
+                        "Total Cost": f"₹{m['total_cost']:,.0f}"
+                    })
+                st.dataframe(df_data, hide_index=True, use_container_width=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            with tabs[3]:
+                st.markdown("<div style='padding: 20px; background: rgba(30,41,59,0.3); border-radius: 0 0 8px 8px; border: 1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
+                st.subheader("BIM Exports")
+                colX, colY = st.columns(2)
+                with colX:
+                    st.markdown("##### Full Project")
+                    glb_bytes = base64.b64decode(st.session_state.gen3d_data["combined_glb"])
+                    st.download_button("📥 Download Combined 3D Model (.glb)", data=glb_bytes, file_name="concept_combined.glb", mime="model/gltf-binary", use_container_width=True)
+                
+                with colY:
+                    st.markdown("##### Individual Floors")
+                    selected_dl_floor = st.selectbox("Select Level to Export", floor_names, key="sel_dl")
+                    dl_idx = floor_names.index(selected_dl_floor)
+                    st.download_button(f"📥 Download {selected_dl_floor} SVG Blueprint", data=floors_data[dl_idx]['svg_content'], file_name=f"floor_{dl_idx+1}.svg", mime="image/svg+xml", use_container_width=True)
+                    dl_glb_bytes = base64.b64decode(floors_data[dl_idx]['glb_base64'])
+                    st.download_button(f"📥 Download {selected_dl_floor} 3D Mesh (.glb)", data=dl_glb_bytes, file_name=f"floor_{dl_idx+1}.glb", mime="model/gltf-binary", use_container_width=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            # Placeholder State - Awaiting Generation
+            st.markdown("""
+            <div style="width: 100%; height: 600px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: rgba(15, 23, 42, 0.4); display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(12px); background-image: radial-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px); background-size: 30px 30px;">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(14, 165, 233, 0.5)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <h2 style="color: rgba(255,255,255,0.8); margin: 0; font-weight: 600; font-family: 'Space Grotesk', sans-serif;">Studio Canvas Ready</h2>
+                <p style="color: rgba(255,255,255,0.4); text-align: center; max-width: 350px; margin-top: 10px; font-size: 0.95rem;">Configure your program requirements in the left panel and click <b>GENERATE CAD MODEL</b> to synthesize the BIM assets.</p>
+            </div>
+            """, unsafe_allow_html=True)
             
 elif app_mode == "PDF Blueprint Analysis":
     st.header("📄 PDF Blueprint Analysis & Code Compliance")
