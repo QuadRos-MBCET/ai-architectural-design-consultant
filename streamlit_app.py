@@ -14,7 +14,7 @@ from services.chat_service import process_simulated_chat
 from services.pdf_service import analyze_pdf_blueprint
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="R D Homes | AI Architecture", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="SURJ Homes | AI Architectural Studio", page_icon="📐", layout="wide", initial_sidebar_state="expanded")
 
 # Inject Custom Premium CSS Styling
 st.markdown("""
@@ -124,22 +124,29 @@ st.markdown("""
 # Modern Header & Branding (CAD Style)
 st.markdown("""
 <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 25px; padding: 20px 30px; background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; backdrop-filter: blur(12px); background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 20px 20px;">
-    <div style="display: flex; align-items: center; gap: 20px;">
-        <div style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.5); padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter">
-                <path d="M3 21h18"></path>
-                <path d="M9 8h1"></path>
-                <path d="M9 12h1"></path>
-                <path d="M9 16h1"></path>
-                <path d="M14 8h1"></path>
-                <path d="M14 12h1"></path>
-                <path d="M14 16h1"></path>
-                <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+    <div style="display: flex; align-items: center; gap: 18px;">
+        <div style="
+            width: 54px; 
+            height: 54px; 
+            border-radius: 12px; 
+            background: rgba(0, 210, 255, 0.08); 
+            border: 1px solid rgba(0, 210, 255, 0.25); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Axonometric structural home / cube motif -->
+                <path d="M16 3L28 9.5V22.5L16 29L4 22.5V9.5L16 3Z" stroke="#00D2FF" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M16 3V16M16 16L28 9.5M16 16L4 9.5" stroke="#00D2FF" stroke-width="1.4" stroke-linecap="round"/>
+                <path d="M16 16V29" stroke="#3A7BD5" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M10 12.8L16 16.2L22 12.8" stroke="#00D2FF" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M10 19.2L16 16.2L22 19.2" stroke="#3A7BD5" stroke-width="1.2" stroke-linecap="round"/>
             </svg>
         </div>
         <div>
             <h1 style="font-size: 2.2rem; font-weight: 700; letter-spacing: 0.02em; margin: 0; line-height: 1.1; color: #f1f5f9; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;">
-                R D <span style="color: #0ea5e9;">Homes</span>
+                SURJ <span style="color: #00D2FF;">Homes</span>
             </h1>
             <p style="font-size: 0.9rem; color: #94a3b8; margin: 0; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;">AI Architectural CAD Studio</p>
         </div>
