@@ -38,6 +38,13 @@ st.markdown("""
         background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08), rgba(13, 17, 23, 1) 70%);
     }
 
+    /* Hide Streamlit Cloud Default UI (Manage App / Deploy / Hamburger Menu) */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="stAppDeployButton"] {display: none;}
+    .stDeployButton {display: none;}
+
     /* Style the Sidebar */
     [data-testid="stSidebar"] {
         background-color: rgba(15, 23, 42, 0.7) !important;
