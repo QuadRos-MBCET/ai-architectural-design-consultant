@@ -328,11 +328,11 @@ if app_mode == "Generative 3D Design":
         st.markdown("<br>", unsafe_allow_html=True)
         prompt = st.text_area("Custom Architectural Prompt", value=st.session_state.current_prompt, height=120)
         
-        st.markdown("### 📐 Structural Parameters")
-        b_width_override = st.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
-        b_length_override = st.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
-        ceiling_height = st.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
-        target_wwr = st.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
+        with st.expander("📐 Advanced Structural Parameters", expanded=False):
+            b_width_override = st.slider("Building Width (m)", min_value=10, max_value=60, value=30, step=5)
+            b_length_override = st.slider("Building Depth (m)", min_value=10, max_value=60, value=30, step=5)
+            ceiling_height = st.slider("Ceiling Height (m)", min_value=2.5, max_value=6.0, value=3.0, step=0.5)
+            target_wwr = st.slider("Target WWR (%)", min_value=10, max_value=90, value=40, step=5)
         
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("✨ GENERATE CAD MODEL", type="primary", use_container_width=True):
