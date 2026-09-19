@@ -1,6 +1,15 @@
 import json
 import re
 import os
+import sys
+
+# Optional PyTorch AI Models (Requires Trained Weights)
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    from models import ArchitecturalLayoutGenerator, BuildingBoundaryVAE
+    AI_MODELS_LOADED = True
+except ImportError:
+    AI_MODELS_LOADED = False
 
 def mock_rag_retrieval(building_type: str) -> str:
     """

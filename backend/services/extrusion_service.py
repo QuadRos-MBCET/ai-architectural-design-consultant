@@ -1,6 +1,16 @@
 import trimesh
 import numpy as np
 from typing import Dict, Any, List
+import sys
+import os
+
+# Optional PyTorch Diffusion Model (Requires Trained Weights)
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    from models import MeshDiffusionUnet3D
+    DIFFUSION_LOADED = True
+except ImportError:
+    DIFFUSION_LOADED = False
 
 def generate_floor_extrusion(b_width: int, b_length: int, floor: Dict[str, Any], elevation: float, output_path: str) -> List[Any]:
     """
