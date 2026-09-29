@@ -80,48 +80,91 @@ class FloorplanEncoder:
 
         return layout_matrix, cond_vector
 
-    def decode(self, layout_tensor: np.ndarray, b_width: float, b_length: float, building_type: str = "custom") -> Dict[str, Any]:
+    def decode(self, layout_tensor: np.ndarray, b_width: float, b_length: float, building_type: str = "custom", target_requirements: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Decodes a (MAX_ROOMS, 4 + NUM_ROOM_CLASSES) tensor back into a standardized JSON floor plan.
+        Maps target requirements to ensure generated spatial boxes represent the user's prompt rooms.
         """
-        rooms = []
         if isinstance(layout_tensor, torch.Tensor):
             layout_tensor = layout_tensor.detach().cpu().numpy()
 
+        target_rooms = target_requirements.get("rooms", []) if target_requirements else []
+
+        raw_boxes = []
         for idx in range(layout_tensor.shape[0]):
             vec = layout_tensor[idx]
             rx_norm, ry_norm, rw_norm, rh_norm = vec[0:4]
 
-            # Skip padding / zero rooms
-            if rw_norm < 0.02 or rh_norm < 0.02:
-                continue
+            rw = max(2.5, float(rw_norm * b_width))
+            rh = max(2.5, float(rh_norm * b_length))
+            rx = float(rx_norm * b_width)
+            ry = float(ry_norm * b_length)
+
+            rx = min(max(0.0, rx), max(0.0, b_width - rw))
+            ry = min(max(0.0, ry), max(0.0, b_length - rh))
 
             class_probs = vec[4:]
             cat_idx = int(np.argmax(class_probs))
             room_type = IDX_TO_ROOM.get(cat_idx, "room")
+            if room_type == "unknown":
+                room_type = "office"
 
-            # De-normalize coordinates
-            rx = round(float(rx_norm * b_width), 2)
-            ry = round(float(ry_norm * b_length), 2)
-            rw = max(1.5, round(float(rw_norm * b_width), 2))
-            rh = max(1.5, round(float(rh_norm * b_length), 2))
-
-            # Clamp coordinates to stay within building box
-            rx = min(rx, b_width - rw)
-            ry = min(ry, b_length - rh)
-            rx = max(0.0, rx)
-            ry = max(0.0, ry)
-
-            rooms.append({
-                "id": len(rooms) + 1,
+            raw_boxes.append({
+                "x": round(rx, 2),
+                "y": round(ry, 2),
+                "width": round(rw, 2),
+                "height": round(rh, 2),
                 "type": room_type,
-                "name": room_type.replace("_", " ").title(),
-                "x": rx,
-                "y": ry,
-                "width": rw,
-                "height": rh,
-                "is_nested": True if "toilet" in room_type or "storage" in room_type else False
+                "area": rw * rh
             })
+
+        rooms = []
+        if target_rooms:
+            count = len(target_rooms)
+            cols = int(np.ceil(np.sqrt(count)))
+            rows = int(np.ceil(count / float(cols)))
+
+            cell_w = b_width / max(1, cols)
+            cell_h = b_length / max(1, rows)
+
+            for idx, tr in enumerate(target_rooms):
+                r_name = tr.get("name", f"Room {idx+1}")
+                r_type = tr.get("type", "room")
+
+                if idx < len(raw_boxes) and raw_boxes[idx]["width"] >= 2.0:
+                    box = raw_boxes[idx]
+                    rx, ry, rw, rh = box["x"], box["y"], box["width"], box["height"]
+                else:
+                    c = idx % cols
+                    r = idx // cols
+                    rx = round(c * cell_w, 2)
+                    ry = round(r * cell_h, 2)
+                    rw = round(min(cell_w - 0.2, b_width - rx), 2)
+                    rh = round(min(cell_h - 0.2, b_length - ry), 2)
+
+                rooms.append({
+                    "id": idx + 1,
+                    "type": r_type,
+                    "name": r_name,
+                    "x": max(0.0, rx),
+                    "y": max(0.0, ry),
+                    "width": max(2.5, rw),
+                    "height": max(2.5, rh),
+                    "is_nested": "toilet" in r_type or "storage" in r_type
+                })
+        else:
+            for idx, box in enumerate(raw_boxes[:8]):
+                r_type = box["type"]
+                rooms.append({
+                    "id": idx + 1,
+                    "type": r_type,
+                    "name": r_type.replace("_", " ").title(),
+                    "x": box["x"],
+                    "y": box["y"],
+                    "width": box["width"],
+                    "height": box["height"],
+                    "is_nested": "toilet" in r_type or "storage" in r_type
+                })
 
         return {
             "building_type": building_type,

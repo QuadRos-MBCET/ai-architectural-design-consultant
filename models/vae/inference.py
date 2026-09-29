@@ -40,7 +40,6 @@ def generate_with_vae(requirements: Dict[str, Any]) -> Tuple[Dict[str, Any], boo
         return None, False, "Model checkpoint not available — using development fallback."
 
     try:
-        # Construct condition vector from requirements
         dummy_plan = {"building_width": b_width, "building_length": b_length, "rooms": requirements.get("rooms", [])}
         _, cond_vec = encoder.encode(dummy_plan)
         cond_tensor = torch.tensor(cond_vec, dtype=torch.float32).unsqueeze(0)
@@ -48,7 +47,7 @@ def generate_with_vae(requirements: Dict[str, Any]) -> Tuple[Dict[str, Any], boo
         with torch.no_grad():
             sampled_tensor = model.sample(cond_tensor, num_samples=1)[0]
 
-        floorplan_json = encoder.decode(sampled_tensor, b_width=b_width, b_length=b_length, building_type=b_type)
+        floorplan_json = encoder.decode(sampled_tensor, b_width=b_width, b_length=b_length, building_type=b_type, target_requirements=requirements)
         return floorplan_json, True, "Generated using PyTorch Conditional VAE"
     except Exception as e:
         print(f"VAE Inference failure: {e}")

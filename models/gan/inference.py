@@ -47,7 +47,7 @@ def generate_with_gan(requirements: Dict[str, Any]) -> Tuple[Dict[str, Any], boo
         with torch.no_grad():
             sampled_tensor = cgan.generate(cond_tensor, num_samples=1)[0]
 
-        floorplan_json = encoder.decode(sampled_tensor, b_width=b_width, b_length=b_length, building_type=b_type)
+        floorplan_json = encoder.decode(sampled_tensor, b_width=b_width, b_length=b_length, building_type=b_type, target_requirements=requirements)
         return floorplan_json, True, "Generated using PyTorch Conditional GAN"
     except Exception as e:
         print(f"GAN Inference failure: {e}")

@@ -21,7 +21,7 @@ def parse_requirements_locally(user_prompt: str) -> Dict[str, Any]:
     """
     prompt_lower = user_prompt.lower()
 
-    # 1. Extract Dimensions (e.g., "30m x 20m" or "30 by 20")
+    # 1. Extract Dimensions (e.g., "30m x 20m", "30 x 20", "40 by 25")
     dim_match = re.search(r'(\d+)\s*(?:m|meter|meters)?\s*(?:x|×|by)\s*(\d+)\s*(?:m|meter|meters)?', prompt_lower)
     width = int(dim_match.group(1)) if dim_match else 30
     length = int(dim_match.group(2)) if dim_match else 20
@@ -38,17 +38,22 @@ def parse_requirements_locally(user_prompt: str) -> Dict[str, Any]:
             building_type = t
             break
 
-    # 4. Extract Key Specified Rooms
+    # 4. Comprehensive Room Keyword Dictionary
     room_keywords = {
-        "reading_hall": ["reading hall", "reading room", "study area"],
+        "reading_hall": ["reading hall", "reading room", "study hall", "study area"],
         "computer_section": ["computer section", "computer lab", "it lab", "pc area"],
-        "discussion_room": ["discussion room", "conference room", "group study"],
-        "librarian_office": ["librarian office", "admin office", "office"],
-        "storage": ["storage", "archive", "store room"],
-        "toilet": ["toilet", "toilets", "restroom", "restrooms", "washroom"],
-        "foyer": ["foyer", "entrance", "lobby", "reception"],
-        "cafeteria": ["cafeteria", "canteen", "cafe"],
-        "exhibition_hall": ["exhibition hall", "display hall", "gallery"]
+        "discussion_room": ["discussion room", "conference room", "meeting room", "group study"],
+        "librarian_office": ["librarian office", "admin office", "manager office", "doctor office", "office"],
+        "storage": ["storage", "archive", "store room", "pantry"],
+        "toilet": ["toilet", "toilets", "restroom", "restrooms", "washroom", "bathroom"],
+        "foyer": ["foyer", "entrance", "main entrance", "lobby", "reception", "waiting hall", "waiting area"],
+        "cafeteria": ["cafeteria", "canteen", "cafe", "dining area", "dining hall"],
+        "exhibition_hall": ["exhibition hall", "display hall", "gallery", "main hall"],
+        "classroom": ["classroom", "lecture hall", "training room"],
+        "lab": ["lab", "laboratory", "research lab", "icu", "surgery room", "emergency room", "operating room"],
+        "bedroom": ["bedroom", "master suite", "guest room", "patient room", "ward"],
+        "living_room": ["living room", "lounge", "sitting room", "family room"],
+        "kitchen": ["kitchen", "cooking area"]
     }
 
     rooms = []
@@ -57,29 +62,42 @@ def parse_requirements_locally(user_prompt: str) -> Dict[str, Any]:
         for p in phrases:
             if p in prompt_lower:
                 found = True
-                # Check for explicit counts (e.g., "two discussion rooms")
+                # Check for explicit word/number counts (e.g., "two discussion rooms", "3 offices")
                 count = 1
-                if f"two {p}" in prompt_lower or f"2 {p}" in prompt_lower:
-                    count = 2
-                elif f"three {p}" in prompt_lower or f"3 {p}" in prompt_lower:
-                    count = 3
+                count_match = re.search(r'(\d+|one|two|three|four|five)\s*' + re.escape(p), prompt_lower)
+                if count_match:
+                    num_str = count_match.group(1)
+                    word_to_num = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+                    count = word_to_num.get(num_str, int(num_str) if num_str.isdigit() else 1)
 
                 for c in range(count):
+                    display_name = p.title() if p.title() not in [r["name"] for r in rooms] else f"{p.title()} {c+1}"
                     rooms.append({
                         "type": rtype,
-                        "name": rtype.replace("_", " ").title() + (f" {c+1}" if count > 1 else ""),
+                        "name": display_name,
                         "count": 1
                     })
                 break
 
-    # Default fallback room suite if none matched
+    # Typology-specific defaults if no specific room keywords were mentioned in prompt
     if not rooms:
-        rooms = [
-            {"type": "reading_hall", "name": "Main Reading Hall", "count": 1},
-            {"type": "librarian_office", "name": "Office", "count": 1},
-            {"type": "storage", "name": "Storage Room", "count": 1},
-            {"type": "toilet", "name": "Restroom", "count": 1}
-        ]
+        if building_type == "hospital" or building_type == "clinic":
+            default_names = ["Reception & Lobby", "Emergency Room", "Doctor Office", "Pharmacy", "ICU Ward", "Restroom"]
+        elif building_type == "house" or building_type == "villa":
+            default_names = ["Living Room", "Master Bedroom", "Kitchen", "Dining Area", "Bathroom", "Entrance Foyer"]
+        elif building_type == "office":
+            default_names = ["Reception Lobby", "Open Workstation", "Executive Office", "Conference Room", "Breakroom", "Restroom"]
+        elif building_type == "school":
+            default_names = ["Main Entrance", "Classroom 1", "Classroom 2", "Science Lab", "Staff Office", "Restroom"]
+        else:
+            default_names = ["Main Reading Hall", "Computer Section", "Librarian Office", "Storage Room", "Restroom"]
+
+        for idx, name in enumerate(default_names):
+            rtype = name.lower().replace(" ", "_")
+            if "restroom" in rtype or "bathroom" in rtype: rtype = "toilet"
+            elif "foyer" in rtype or "entrance" in rtype or "reception" in rtype: rtype = "foyer"
+            elif "office" in rtype: rtype = "librarian_office"
+            rooms.append({"type": rtype, "name": name, "count": 1})
 
     return {
         "building_type": building_type,

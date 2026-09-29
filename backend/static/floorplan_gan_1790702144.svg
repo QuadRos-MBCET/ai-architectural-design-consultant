@@ -1,0 +1,42 @@
+<svg viewBox="0 0 525.0 375.0" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse">
+    <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+  </pattern>
+</defs>
+<rect width="525.0" height="375.0" fill="#f8fafc"/>
+<rect x="75" y="75" width="375.0" height="225.0" fill="url(#grid)"/>
+<rect x="75" y="75" width="375.0" height="225.0" fill="none" stroke="#0f172a" stroke-width="8"/>
+<rect x="75.0" y="75.0" width="37.5" height="37.5" fill="#eff6ff" stroke="#334155" stroke-width="4"/>
+<rect x="78.75" y="109.5" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="108.5" y="85.0" width="8" height="24" fill="#ffffff"/>
+<path d="M 112.5 85.0 A 24 24 0 0 1 136.5 109.0 L 112.5 109.0 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="93.75" y="89.75" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">BATHROOM</text>
+<text x="93.75" y="100.75" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 2.5m</text>
+<rect x="75.6" y="75.0" width="37.5" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="79.35" y="109.5" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="109.1" y="85.0" width="8" height="24" fill="#ffffff"/>
+<path d="M 113.1 85.0 A 24 24 0 0 1 137.1 109.0 L 113.1 109.0 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="94.35" y="89.75" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">DINING HALL</text>
+<text x="94.35" y="100.75" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 2.5m</text>
+<rect x="75.0" y="75.45" width="375.0" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="247.5" y="109.95" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="446.0" y="85.45" width="8" height="24" fill="#ffffff"/>
+<path d="M 450.0 85.45 A 24 24 0 0 1 474.0 109.45 L 450.0 109.45 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="262.5" y="90.2" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">BEDROOM</text>
+<text x="262.5" y="106.2" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">25.0m x 2.5m</text>
+<rect x="75.0" y="78.3" width="37.5" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="78.75" y="112.8" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="108.5" y="88.3" width="8" height="24" fill="#ffffff"/>
+<path d="M 112.5 88.3 A 24 24 0 0 1 136.5 112.3 L 112.5 112.3 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="93.75" y="93.05" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">LIVING ROOM</text>
+<text x="93.75" y="104.05" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 2.5m</text>
+<rect x="75.0" y="75.15" width="37.5" height="224.85" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="78.75" y="297.0" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="108.5" y="85.15" width="8" height="24" fill="#ffffff"/>
+<path d="M 112.5 85.15 A 24 24 0 0 1 136.5 109.15 L 112.5 109.15 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="93.75" y="183.575" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">KITCHEN</text>
+<text x="93.75" y="194.575" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 15.0m</text>
+<text x="75" y="45" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="#0f172a">2D ARCHITECTURAL BLUEPRINT - VILLA</text>
+<text x="75" y="62" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Boundary Dimensions: 25.0m × 15.0m | Scale: 1:100</text>
+</svg>

@@ -1,6 +1,7 @@
 from typing import Dict, Any, Tuple
 import os
 import sys
+import numpy as np
 
 # Import VAE and CGAN inference
 from models.vae.inference import generate_with_vae
@@ -15,29 +16,49 @@ except ImportError:
 def generate_bsp_baseline_floorplan(requirements: Dict[str, Any]) -> Dict[str, Any]:
     """
     Procedural BSP layout generator used as a baseline benchmark and development fallback.
+    Generates non-overlapping spatial partitions directly matching the user's prompt rooms.
     """
     b_width = float(requirements.get("building_width", requirements.get("width", 30.0)))
     b_length = float(requirements.get("building_length", requirements.get("length", 20.0)))
     b_type = requirements.get("building_type", "library")
+    rooms = requirements.get("rooms", [])
 
-    # Run BSP generator from llm_service
-    prompt_str = f"design a 1 floor {b_type} of {int(b_width)}m x {int(b_length)}m"
-    res = extract_requirements(prompt_str, width=b_width, length=b_length)
+    if not rooms:
+        rooms = [
+            {"type": "reading_hall", "name": "Main Reading Hall"},
+            {"type": "librarian_office", "name": "Librarian Office"},
+            {"type": "storage", "name": "Storage Room"},
+            {"type": "toilet", "name": "Restroom"}
+        ]
 
-    floors = res.get("floors", [])
-    rooms = floors[0].get("rooms", []) if floors else []
+    count = len(rooms)
+    cols = int(np.ceil(np.sqrt(count)))
+    rows = int(np.ceil(count / float(cols)))
+
+    cell_w = b_width / max(1, cols)
+    cell_h = b_length / max(1, rows)
 
     formatted_rooms = []
     for idx, r in enumerate(rooms):
+        c = idx % cols
+        row_idx = idx // cols
+        rx = round(c * cell_w, 2)
+        ry = round(row_idx * cell_h, 2)
+        rw = round(min(cell_w - 0.2, b_width - rx), 2)
+        rh = round(min(cell_h - 0.2, b_length - ry), 2)
+
+        r_name = r.get("name", f"Room {idx+1}")
+        r_type = r.get("type", "room")
+
         formatted_rooms.append({
             "id": idx + 1,
-            "type": r.get("name", "room").lower().replace(" ", "_"),
-            "name": r.get("name", f"Room {idx+1}"),
-            "x": float(r.get("x", 0.0)),
-            "y": float(r.get("y", 0.0)),
-            "width": float(r.get("width", 5.0)),
-            "height": float(r.get("length", r.get("height", 5.0))),
-            "is_nested": r.get("is_nested", False)
+            "type": r_type,
+            "name": r_name,
+            "x": max(0.0, rx),
+            "y": max(0.0, ry),
+            "width": max(2.5, rw),
+            "height": max(2.5, rh),
+            "is_nested": "toilet" in r_type or "storage" in r_type
         })
 
     return {
