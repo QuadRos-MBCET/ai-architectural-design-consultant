@@ -1,0 +1,24 @@
+<svg viewBox="0 0 600.0 450.0" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse">
+    <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+  </pattern>
+</defs>
+<rect width="600.0" height="450.0" fill="#f8fafc"/>
+<rect x="75" y="75" width="450.0" height="300.0" fill="url(#grid)"/>
+<rect x="75" y="75" width="450.0" height="300.0" fill="none" stroke="#0f172a" stroke-width="8"/>
+<rect x="75.0" y="75.9" width="449.84999999999997" height="299.1" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="284.92499999999995" y="372.0" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="520.8499999999999" y="85.9" width="8" height="24" fill="#ffffff"/>
+<path d="M 524.8499999999999 85.9 A 24 24 0 0 1 548.8499999999999 109.9 L 524.8499999999999 109.9 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="299.92499999999995" y="221.45000000000002" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">UNKNOWN</text>
+<text x="299.92499999999995" y="237.45000000000002" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">30.0m x 19.9m</text>
+<rect x="75.0" y="165.75" width="437.85" height="209.25" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="278.925" y="372.0" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="508.85" y="175.75" width="8" height="24" fill="#ffffff"/>
+<path d="M 512.85 175.75 A 24 24 0 0 1 536.85 199.75 L 512.85 199.75 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="293.925" y="266.375" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">UNKNOWN</text>
+<text x="293.925" y="282.375" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">29.2m x 13.9m</text>
+<text x="75" y="45" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="#0f172a">2D ARCHITECTURAL BLUEPRINT - LIBRARY</text>
+<text x="75" y="62" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Boundary Dimensions: 30.0m × 20.0m | Scale: 1:100</text>
+</svg>

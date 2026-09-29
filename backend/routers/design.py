@@ -3,8 +3,12 @@ from pydantic import BaseModel
 from typing import Dict, Any, List
 import os
 import time
-from services.floorplan_service import generate_svg_floorplan
-from services.extrusion_service import generate_floor_extrusion, export_combined_meshes
+try:
+    from backend.services.floorplan_service import generate_svg_floorplan
+    from backend.services.extrusion_service import generate_floor_extrusion, export_combined_meshes
+except Exception:
+    from services.floorplan_service import generate_svg_floorplan
+    from services.extrusion_service import generate_floor_extrusion, export_combined_meshes
 
 router = APIRouter(prefix="/api/design", tags=["design"])
 

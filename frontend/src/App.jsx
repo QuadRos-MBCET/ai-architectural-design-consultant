@@ -1,212 +1,345 @@
-import React, { useState, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import ThreeViewer from './components/ThreeViewer';
-import mermaid from 'mermaid';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Initialize mermaid with dark theme
-mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { primaryColor: '#0f1115', primaryTextColor: '#f8fafc', primaryBorderColor: '#3b82f6', lineColor: '#94a3b8' } });
-
-function Mermaid({ chart }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    if (ref.current && chart) {
-      const uniqueId = 'mermaid-' + Math.random().toString(36).substring(2, 9);
-      mermaid.render(uniqueId, chart).then(({ svg }) => {
-        if (ref.current) ref.current.innerHTML = svg;
-      }).catch(err => {
-        console.error("Mermaid syntax error:", err);
-        if (ref.current) ref.current.innerHTML = `<div style="color:red">Mermaid Error: ${err.message}</div>`;
-      });
-    }
-  }, [chart]);
-  return <div ref={ref} className="mermaid" style={{ display: 'flex', justifyContent: 'center', padding: '2rem', backgroundColor: '#1a202c', borderRadius: '8px', border: '1px solid #2d3748', overflowX: 'auto', minHeight: '400px' }} />;
-}
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 function App() {
-  const [prompt, setPrompt] = useState('design a 2 floor eco friendly public library for a hot and humid climate with natural ventilation');
-  const [reportData, setReportData] = useState(null);
-  const [gen3dData, setGen3dData] = useState(null);
-  const [selectedTab, setSelectedTab] = useState('systems'); // 'combined', 'systems', or index of floor
+  const [prompt, setPrompt] = useState(
+    'Create a modern college library of 30m × 20m with a large reading hall, computer section, two discussion rooms, librarian office, storage and toilets.'
+  );
+  const [buildingType, setBuildingType] = useState('library');
+  const [width, setWidth] = useState(30);
+  const [length, setLength] = useState(20);
+  const [selectedModel, setSelectedModel] = useState('gan');
+  
+  const [viewMode, setViewMode] = useState('single'); // 'single' or 'compare'
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState('');
-  const [error, setError] = useState('');
+  const [statusMsg, setStatusMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  const [singleResult, setSingleResult] = useState(null);
+  const [compareResult, setCompareResult] = useState(null);
 
-  const generateDesign = async () => {
+  // Initial generation on load
+  useEffect(() => {
+    handleGenerate();
+  }, []);
+
+  const handleGenerate = async () => {
     setIsLoading(true);
-    setError('');
-    setReportData(null);
-    setGen3dData(null);
-    setSelectedTab('systems'); // default to systems diagram first!
-    
+    setErrorMsg('');
+    setStatusMsg('Parsing requirements & executing generative model...');
+
     try {
-      setStatus('Analyzing geometry & generating blueprints...');
-      
-      const extractRes = await fetch(`${API_BASE}/api/requirements/extract`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt: prompt })
-      });
-      
-      if (!extractRes.ok) throw new Error('Failed to extract geometry');
-      const extractData = await extractRes.json();
-      const jsonSpec = extractData.structured_json;
-      
-      setReportData(jsonSpec);
-      
-      setStatus('Extruding Multi-Story Massing Model...');
-      const gen3dRes = await fetch(`${API_BASE}/api/design/generate-3d`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ structured_json: jsonSpec })
-      });
-      
-      if (!gen3dRes.ok) throw new Error('Failed to generate models');
-      const genData = await gen3dRes.json();
-      
-      setGen3dData(genData);
-      setStatus('');
-      
+      if (viewMode === 'single') {
+        const res = await fetch(`${API_BASE}/api/floorplan/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt,
+            model: selectedModel,
+            building_type: buildingType,
+            width: Number(width),
+            length: Number(length)
+          })
+        });
+
+        if (!res.ok) throw new Error(`API returned status ${res.status}`);
+        const data = await res.json();
+        setSingleResult(data);
+        setStatusMsg(data.status);
+      } else {
+        const res = await fetch(`${API_BASE}/api/floorplan/compare`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt,
+            building_type: buildingType,
+            width: Number(width),
+            length: Number(length)
+          })
+        });
+
+        if (!res.ok) throw new Error(`API returned status ${res.status}`);
+        const data = await res.json();
+        setCompareResult(data);
+        setStatusMsg('Comparative analysis completed for VAE, GAN, and BSP Baseline.');
+      }
     } catch (err) {
-      setError(err.message);
-      setStatus('');
+      setErrorMsg(`Generation failed: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Determine what to show based on selected tab
-  let currentModelUrl = null;
-  let currentBlueprintUrl = null;
-  let viewTitle = "Procedural Visualizations";
+  const downloadSVG = (svgContent, filename = 'floorplan.svg') => {
+    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
-  if (gen3dData) {
-    if (selectedTab === 'combined') {
-      currentModelUrl = `${API_BASE}${gen3dData.combined_model_url}`;
-      viewTitle = "Multi-Story Building View";
-    } else if (selectedTab === 'systems') {
-      viewTitle = "Climate & Systems Architecture";
-    } else {
-      const floor = gen3dData.floors[selectedTab];
-      currentModelUrl = `${API_BASE}${floor.model_url}`;
-      currentBlueprintUrl = `${API_BASE}${floor.blueprint_url}`;
-      viewTitle = `${floor.name} View`;
-    }
-  }
+  const downloadPNG = (svgContent, filename = 'floorplan.png') => {
+    const img = new Image();
+    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
 
-  const TabButton = ({ label, active, onClick }) => (
-    <button 
-      onClick={onClick}
-      style={{ 
-        padding: '8px 16px', 
-        borderRadius: '4px', 
-        border: '1px solid #334155', 
-        cursor: 'pointer', 
-        backgroundColor: active ? '#10b981' : '#1e293b', 
-        color: active ? '#fff' : '#94a3b8', 
-        fontWeight: 'bold',
-        transition: 'all 0.2s'
-      }}
-    >
-      {label}
-    </button>
-  );
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width || 800;
+      canvas.height = img.height || 600;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    img.src = url;
+  };
 
   return (
     <div className="app-container">
+      {/* Header Bar */}
       <header className="app-header">
-        <h1>AI Architectural Consultant</h1>
-        <p>Generative Retrieval-Augmented 3D Design Pipeline</p>
+        <div>
+          <h1>Prompt-Based 2D Floor Plan Generator</h1>
+          <p>Generative Architectural Layout Synthesis using Conditional GAN & VAE PyTorch Models</p>
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            className={`btn-secondary ${viewMode === 'single' ? 'active' : ''}`}
+            onClick={() => { setViewMode('single'); }}
+            style={{ backgroundColor: viewMode === 'single' ? '#238636' : '#21262d', color: '#fff' }}
+          >
+            Single Model Mode
+          </button>
+          <button
+            className={`btn-secondary ${viewMode === 'compare' ? 'active' : ''}`}
+            onClick={() => { setViewMode('compare'); }}
+            style={{ backgroundColor: viewMode === 'compare' ? '#238636' : '#21262d', color: '#fff' }}
+          >
+            Compare Models (GAN vs VAE vs BSP)
+          </button>
+        </div>
       </header>
 
+      {/* Main Content Area */}
       <main className="main-content">
-        {/* Left Column: Requirements */}
-        <section className="column req-column">
-          <h2>Project Requirements</h2>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe the architectural project..."
-            rows={8}
-            className="prompt-input"
-          />
-          <button 
-            onClick={generateDesign} 
+        {/* Left Control Column */}
+        <section className="column control-column">
+          <div>
+            <h2 className="section-title">Describe Your Floor Plan</h2>
+            <textarea
+              className="prompt-input"
+              rows={6}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="e.g. Create a modern college library of 30m × 20m with a large reading hall..."
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Building Typology</label>
+            <select
+              className="select-input"
+              value={buildingType}
+              onChange={(e) => setBuildingType(e.target.value)}
+            >
+              <option value="library">College Library</option>
+              <option value="hospital">Healthcare Clinic / Hospital</option>
+              <option value="mall">Shopping Mall / Retail</option>
+              <option value="office">Corporate Office</option>
+              <option value="school">Educational School</option>
+              <option value="house">Residential House / Villa</option>
+              <option value="museum">Public Museum</option>
+              <option value="warehouse">Industrial Warehouse</option>
+            </select>
+          </div>
+
+          <div className="dimension-row">
+            <div className="form-group" style={{ flex: 1 }}>
+              <label className="form-label">Width (Meters)</label>
+              <input
+                type="number"
+                className="number-input"
+                min="10"
+                max="100"
+                value={width}
+                onChange={(e) => setWidth(e.target.value)}
+              />
+            </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label className="form-label">Length (Meters)</label>
+              <input
+                type="number"
+                className="number-input"
+                min="10"
+                max="100"
+                value={length}
+                onChange={(e) => setLength(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {viewMode === 'single' && (
+            <div className="form-group">
+              <label className="form-label">Generative AI Model</label>
+              <select
+                className="select-input"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+              >
+                <option value="gan">Conditional GAN (PyTorch Checkpoint)</option>
+                <option value="vae">Conditional VAE (PyTorch Checkpoint)</option>
+                <option value="bsp_baseline">BSP Baseline (Procedural Benchmark)</option>
+              </select>
+            </div>
+          )}
+
+          <button
+            className="btn-primary"
+            onClick={handleGenerate}
             disabled={isLoading}
-            className="generate-btn"
           >
-            {isLoading ? 'Processing...' : 'Generate Multi-Story Design'}
+            {isLoading ? 'Generating Floor Plan...' : 'Generate 2D Floor Plan'}
           </button>
-          
-          {status && <div className="status-msg">{status}</div>}
-          {error && <div className="error-msg">{error}</div>}
 
-          {/* Materials Estimate Section */}
-          {reportData && reportData.materials_estimate && (
-            <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
-              <h3 style={{ marginTop: 0, color: '#f1f5f9', fontSize: '1.1rem' }}>Bill of Materials (INR)</h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px', fontSize: '0.85rem' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#0f1115', textAlign: 'left' }}>
-                    <th style={{ padding: '8px', color: '#94a3b8' }}>Item</th>
-                    <th style={{ padding: '8px', color: '#94a3b8' }}>Qty</th>
-                    <th style={{ padding: '8px', color: '#94a3b8' }}>Rate</th>
-                    <th style={{ padding: '8px', color: '#94a3b8' }}>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportData.materials_estimate.map((mat, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid #334155' }}>
-                      <td style={{ padding: '8px', color: '#cbd5e1' }}>{mat.item}</td>
-                      <td style={{ padding: '8px', color: '#94a3b8' }}>{mat.quantity} {mat.unit}</td>
-                      <td style={{ padding: '8px', color: '#94a3b8' }}>₹{mat.present_rate.toLocaleString('en-IN')}</td>
-                      <td style={{ padding: '8px', fontWeight: 'bold', color: '#10b981' }}>₹{mat.total_cost.toLocaleString('en-IN', {maximumFractionDigits: 0})}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {statusMsg && (
+            <div style={{ fontSize: '0.82rem', color: '#58a6ff', backgroundColor: 'rgba(56,139,253,0.1)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(56,139,253,0.2)' }}>
+              {statusMsg}
+            </div>
+          )}
+
+          {errorMsg && (
+            <div style={{ fontSize: '0.82rem', color: '#f85149', backgroundColor: 'rgba(248,81,73,0.1)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(248,81,73,0.2)' }}>
+              {errorMsg}
             </div>
           )}
         </section>
 
-        {/* Center Column: 3D Viewer & 2D Blueprint */}
-        <section className="column viewer-column" style={{ position: 'relative' }}>
-          <h2>{viewTitle}</h2>
-          
-          {/* Floor Selector Tabs */}
-          {gen3dData && (
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', padding: '10px', backgroundColor: '#0f1115', borderRadius: '6px', border: '1px solid #334155' }}>
-              <TabButton label="Systems Diagram" active={selectedTab === 'systems'} onClick={() => setSelectedTab('systems')} />
-              <TabButton label="Entire Building" active={selectedTab === 'combined'} onClick={() => setSelectedTab('combined')} />
-              {gen3dData.floors.map((floor, idx) => (
-                <TabButton key={idx} label={floor.name} active={selectedTab === idx} onClick={() => setSelectedTab(idx)} />
-              ))}
-            </div>
-          )}
+        {/* Right Display Column */}
+        <section className="column viewer-column">
+          {viewMode === 'single' ? (
+            singleResult && singleResult.floorplan ? (
+              <>
+                {/* SVG Blueprint Viewer */}
+                <div className="svg-display-card">
+                  <div
+                    dangerouslySetInnerHTML={{ __html: singleResult.svg_content }}
+                    style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center' }}
+                  />
+                </div>
 
-          {selectedTab === 'systems' && reportData && reportData.systems_diagram && (
-            <Mermaid chart={reportData.systems_diagram} />
-          )}
+                {/* Metrics & Validation Panel */}
+                <div className="metrics-panel">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.0rem', color: '#f0f6fc' }}>Generation Summary & Metrics</h3>
+                      <span className={`status-badge ${singleResult.is_trained_checkpoint ? 'badge-success' : 'badge-warning'}`} style={{ marginTop: '4px' }}>
+                        {singleResult.is_trained_checkpoint ? 'Trained Checkpoint Output' : 'Development Fallback'}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="btn-secondary" onClick={() => downloadSVG(singleResult.svg_content)}>
+                        Download SVG
+                      </button>
+                      <button className="btn-secondary" onClick={() => downloadPNG(singleResult.svg_content)}>
+                        Download PNG
+                      </button>
+                      <button className="btn-primary" onClick={handleGenerate}>
+                        Regenerate
+                      </button>
+                    </div>
+                  </div>
 
-          {currentBlueprintUrl && selectedTab !== 'systems' && (
-            <div style={{ padding: '1rem', borderBottom: '1px solid #334155', backgroundColor: '#1a202c', textAlign: 'center', marginBottom: '15px', borderRadius: '8px' }}>
-              <h3 style={{ marginTop: 0, fontSize: '1.1rem', color: '#f1f5f9' }}>2D Structural Blueprint</h3>
-              <img src={currentBlueprintUrl} alt="2D Floor Plan SVG" style={{ maxWidth: '100%', border: '1px solid #475569', borderRadius: '4px', backgroundColor: '#f8fafc' }} />
-            </div>
-          )}
+                  <div className="metrics-grid">
+                    <div className="metric-card">
+                      <div className="val">{singleResult.actual_model_used.toUpperCase()}</div>
+                      <div className="lbl">Model Architecture</div>
+                    </div>
+                    <div className="metric-card">
+                      <div className="val">{singleResult.floorplan.building_width}m × {singleResult.floorplan.building_length}m</div>
+                      <div className="lbl">Boundary Dimensions</div>
+                    </div>
+                    <div className="metric-card">
+                      <div className="val">{singleResult.floorplan.rooms.length} Rooms</div>
+                      <div className="lbl">Room Density</div>
+                    </div>
+                    <div className="metric-card">
+                      <div className="val">{singleResult.validation.score_percentage}%</div>
+                      <div className="lbl">Validation Score</div>
+                    </div>
+                  </div>
 
-          {selectedTab !== 'systems' && (
-            <div className="viewer-wrapper">
-              <h3 style={{ position: 'absolute', top: '10px', left: '15px', zIndex: 10, margin: 0, fontSize: '1.0rem', color: '#f1f5f9', background: 'rgba(15, 17, 21, 0.8)', padding: '6px 12px', borderRadius: '6px', border: '1px solid #334155' }}>CAD Rendering</h3>
-              <ThreeViewer modelUrl={currentModelUrl} />
-            </div>
+                  {singleResult.validation.warnings && singleResult.validation.warnings.length > 0 && (
+                    <div style={{ backgroundColor: '#0d1117', border: '1px solid #21262d', padding: '10px', borderRadius: '6px', fontSize: '0.82rem' }}>
+                      <strong style={{ color: '#d29922' }}>Validation Audit & Warnings:</strong>
+                      <ul style={{ margin: '6px 0 0 18px', padding: 0, color: '#8b949e' }}>
+                        {singleResult.validation.warnings.map((w, idx) => (
+                          <li key={idx}>{w}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="svg-display-card">
+                <p style={{ color: '#8b949e' }}>Click "Generate 2D Floor Plan" to synthesize layout.</p>
+              </div>
+            )
+          ) : (
+            /* Model Comparison View */
+            compareResult && compareResult.comparison ? (
+              <div className="comparison-grid">
+                {['gan', 'vae', 'bsp_baseline'].map((mKey) => {
+                  const mData = compareResult.comparison[mKey];
+                  return (
+                    <div key={mKey} className="comparison-card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h3 style={{ margin: 0, fontSize: '0.95rem', color: '#f0f6fc' }}>{mData.model_name}</h3>
+                        <span className={`status-badge ${mData.is_trained_checkpoint ? 'badge-success' : 'badge-warning'}`}>
+                          {mData.is_trained_checkpoint ? 'Checkpoint' : 'Fallback'}
+                        </span>
+                      </div>
+
+                      <div style={{ height: '320px', border: '1px solid #21262d', borderRadius: '6px', overflow: 'hidden', display: 'flex', justifyContent: 'center', backgroundColor: '#0d1117' }}>
+                        <div dangerouslySetInnerHTML={{ __html: mData.svg_content }} style={{ width: '100%', height: '100%' }} />
+                      </div>
+
+                      <div style={{ fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '4px', color: '#8b949e' }}>
+                        <div><strong>Validation Score:</strong> <span style={{ color: '#3fb950' }}>{mData.validation.score_percentage}%</span></div>
+                        <div><strong>Rooms Generated:</strong> {mData.floorplan.rooms.length}</div>
+                        <div><strong>Unused Area Ratio:</strong> {(mData.validation.unused_area_ratio * 100).toFixed(1)}%</div>
+                        <div><strong>Overlaps Count:</strong> {mData.validation.overlaps_count}</div>
+                        <div><strong>Latency:</strong> {mData.generation_time_ms} ms</div>
+                      </div>
+
+                      <button className="btn-secondary" style={{ marginTop: 'auto' }} onClick={() => downloadSVG(mData.svg_content, `floorplan_${mKey}.svg`)}>
+                        Download SVG
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="svg-display-card">
+                <p style={{ color: '#8b949e' }}>Click "Generate 2D Floor Plan" to run comparative evaluation across GAN, VAE, and BSP Baseline.</p>
+              </div>
+            )
           )}
         </section>
-
-        
       </main>
     </div>
   );

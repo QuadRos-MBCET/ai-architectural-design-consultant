@@ -1,4 +1,9 @@
-import trimesh
+try:
+    import trimesh
+    TRIMESH_AVAILABLE = True
+except ImportError:
+    trimesh = None
+    TRIMESH_AVAILABLE = False
 import numpy as np
 from typing import Dict, Any, List
 import sys
