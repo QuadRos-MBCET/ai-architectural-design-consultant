@@ -13,6 +13,7 @@ function App() {
 
   const [consultantData, setConsultantData] = useState(null);
   const [activeFloor, setActiveFloor] = useState('ground'); // 'ground' or 'top'
+  const [workflowTab, setWorkflowTab] = useState('rag'); // 'rag' or 'gan'
 
   useEffect(() => {
     handleRunPipeline();
@@ -130,36 +131,96 @@ function App() {
                 {/* Overall Project Workflow Dropdown Accordion */}
                 <details className="workflow-dropdown-card" open>
                   <summary>
-                    <span>🔄 <strong>Overall Project Architectural Workflow (5-Stage RAG Pipeline)</strong></span>
+                    <span>🔄 <strong>Overall Project Architectural Workflow</strong></span>
                     <span style={{ fontSize: '0.8rem', color: '#58a6ff' }}>Click to Toggle View</span>
                   </summary>
-                  <div className="workflow-steps-grid">
-                    <div className="workflow-step-item">
-                      <span className="step-num">STAGE 01</span>
-                      <div className="step-title">NLP Requirement Parsing</div>
-                      <p className="step-desc">Parses building typology, room program, dimensions, and prompt hash seed.</p>
-                    </div>
-                    <div className="workflow-step-item">
-                      <span className="step-num">STAGE 02</span>
-                      <div className="step-title">FAISS Vector Retrieval</div>
-                      <p className="step-desc">Queries FAISS vector index & typology database for precedent case studies.</p>
-                    </div>
-                    <div className="workflow-step-item">
-                      <span className="step-num">STAGE 03</span>
-                      <div className="step-title">RAG Context Refinement</div>
-                      <p className="step-desc">Extracts passive climate rules and enforces 6m structural column grid bounds.</p>
-                    </div>
-                    <div className="workflow-step-item">
-                      <span className="step-num">STAGE 04</span>
-                      <div className="step-title">Generative Model Synthesis</div>
-                      <p className="step-desc">PyTorch DDPM Diffusion / cGAN model synthesizes 2D spatial bounding boxes.</p>
-                    </div>
-                    <div className="workflow-step-item">
-                      <span className="step-num">STAGE 05</span>
-                      <div className="step-title">CAD Blueprint Rendering</div>
-                      <p className="step-desc">Solves geometric overlaps and renders multi-tier, multi-floor 2D CAD SVG blueprints.</p>
-                    </div>
+
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    <button
+                      className={`btn-secondary ${workflowTab === 'rag' ? 'active-tab' : ''}`}
+                      onClick={() => setWorkflowTab('rag')}
+                      style={{
+                        backgroundColor: workflowTab === 'rag' ? '#1f6beb' : '#21262d',
+                        color: '#ffffff',
+                        fontSize: '0.82rem',
+                        padding: '6px 12px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      🌐 5-Stage RAG Pipeline Workflow
+                    </button>
+                    <button
+                      className={`btn-secondary ${workflowTab === 'gan' ? 'active-tab' : ''}`}
+                      onClick={() => setWorkflowTab('gan')}
+                      style={{
+                        backgroundColor: workflowTab === 'gan' ? '#1f6beb' : '#21262d',
+                        color: '#ffffff',
+                        fontSize: '0.82rem',
+                        padding: '6px 12px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      🧠 PyTorch cGAN & Diffusion Neural Workflow
+                    </button>
                   </div>
+
+                  {workflowTab === 'rag' ? (
+                    <div className="workflow-steps-grid">
+                      <div className="workflow-step-item">
+                        <span className="step-num">STAGE 01</span>
+                        <div className="step-title">NLP Requirement Parsing</div>
+                        <p className="step-desc">Parses building typology, room program, dimensions, and prompt hash seed.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num">STAGE 02</span>
+                        <div className="step-title">FAISS Vector Retrieval</div>
+                        <p className="step-desc">Queries FAISS vector index & typology database for precedent case studies.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num">STAGE 03</span>
+                        <div className="step-title">RAG Context Refinement</div>
+                        <p className="step-desc">Extracts passive climate rules and enforces 6m structural column grid bounds.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num">STAGE 04</span>
+                        <div className="step-title">Generative Model Synthesis</div>
+                        <p className="step-desc">PyTorch DDPM Diffusion / cGAN model synthesizes 2D spatial bounding boxes.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num">STAGE 05</span>
+                        <div className="step-title">CAD Blueprint Rendering</div>
+                        <p className="step-desc">Solves geometric overlaps and renders multi-tier, multi-floor 2D CAD SVG blueprints.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="workflow-steps-grid">
+                      <div className="workflow-step-item">
+                        <span className="step-num" style={{ color: '#a371f7' }}>cGAN STEP 01</span>
+                        <div className="step-title">Condition Vector (c ∈ ℝ²⁴)</div>
+                        <p className="step-desc">Encodes building dimensions & 22 room typology counts into PyTorch condition tensor.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num" style={{ color: '#a371f7' }}>cGAN STEP 02</span>
+                        <div className="step-title">Latent Sampling (z ∈ ℝ⁶⁴)</div>
+                        <p className="step-desc">Samples 64-dim Gaussian random noise vector z ~ N(0, I) to seed spatial variety.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num" style={{ color: '#a371f7' }}>cGAN STEP 03</span>
+                        <div className="step-title">Generator Forward Pass (G)</div>
+                        <p className="step-desc">Passes concatenated [z, c] through FC layers, BatchNorm1d, and ReLU to output (16 × 26) tensor.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num" style={{ color: '#a371f7' }}>cGAN STEP 04</span>
+                        <div className="step-title">Sigmoid & Softmax Decoding</div>
+                        <p className="step-desc">Applies Sigmoid to [x, y, w, h] coords and Softmax across 22 room category channels.</p>
+                      </div>
+                      <div className="workflow-step-item">
+                        <span className="step-num" style={{ color: '#a371f7' }}>cGAN STEP 05</span>
+                        <div className="step-title">Discriminator (D) Validation</div>
+                        <p className="step-desc">Adversarial Discriminator evaluates spatial realism against real floor plan dataset.</p>
+                      </div>
+                    </div>
+                  )}
                 </details>
 
                 {/* Knowledge & Strategy Cards */}
