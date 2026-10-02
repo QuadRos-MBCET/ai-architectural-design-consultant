@@ -129,9 +129,11 @@ def extract_requirements(user_prompt: str, **kwargs) -> dict:
         else:
             building_type = fallback
 
-    match = re.search(r'(\d+)\s*(?:story|storey|floor)', prompt_lower)
+    match = re.search(r'(\d+|one|two|three|four|five)\s*[-–—]?\s*(?:story|storey|floor|floors|stories)', prompt_lower)
     if match: 
-        num_floors = int(match.group(1))
+        val = match.group(1)
+        word_to_num = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+        num_floors = word_to_num.get(val, int(val) if val.isdigit() else 1)
 
     dynamic_floors = []
     

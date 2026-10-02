@@ -30,9 +30,16 @@ def parse_requirements_locally(user_prompt: str) -> Dict[str, Any]:
     width = int(dim_match.group(1)) if dim_match else 30
     length = int(dim_match.group(2)) if dim_match else 20
 
-    # 2. Extract Floor Count
-    floor_match = re.search(r'(\d+)\s*(?:story|storey|floor)', prompt_lower)
-    floors = int(floor_match.group(1)) if floor_match else 1
+    # 2. Extract Floor Count (supports "2-story", "2 story", "two story", "3-storey", "multi-story", etc.)
+    floor_match = re.search(r'(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[-–—]?\s*(?:story|storey|floor|floors|stories)', prompt_lower)
+    if floor_match:
+        val = floor_match.group(1)
+        word_to_num = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+        floors = word_to_num.get(val, int(val) if val.isdigit() else 1)
+    elif any(k in prompt_lower for k in ["multi-story", "multi story", "double story", "two story", "2 story", "2-story"]):
+        floors = 2
+    else:
+        floors = 1
 
     # 3. Detect Typology (Expanded for Police Station, Hospital, Hotel, Restaurant, Library, House, etc.)
     typologies = {
