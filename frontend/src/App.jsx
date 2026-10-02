@@ -36,7 +36,7 @@ function App() {
       setConsultantData(data);
       setStatusMsg('Successfully generated context-aware architectural design consultation & blueprint.');
     } catch (err) {
-      setErrorMsg(`Execution failed: ${err.message}`);
+      setErrorMsg(`Connection Error: Unable to reach backend server at ${API_BASE}. Please ensure the local FastAPI backend is running (run_project.bat) or VITE_API_URL is configured.`);
     } finally {
       setIsLoading(false);
     }
