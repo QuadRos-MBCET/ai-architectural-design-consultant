@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from backend.routers import requirements, design, floorplan
+from backend.routers import requirements, design, floorplan, consultant
 import os
 
 app = FastAPI(
-    title="Prompt-Based 2D Floor Plan Generation Using GAN and VAE",
-    description="Generative AI system for synthesizing architectural 2D floor plans from natural language prompts using Conditional GAN and VAE models.",
+    title="AI Architectural Design Consultant: A RAG Framework for Context-Aware Conceptual Architectural Design",
+    description="Retrieval-Augmented Generation (RAG) system combining LLMs, FAISS vector databases, and diffusion models for context-aware architectural design.",
     version="2.0.0"
 )
 
@@ -33,18 +33,18 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 app.include_router(requirements.router)
 app.include_router(design.router)
 app.include_router(floorplan.router)
+app.include_router(consultant.router)
 
 @app.get("/")
 def read_root():
     return {
-        "title": "Prompt-Based 2D Floor Plan Generation Using GAN and VAE",
+        "title": "AI Architectural Design Consultant: RAG Framework",
         "status": "Operational",
         "documentation": "/docs",
         "endpoints": {
-            "generate": "/api/floorplan/generate",
-            "compare": "/api/floorplan/compare",
-            "models": "/api/floorplan/models",
-            "validate": "/api/floorplan/validate",
-            "render": "/api/floorplan/render"
+            "consultant_analyze": "/api/consultant/analyze",
+            "consultant_compare": "/api/consultant/compare",
+            "floorplan_generate": "/api/floorplan/generate",
+            "floorplan_compare": "/api/floorplan/compare"
         }
     }

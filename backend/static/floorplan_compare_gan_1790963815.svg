@@ -1,0 +1,54 @@
+<svg viewBox="0 0 600.0 450.0" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse">
+    <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+  </pattern>
+</defs>
+<rect width="600.0" height="450.0" fill="#f8fafc"/>
+<rect x="75" y="75" width="450.0" height="300.0" fill="url(#grid)"/>
+<rect x="75" y="75" width="450.0" height="300.0" fill="none" stroke="#0f172a" stroke-width="8"/>
+<rect x="75.0" y="75.0" width="37.5" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="78.75" y="109.5" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="108.5" y="85.0" width="8" height="24" fill="#ffffff"/>
+<path d="M 112.5 85.0 A 24 24 0 0 1 136.5 109.0 L 112.5 109.0 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="93.75" y="89.75" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">READING HALL</text>
+<text x="93.75" y="100.75" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 2.5m</text>
+<rect x="75.6" y="75.0" width="37.5" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="79.35" y="109.5" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="109.1" y="85.0" width="8" height="24" fill="#ffffff"/>
+<path d="M 113.1 85.0 A 24 24 0 0 1 137.1 109.0 L 113.1 109.0 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="94.35" y="89.75" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">COMPUTER SECTION</text>
+<text x="94.35" y="100.75" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 2.5m</text>
+<rect x="75.0" y="75.6" width="449.84999999999997" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="284.92499999999995" y="110.1" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="520.8499999999999" y="85.6" width="8" height="24" fill="#ffffff"/>
+<path d="M 524.8499999999999 85.6 A 24 24 0 0 1 548.8499999999999 109.6 L 524.8499999999999 109.6 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="299.92499999999995" y="90.35" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">DISCUSSION ROOM</text>
+<text x="299.92499999999995" y="106.35" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">30.0m x 2.5m</text>
+<rect x="75.0" y="78.75" width="37.5" height="37.5" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="78.75" y="113.25" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="108.5" y="88.75" width="8" height="24" fill="#ffffff"/>
+<path d="M 112.5 88.75 A 24 24 0 0 1 136.5 112.75 L 112.5 112.75 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="93.75" y="93.5" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">DISCUSSION ROOM 2</text>
+<text x="93.75" y="104.5" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 2.5m</text>
+<rect x="75.0" y="75.3" width="37.5" height="299.7" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="78.75" y="372.0" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="108.5" y="85.3" width="8" height="24" fill="#ffffff"/>
+<path d="M 112.5 85.3 A 24 24 0 0 1 136.5 109.3 L 112.5 109.3 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="93.75" y="221.14999999999998" font-family="Space Grotesk, sans-serif" font-size="7" font-weight="700" fill="#0f172a" text-anchor="middle">LIBRARIAN OFFICE</text>
+<text x="93.75" y="232.14999999999998" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">2.5m x 20.0m</text>
+<rect x="75.0" y="76.05" width="449.84999999999997" height="298.95" fill="#ffffff" stroke="#334155" stroke-width="4"/>
+<rect x="284.92499999999995" y="372.0" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="520.8499999999999" y="86.05" width="8" height="24" fill="#ffffff"/>
+<path d="M 524.8499999999999 86.05 A 24 24 0 0 1 548.8499999999999 110.05 L 524.8499999999999 110.05 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="299.92499999999995" y="221.52499999999998" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">STORAGE</text>
+<text x="299.92499999999995" y="237.52499999999998" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">30.0m x 19.9m</text>
+<rect x="75.0" y="75.0" width="449.84999999999997" height="37.5" fill="#eff6ff" stroke="#334155" stroke-width="4"/>
+<rect x="284.92499999999995" y="109.5" width="30" height="6" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+<rect x="520.8499999999999" y="85.0" width="8" height="24" fill="#ffffff"/>
+<path d="M 524.8499999999999 85.0 A 24 24 0 0 1 548.8499999999999 109.0 L 524.8499999999999 109.0 Z" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="299.92499999999995" y="89.75" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">TOILET</text>
+<text x="299.92499999999995" y="105.75" font-family="Inter, sans-serif" font-size="8" fill="#64748b" text-anchor="middle">30.0m x 2.5m</text>
+<text x="75" y="45" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="#0f172a">2D ARCHITECTURAL BLUEPRINT - LIBRARY</text>
+<text x="75" y="62" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Boundary Dimensions: 30.0m × 20.0m | Scale: 1:100</text>
+</svg>

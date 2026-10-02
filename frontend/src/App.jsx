@@ -5,64 +5,59 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 function App() {
   const [prompt, setPrompt] = useState(
-    'Create a modern college library of 30m x 20m with a reading hall, computer section, two discussion rooms, librarian office, storage and toilets.'
+    'Design a modern sustainable college library in a tropical hot-humid climate with a reading hall, computer section, discussion rooms, librarian office, storage, toilets, natural ventilation, and solar shading.'
   );
-  const [selectedModel, setSelectedModel] = useState('compare_3'); // 'compare_3', 'gan', 'vae', 'diffusion', 'bsp_baseline'
-  
+  const [mode, setMode] = useState('rag_consultant'); // 'rag_consultant' or 'experimental_compare'
   const [isLoading, setIsLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [singleResult, setSingleResult] = useState(null);
-  const [compareResult, setCompareResult] = useState(null);
+  const [consultantData, setConsultantData] = useState(null);
+  const [compareData, setCompareData] = useState(null);
 
-  // Initial generation on load
   useEffect(() => {
-    handleGenerate();
+    handleRunPipeline();
   }, []);
 
-  const handleGenerate = async () => {
+  const handleRunPipeline = async () => {
     setIsLoading(true);
     setErrorMsg('');
-    setStatusMsg('Parsing prompt and synthesizing 2D floor plans...');
+    setStatusMsg('Running FAISS vector retrieval & architectural RAG pipeline...');
 
     try {
-      if (selectedModel === 'compare_3') {
-        const res = await fetch(`${API_BASE}/api/floorplan/compare`, {
+      if (mode === 'rag_consultant') {
+        const res = await fetch(`${API_BASE}/api/consultant/analyze`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: prompt })
+          body: JSON.stringify({ prompt })
         });
 
         if (!res.ok) throw new Error(`API returned status ${res.status}`);
         const data = await res.json();
-        setCompareResult(data);
-        setSingleResult(null);
-        setStatusMsg('Successfully generated 2D layouts across GAN, VAE, and Diffusion models.');
+        setConsultantData(data);
+        setCompareData(null);
+        setStatusMsg('Successfully generated context-aware architectural design consultation & blueprint.');
       } else {
-        const res = await fetch(`${API_BASE}/api/floorplan/generate`, {
+        const res = await fetch(`${API_BASE}/api/consultant/compare`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: prompt,
-            model: selectedModel
-          })
+          body: JSON.stringify({ prompt })
         });
 
         if (!res.ok) throw new Error(`API returned status ${res.status}`);
         const data = await res.json();
-        setSingleResult(data);
-        setCompareResult(null);
-        setStatusMsg(`Generated 2D layout using ${selectedModel.toUpperCase()}.`);
+        setCompareData(data);
+        setConsultantData(null);
+        setStatusMsg('Experimental comparison completed: Standard Prompt-Only vs RAG-Backed Framework.');
       }
     } catch (err) {
-      setErrorMsg(`Generation failed: ${err.message}`);
+      setErrorMsg(`Execution failed: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const downloadSVG = (svgContent, filename = 'floorplan.svg') => {
+  const downloadSVG = (svgContent, filename = 'blueprint.svg') => {
     const blob = new Blob([svgContent], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -75,117 +70,180 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Header Bar */}
+      {/* Header */}
       <header className="app-header">
         <div>
-          <h1>2D Architectural Floor Plan Generator</h1>
-          <p>Demonstrating 3 Generative AI Architectures: Conditional GAN, Conditional VAE & DDPM Diffusion</p>
+          <h1>AI Architectural Design Consultant</h1>
+          <p>A Retrieval-Augmented Generation (RAG) Framework for Context-Aware Conceptual Architectural Design</p>
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <main className="main-content">
-        {/* Left Control Column */}
+        {/* Left Controls */}
         <section className="column control-column">
           <div>
-            <h2 className="section-title">Natural Language Prompt</h2>
+            <h2 className="section-title">Architectural Prompt & Site Context</h2>
             <textarea
               className="prompt-input"
-              rows={5}
+              rows={6}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="e.g. Create a college library with reading hall, computer section, librarian office, storage and toilets..."
+              placeholder="e.g. Design a sustainable college library in a tropical climate with reading hall..."
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Model Selection</label>
+            <label className="form-label">Workflow Mode</label>
             <select
               className="select-input"
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
             >
-              <option value="compare_3">Compare All 3 AI Models (GAN vs VAE vs Diffusion)</option>
-              <option value="gan">1. Conditional GAN (PyTorch Checkpoint)</option>
-              <option value="vae">2. Conditional VAE (PyTorch Checkpoint)</option>
-              <option value="diffusion">3. Conditional DDPM Diffusion (PyTorch Checkpoint)</option>
-              <option value="bsp_baseline">4. BSP Baseline (Procedural Benchmark)</option>
+              <option value="rag_consultant">RAG Architectural Design Consultant (Our Framework)</option>
+              <option value="experimental_compare">Experimental Comparison (Standard vs RAG-Enhanced)</option>
             </select>
           </div>
 
           <button
             className="btn-primary"
-            onClick={handleGenerate}
+            onClick={handleRunPipeline}
             disabled={isLoading}
           >
-            {isLoading ? 'Generating Layouts...' : 'Generate 2D Floor Plan'}
+            {isLoading ? 'Retrieving Knowledge & Synthesizing...' : 'Run Architectural Analysis'}
           </button>
 
           {statusMsg && (
-            <div style={{ fontSize: '0.82rem', color: '#3fb950', backgroundColor: 'rgba(35,134,54,0.1)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(55,185,80,0.2)' }}>
+            <div className="msg-box msg-success">
               {statusMsg}
             </div>
           )}
 
           {errorMsg && (
-            <div style={{ fontSize: '0.82rem', color: '#f85149', backgroundColor: 'rgba(248,81,73,0.1)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(248,81,73,0.2)' }}>
+            <div className="msg-box msg-error">
               {errorMsg}
             </div>
           )}
         </section>
 
-        {/* Right Display Column */}
+        {/* Right Display Area */}
         <section className="column viewer-column">
-          {/* Comparison View (GAN vs VAE vs Diffusion) */}
-          {compareResult && compareResult.comparison ? (
-            <div className="comparison-grid">
-              {['gan', 'vae', 'diffusion'].map((mKey) => {
-                const mData = compareResult.comparison[mKey];
-                if (!mData) return null;
-                return (
-                  <div key={mKey} className="comparison-card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h3 style={{ margin: 0, fontSize: '1.0rem', color: '#f0f6fc' }}>{mData.model_name}</h3>
-                      <span className="status-badge badge-success">
-                        Trained Checkpoint
-                      </span>
-                    </div>
-
-                    <div className="svg-box">
-                      <div dangerouslySetInnerHTML={{ __html: mData.svg_content }} style={{ width: '100%', height: '100%' }} />
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', color: '#8b949e' }}>
-                      <span><strong>Rooms:</strong> {mData.floorplan.rooms.length}</span>
-                      <span><strong>Latency:</strong> {mData.generation_time_ms} ms</span>
-                      <button className="btn-secondary" style={{ width: 'auto', padding: '4px 10px' }} onClick={() => downloadSVG(mData.svg_content, `${mKey}_floorplan.svg`)}>
-                        Download SVG
-                      </button>
+          {mode === 'rag_consultant' ? (
+            consultantData ? (
+              <div className="consultant-results-view">
+                {/* Knowledge & Strategy Cards */}
+                <div className="info-grid">
+                  {/* Retrieved Evidence */}
+                  <div className="info-card">
+                    <h3>FAISS Retrieved Architectural Case Studies</h3>
+                    <div className="knowledge-text">
+                      {consultantData.retrieved_evidence}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          ) : singleResult && singleResult.floorplan ? (
-            /* Single Model View */
-            <div className="single-card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#f0f6fc' }}>
-                  {singleResult.actual_model_used.toUpperCase()} Generated 2D Blueprint
-                </h2>
-                <button className="btn-secondary" style={{ width: 'auto', padding: '6px 14px' }} onClick={() => downloadSVG(singleResult.svg_content, `${singleResult.actual_model_used}_floorplan.svg`)}>
-                  Download SVG
-                </button>
-              </div>
 
-              <div className="svg-box" style={{ flex: 1, minHeight: '520px' }}>
-                <div dangerouslySetInnerHTML={{ __html: singleResult.svg_content }} style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center' }} />
+                  {/* Sustainable Climate Strategies */}
+                  <div className="info-card">
+                    <h3>Sustainable Climate Strategies ({consultantData.climate_zone})</h3>
+                    <ul className="strategy-list">
+                      {consultantData.passive_strategies.map((strat, idx) => (
+                        <li key={idx}>🌿 {strat}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Refined Prompt */}
+                  <div className="info-card full-width">
+                    <h3>RAG-Refined Context-Aware Diffusion Prompt</h3>
+                    <div className="code-text">{consultantData.refined_prompt}</div>
+                  </div>
+                </div>
+
+                {/* SVG Blueprint Section */}
+                <div className="blueprint-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f0f6fc' }}>Context-Aware 2D Architectural Blueprint</h3>
+                      <span className="status-badge badge-success">Suitability Score: {consultantData.suitability_score}%</span>
+                    </div>
+                    <button className="btn-secondary" onClick={() => downloadSVG(consultantData.floorplan.svg_content || '')}>
+                      Download SVG
+                    </button>
+                  </div>
+
+                  <div className="svg-box" style={{ minHeight: '450px' }}>
+                    <div
+                      dangerouslySetInnerHTML={{ __html: consultantData.floorplan.svg_content || '' }}
+                      style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center' }}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="placeholder-box">
+                <p>Click "Run Architectural Analysis" to execute RAG retrieval and generate context-aware design guidance.</p>
+              </div>
+            )
           ) : (
-            <div className="svg-display-card">
-              <p style={{ color: '#8b949e' }}>Click "Generate 2D Floor Plan" to synthesize layouts for GAN, VAE, and Diffusion models.</p>
-            </div>
+            /* Experimental Comparison Mode */
+            compareData && compareData.comparison ? (
+              <div className="comparison-view">
+                <h2 style={{ fontSize: '1.1rem', margin: '0 0 10px 0', color: '#f0f6fc' }}>
+                  Experimental Comparison: Standard Prompt-Only vs RAG-Backed Framework
+                </h2>
+
+                <div className="comparison-grid">
+                  {/* Baseline Card */}
+                  <div className="comparison-card">
+                    <div className="card-header">
+                      <h3>{compareData.comparison.baseline.name}</h3>
+                      <span className="status-badge badge-warning">Standard Baseline</span>
+                    </div>
+                    <p className="approach-text">{compareData.comparison.baseline.approach}</p>
+
+                    <div className="metric-row">
+                      <div><strong>Context-Aware:</strong> ❌ No</div>
+                      <div><strong>Climate Rules:</strong> 0</div>
+                      <div><strong>Suitability Score:</strong> <span style={{ color: '#d29922' }}>{compareData.comparison.baseline.suitability_score}%</span></div>
+                    </div>
+
+                    <div className="svg-box" style={{ height: '320px' }}>
+                      <div dangerouslySetInnerHTML={{ __html: compareData.comparison.baseline.svg_content }} style={{ width: '100%', height: '100%' }} />
+                    </div>
+
+                    <button className="btn-secondary" onClick={() => downloadSVG(compareData.comparison.baseline.svg_content, 'baseline_floorplan.svg')}>
+                      Download Baseline SVG
+                    </button>
+                  </div>
+
+                  {/* Proposed RAG Card */}
+                  <div className="comparison-card highlight-card">
+                    <div className="card-header">
+                      <h3>{compareData.comparison.proposed_rag.name}</h3>
+                      <span className="status-badge badge-success">Proposed RAG Framework</span>
+                    </div>
+                    <p className="approach-text">{compareData.comparison.proposed_rag.approach}</p>
+
+                    <div className="metric-row">
+                      <div><strong>Context-Aware:</strong> ✅ Yes (FAISS RAG)</div>
+                      <div><strong>Climate Rules:</strong> {compareData.comparison.proposed_rag.climate_strategies_applied} Applied</div>
+                      <div><strong>Suitability Score:</strong> <span style={{ color: '#3fb950' }}>{compareData.comparison.proposed_rag.suitability_score}%</span></div>
+                    </div>
+
+                    <div className="svg-box" style={{ height: '320px' }}>
+                      <div dangerouslySetInnerHTML={{ __html: compareData.comparison.proposed_rag.svg_content }} style={{ width: '100%', height: '100%' }} />
+                    </div>
+
+                    <button className="btn-secondary" onClick={() => downloadSVG(compareData.comparison.proposed_rag.svg_content, 'rag_consultant_floorplan.svg')}>
+                      Download RAG Consultant SVG
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="placeholder-box">
+                <p>Click "Run Architectural Analysis" to perform experimental comparison between Standard Generation vs RAG-Backed Framework.</p>
+              </div>
+            )
           )}
         </section>
       </main>
