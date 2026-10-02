@@ -6,6 +6,7 @@ import numpy as np
 # Import VAE and CGAN inference
 from models.vae.inference import generate_with_vae
 from models.gan.inference import generate_with_gan
+from models.diffusion.inference import generate_with_diffusion
 try:
     from backend.services.llm_service import extract_requirements
     from backend.services.layout_validator import validate_floorplan, repair_geometry_if_needed
@@ -96,6 +97,13 @@ def generate_floorplan(requirements: Dict[str, Any], model_type: str = "gan") ->
             actual_model_used = "bsp_baseline"
             floorplan = generate_bsp_baseline_floorplan(requirements)
             status_msg = "GAN Checkpoint unavailable — executed BSP procedural fallback."
+
+    elif model_type in ["diffusion", "ddpm"]:
+        floorplan, is_real_checkpoint, status_msg = generate_with_diffusion(requirements)
+        if not floorplan:
+            actual_model_used = "bsp_baseline"
+            floorplan = generate_bsp_baseline_floorplan(requirements)
+            status_msg = "Diffusion Checkpoint unavailable — executed BSP procedural fallback."
 
     else:
         actual_model_used = "bsp_baseline"

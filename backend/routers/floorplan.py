@@ -16,6 +16,7 @@ except ImportError:
     from services.floorplan_service import render_floorplan_svg
 from models.vae.inference import load_vae_model
 from models.gan.inference import load_cgan_model
+from models.diffusion.inference import load_diffusion_model
 
 router = APIRouter(prefix="/api/floorplan", tags=["floorplan"])
 
@@ -37,6 +38,7 @@ class FloorplanRenderRequest(BaseModel):
 async def get_available_models():
     _, vae_loaded = load_vae_model()
     _, gan_loaded = load_cgan_model()
+    _, diff_loaded = load_diffusion_model()
     return {
         "models": [
             {
@@ -52,6 +54,13 @@ async def get_available_models():
                 "description": "Variational autoencoder sampling layout latent space.",
                 "available": vae_loaded,
                 "status": "Trained Checkpoint Available" if vae_loaded else "Checkpoint Unavailable — Uses Procedural Fallback"
+            },
+            {
+                "id": "diffusion",
+                "name": "Conditional DDPM Diffusion",
+                "description": "Iterative denoising diffusion probabilistic model.",
+                "available": diff_loaded,
+                "status": "Trained Checkpoint Available" if diff_loaded else "Checkpoint Unavailable — Uses Procedural Fallback"
             },
             {
                 "id": "bsp_baseline",
@@ -138,7 +147,7 @@ async def compare_floorplan_models(request: FloorplanGenerateRequest):
         timestamp = int(time.time())
 
         results = {}
-        for m in ["gan", "vae", "bsp_baseline"]:
+        for m in ["gan", "vae", "diffusion", "bsp_baseline"]:
             start_time = time.time()
             gen_res = generate_floorplan(requirements, model_type=m)
             elapsed_ms = round((time.time() - start_time) * 1000, 1)
@@ -147,8 +156,15 @@ async def compare_floorplan_models(request: FloorplanGenerateRequest):
             output_path = os.path.join(static_dir, filename)
             svg_content = render_floorplan_svg(gen_res["floorplan"], output_path=output_path)
 
+            model_name_map = {
+                "gan": "Conditional GAN",
+                "vae": "Conditional VAE",
+                "diffusion": "DDPM Diffusion",
+                "bsp_baseline": "BSP Baseline"
+            }
+
             results[m] = {
-                "model_name": "Conditional GAN" if m == "gan" else ("Conditional VAE" if m == "vae" else "BSP Baseline"),
+                "model_name": model_name_map.get(m, m.upper()),
                 "actual_model_used": gen_res["actual_model_used"],
                 "is_trained_checkpoint": gen_res["is_trained_checkpoint"],
                 "status": gen_res["status"],

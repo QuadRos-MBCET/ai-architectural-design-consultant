@@ -114,7 +114,7 @@ function App() {
       <header className="app-header">
         <div>
           <h1>Prompt-Based 2D Floor Plan Generator</h1>
-          <p>Generative Architectural Layout Synthesis using Conditional GAN & VAE PyTorch Models</p>
+          <p>Generative Architectural Layout Synthesis using Conditional GAN, VAE & DDPM Diffusion Models</p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
@@ -129,7 +129,7 @@ function App() {
             onClick={() => { setViewMode('compare'); }}
             style={{ backgroundColor: viewMode === 'compare' ? '#238636' : '#21262d', color: '#fff' }}
           >
-            Compare Models (GAN vs VAE vs BSP)
+            Compare Models (GAN vs VAE vs Diffusion vs BSP)
           </button>
         </div>
       </header>
@@ -202,6 +202,7 @@ function App() {
               >
                 <option value="gan">Conditional GAN (PyTorch Checkpoint)</option>
                 <option value="vae">Conditional VAE (PyTorch Checkpoint)</option>
+                <option value="diffusion">Conditional DDPM Diffusion (PyTorch Checkpoint)</option>
                 <option value="bsp_baseline">BSP Baseline (Procedural Benchmark)</option>
               </select>
             </div>
@@ -302,9 +303,10 @@ function App() {
           ) : (
             /* Model Comparison View */
             compareResult && compareResult.comparison ? (
-              <div className="comparison-grid">
-                {['gan', 'vae', 'bsp_baseline'].map((mKey) => {
+              <div className="comparison-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+                {['gan', 'vae', 'diffusion', 'bsp_baseline'].map((mKey) => {
                   const mData = compareResult.comparison[mKey];
+                  if (!mData) return null;
                   return (
                     <div key={mKey} className="comparison-card">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -335,7 +337,7 @@ function App() {
               </div>
             ) : (
               <div className="svg-display-card">
-                <p style={{ color: '#8b949e' }}>Click "Generate 2D Floor Plan" to run comparative evaluation across GAN, VAE, and BSP Baseline.</p>
+                <p style={{ color: '#8b949e' }}>Click "Generate 2D Floor Plan" to run comparative evaluation across GAN, VAE, Diffusion, and BSP Baseline.</p>
               </div>
             )
           )}
