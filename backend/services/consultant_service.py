@@ -101,12 +101,30 @@ def run_rag_consultant_pipeline(prompt: str, width: float = 30.0, length: float 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     static_dir = os.path.join(base_dir, "static")
     os.makedirs(static_dir, exist_ok=True)
+
+    floors_count = requirements.get("floors_count", 1)
+    if floors_count > 1:
+        gen_res["floorplan"]["floor_name"] = "Ground Floor (Level 1)"
+
     svg_filename = f"rag_consultant_{timestamp}.svg"
     svg_path = os.path.join(static_dir, svg_filename)
 
     svg_content = render_floorplan_svg(gen_res["floorplan"], output_path=svg_path)
     gen_res["floorplan"]["svg_content"] = svg_content
     gen_res["floorplan"]["svg_url"] = f"/static/{svg_filename}?t={timestamp}"
+
+    top_floorplan = None
+    if floors_count > 1:
+        top_req = dict(requirements)
+        top_req["is_top_floor"] = True
+        top_gen = generate_floorplan(top_req, model_type="diffusion")
+        top_gen["floorplan"]["floor_name"] = f"Top Floor (Level {floors_count})"
+        top_svg_filename = f"rag_consultant_top_{timestamp}.svg"
+        top_svg_path = os.path.join(static_dir, top_svg_filename)
+        top_svg_content = render_floorplan_svg(top_gen["floorplan"], output_path=top_svg_path)
+        top_gen["floorplan"]["svg_content"] = top_svg_content
+        top_gen["floorplan"]["svg_url"] = f"/static/{top_svg_filename}?t={timestamp}"
+        top_floorplan = top_gen["floorplan"]
 
     # Calculate Contextual Accuracy & Suitability Score
     suitability_score = min(98, max(85, gen_res["validation"].get("score_percentage", 85) + 10))
@@ -122,7 +140,9 @@ def run_rag_consultant_pipeline(prompt: str, width: float = 30.0, length: float 
         "structural_rules": climate_info["structural_rules"],
         "suitability_score": suitability_score,
         "generation_time_ms": elapsed_ms,
+        "floors_count": floors_count,
         "floorplan": gen_res["floorplan"],
+        "top_floorplan": top_floorplan,
         "validation": gen_res["validation"]
     }
 

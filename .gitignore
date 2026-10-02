@@ -4,3 +4,4 @@ __pycache__/
 frontend/public/*.glb
 frontend/public/*.svg
 node_modules/
+backend/static/*.svg

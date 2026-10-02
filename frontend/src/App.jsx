@@ -7,13 +7,12 @@ function App() {
   const [prompt, setPrompt] = useState(
     'Design a modern sustainable college library in a tropical hot-humid climate with a reading hall, computer section, discussion rooms, librarian office, storage, toilets, natural ventilation, and solar shading.'
   );
-  const [mode, setMode] = useState('rag_consultant'); // 'rag_consultant' or 'experimental_compare'
   const [isLoading, setIsLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
   const [consultantData, setConsultantData] = useState(null);
-  const [compareData, setCompareData] = useState(null);
+  const [activeFloor, setActiveFloor] = useState('ground'); // 'ground' or 'top'
 
   useEffect(() => {
     handleRunPipeline();
@@ -25,31 +24,16 @@ function App() {
     setStatusMsg('Running FAISS vector retrieval & architectural RAG pipeline...');
 
     try {
-      if (mode === 'rag_consultant') {
-        const res = await fetch(`${API_BASE}/api/consultant/analyze`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
+      const res = await fetch(`${API_BASE}/api/consultant/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
 
-        if (!res.ok) throw new Error(`API returned status ${res.status}`);
-        const data = await res.json();
-        setConsultantData(data);
-        setCompareData(null);
-        setStatusMsg('Successfully generated context-aware architectural design consultation & blueprint.');
-      } else {
-        const res = await fetch(`${API_BASE}/api/consultant/compare`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-
-        if (!res.ok) throw new Error(`API returned status ${res.status}`);
-        const data = await res.json();
-        setCompareData(data);
-        setConsultantData(null);
-        setStatusMsg('Experimental comparison completed: Standard Prompt-Only vs RAG-Backed Framework.');
-      }
+      if (!res.ok) throw new Error(`API returned status ${res.status}`);
+      const data = await res.json();
+      setConsultantData(data);
+      setStatusMsg('Successfully generated context-aware architectural design consultation & blueprint.');
     } catch (err) {
       setErrorMsg(`Execution failed: ${err.message}`);
     } finally {
@@ -91,19 +75,32 @@ function App() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="e.g. Design a sustainable college library in a tropical climate with reading hall..."
             />
+            <div className="prompt-guide-box">
+              <div className="prompt-guide-title">
+                <span className="info-icon">💡</span> <strong>Supported Prompt Structure:</strong>
+              </div>
+              <div className="prompt-guide-list">
+                <div className="guide-item">
+                  <span className="guide-label">🏢 Typologies:</span>
+                  <span className="guide-val">Hospital, Hotel, Restaurant, Police Station, Library, House, School, Office</span>
+                </div>
+                <div className="guide-item">
+                  <span className="guide-label">🚪 Rooms & Counts:</span>
+                  <span className="guide-val">e.g. <em>3 holding cells, ICU ward, reading hall, commercial kitchen, 2 suites</em></span>
+                </div>
+                <div className="guide-item">
+                  <span className="guide-label">📏 Dimensions & Floors:</span>
+                  <span className="guide-val">e.g. <em>30m x 20m, 2 floors</em></span>
+                </div>
+                <div className="guide-item">
+                  <span className="guide-label">🌿 Climate & Site:</span>
+                  <span className="guide-val">e.g. <em>tropical climate, hot-humid, arid, urban site</em></span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Workflow Mode</label>
-            <select
-              className="select-input"
-              value={mode}
-              onChange={(e) => setMode(e.target.value)}
-            >
-              <option value="rag_consultant">RAG Architectural Design Consultant (Our Framework)</option>
-              <option value="experimental_compare">Experimental Comparison (Standard vs RAG-Enhanced)</option>
-            </select>
-          </div>
+
 
           <button
             className="btn-primary"
@@ -128,9 +125,43 @@ function App() {
 
         {/* Right Display Area */}
         <section className="column viewer-column">
-          {mode === 'rag_consultant' ? (
-            consultantData ? (
+          {consultantData ? (
               <div className="consultant-results-view">
+                {/* Overall Project Workflow Dropdown Accordion */}
+                <details className="workflow-dropdown-card" open>
+                  <summary>
+                    <span>🔄 <strong>Overall Project Architectural Workflow (5-Stage RAG Pipeline)</strong></span>
+                    <span style={{ fontSize: '0.8rem', color: '#58a6ff' }}>Click to Toggle View</span>
+                  </summary>
+                  <div className="workflow-steps-grid">
+                    <div className="workflow-step-item">
+                      <span className="step-num">STAGE 01</span>
+                      <div className="step-title">NLP Requirement Parsing</div>
+                      <p className="step-desc">Parses building typology, room program, dimensions, and prompt hash seed.</p>
+                    </div>
+                    <div className="workflow-step-item">
+                      <span className="step-num">STAGE 02</span>
+                      <div className="step-title">FAISS Vector Retrieval</div>
+                      <p className="step-desc">Queries FAISS vector index & typology database for precedent case studies.</p>
+                    </div>
+                    <div className="workflow-step-item">
+                      <span className="step-num">STAGE 03</span>
+                      <div className="step-title">RAG Context Refinement</div>
+                      <p className="step-desc">Extracts passive climate rules and enforces 6m structural column grid bounds.</p>
+                    </div>
+                    <div className="workflow-step-item">
+                      <span className="step-num">STAGE 04</span>
+                      <div className="step-title">Generative Model Synthesis</div>
+                      <p className="step-desc">PyTorch DDPM Diffusion / cGAN model synthesizes 2D spatial bounding boxes.</p>
+                    </div>
+                    <div className="workflow-step-item">
+                      <span className="step-num">STAGE 05</span>
+                      <div className="step-title">CAD Blueprint Rendering</div>
+                      <p className="step-desc">Solves geometric overlaps and renders multi-tier, multi-floor 2D CAD SVG blueprints.</p>
+                    </div>
+                  </div>
+                </details>
+
                 {/* Knowledge & Strategy Cards */}
                 <div className="info-grid">
                   {/* Retrieved Evidence */}
@@ -162,17 +193,55 @@ function App() {
                 <div className="blueprint-card">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f0f6fc' }}>Context-Aware 2D Architectural Blueprint</h3>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#f0f6fc' }}>
+                        Context-Aware 2D Architectural Blueprint
+                        {consultantData.floors_count > 1 && ` (${consultantData.floors_count}-Story Building)`}
+                      </h3>
                       <span className="status-badge badge-success">Suitability Score: {consultantData.suitability_score}%</span>
                     </div>
-                    <button className="btn-secondary" onClick={() => downloadSVG(consultantData.floorplan.svg_content || '')}>
+                    <button
+                      className="btn-secondary"
+                      onClick={() => {
+                        const targetPlan = activeFloor === 'top' && consultantData.top_floorplan ? consultantData.top_floorplan : consultantData.floorplan;
+                        downloadSVG(targetPlan.svg_content || '', `${activeFloor}_floorplan.svg`);
+                      }}
+                    >
                       Download SVG
                     </button>
                   </div>
 
+                  {consultantData.top_floorplan && (
+                    <div className="floor-tab-bar" style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                      <button
+                        className={`btn-secondary ${activeFloor === 'ground' ? 'active-tab' : ''}`}
+                        onClick={() => setActiveFloor('ground')}
+                        style={{
+                          backgroundColor: activeFloor === 'ground' ? '#238636' : '#21262d',
+                          color: '#ffffff',
+                          fontWeight: '600'
+                        }}
+                      >
+                        🏢 Ground Floor (Level 1)
+                      </button>
+                      <button
+                        className={`btn-secondary ${activeFloor === 'top' ? 'active-tab' : ''}`}
+                        onClick={() => setActiveFloor('top')}
+                        style={{
+                          backgroundColor: activeFloor === 'top' ? '#238636' : '#21262d',
+                          color: '#ffffff',
+                          fontWeight: '600'
+                        }}
+                      >
+                        🏙️ Top Floor (Level {consultantData.floors_count})
+                      </button>
+                    </div>
+                  )}
+
                   <div className="svg-box" style={{ minHeight: '450px' }}>
                     <div
-                      dangerouslySetInnerHTML={{ __html: consultantData.floorplan.svg_content || '' }}
+                      dangerouslySetInnerHTML={{
+                        __html: (activeFloor === 'top' && consultantData.top_floorplan ? consultantData.top_floorplan : consultantData.floorplan).svg_content || ''
+                      }}
                       style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center' }}
                     />
                   </div>
@@ -182,69 +251,7 @@ function App() {
               <div className="placeholder-box">
                 <p>Click "Run Architectural Analysis" to execute RAG retrieval and generate context-aware design guidance.</p>
               </div>
-            )
-          ) : (
-            /* Experimental Comparison Mode */
-            compareData && compareData.comparison ? (
-              <div className="comparison-view">
-                <h2 style={{ fontSize: '1.1rem', margin: '0 0 10px 0', color: '#f0f6fc' }}>
-                  Experimental Comparison: Standard Prompt-Only vs RAG-Backed Framework
-                </h2>
-
-                <div className="comparison-grid">
-                  {/* Baseline Card */}
-                  <div className="comparison-card">
-                    <div className="card-header">
-                      <h3>{compareData.comparison.baseline.name}</h3>
-                      <span className="status-badge badge-warning">Standard Baseline</span>
-                    </div>
-                    <p className="approach-text">{compareData.comparison.baseline.approach}</p>
-
-                    <div className="metric-row">
-                      <div><strong>Context-Aware:</strong> ❌ No</div>
-                      <div><strong>Climate Rules:</strong> 0</div>
-                      <div><strong>Suitability Score:</strong> <span style={{ color: '#d29922' }}>{compareData.comparison.baseline.suitability_score}%</span></div>
-                    </div>
-
-                    <div className="svg-box" style={{ height: '320px' }}>
-                      <div dangerouslySetInnerHTML={{ __html: compareData.comparison.baseline.svg_content }} style={{ width: '100%', height: '100%' }} />
-                    </div>
-
-                    <button className="btn-secondary" onClick={() => downloadSVG(compareData.comparison.baseline.svg_content, 'baseline_floorplan.svg')}>
-                      Download Baseline SVG
-                    </button>
-                  </div>
-
-                  {/* Proposed RAG Card */}
-                  <div className="comparison-card highlight-card">
-                    <div className="card-header">
-                      <h3>{compareData.comparison.proposed_rag.name}</h3>
-                      <span className="status-badge badge-success">Proposed RAG Framework</span>
-                    </div>
-                    <p className="approach-text">{compareData.comparison.proposed_rag.approach}</p>
-
-                    <div className="metric-row">
-                      <div><strong>Context-Aware:</strong> ✅ Yes (FAISS RAG)</div>
-                      <div><strong>Climate Rules:</strong> {compareData.comparison.proposed_rag.climate_strategies_applied} Applied</div>
-                      <div><strong>Suitability Score:</strong> <span style={{ color: '#3fb950' }}>{compareData.comparison.proposed_rag.suitability_score}%</span></div>
-                    </div>
-
-                    <div className="svg-box" style={{ height: '320px' }}>
-                      <div dangerouslySetInnerHTML={{ __html: compareData.comparison.proposed_rag.svg_content }} style={{ width: '100%', height: '100%' }} />
-                    </div>
-
-                    <button className="btn-secondary" onClick={() => downloadSVG(compareData.comparison.proposed_rag.svg_content, 'rag_consultant_floorplan.svg')}>
-                      Download RAG Consultant SVG
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="placeholder-box">
-                <p>Click "Run Architectural Analysis" to perform experimental comparison between Standard Generation vs RAG-Backed Framework.</p>
-              </div>
-            )
-          )}
+            )}
         </section>
       </main>
     </div>

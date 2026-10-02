@@ -48,6 +48,8 @@ def generate_with_diffusion(requirements: Dict[str, Any]) -> Tuple[Dict[str, Any
             sampled_tensor = model.sample(cond_tensor, num_samples=1)[0]
 
         floorplan_json = encoder.decode(sampled_tensor, b_width=b_width, b_length=b_length, building_type=b_type, target_requirements=requirements)
+        import gc
+        gc.collect()
         return floorplan_json, True, "Generated using PyTorch Conditional DDPM Diffusion Model"
     except Exception as e:
         print(f"Diffusion Inference failure: {e}")

@@ -19,6 +19,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global Crash-Prevention Exception Handler
+from fastapi import Request
+from fastapi.responses import JSONResponse
+import traceback
+import gc
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    error_msg = str(exc)
+    tb_str = traceback.format_exc()
+    print(f"[CRASH PREVENTED] Exception on {request.url.path}: {error_msg}\n{tb_str}")
+    gc.collect()  # Clean up unreferenced objects to avoid memory leaks
+    return JSONResponse(
+        status_code=500,
+        content={"success": False, "error": "Internal Server Error", "detail": error_msg}
+    )
+
 # Mount static directories to serve SVG blueprints over HTTP
 base_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir = os.path.join(base_dir, "static")
