@@ -17,7 +17,7 @@ def render_floorplan_svg(floorplan: Dict[str, Any], output_path: str = None) -> 
         rooms = floorplan.get("rooms", [])
 
         scale = 16  # Scale factor: 16px per meter
-        margin = 85
+        margin = 110  # Generous top/left margin to prevent header text & grid bubble overlaps
         svg_width = b_width * scale + (margin * 2)
         svg_height = b_length * scale + (margin * 2)
 
@@ -42,19 +42,19 @@ def render_floorplan_svg(floorplan: Dict[str, Any], output_path: str = None) -> 
         for c in range(grid_cols + 1):
             cx = margin + (c * (b_width * scale / grid_cols))
             # Grid Line
-            svg_content.append(f'<line x1="{cx}" y1="{margin - 25}" x2="{cx}" y2="{margin + b_length * scale + 10}" stroke="#94a3b8" stroke-width="0.75" stroke-dasharray="4,3"/>')
-            # Top Grid Bubble
+            svg_content.append(f'<line x1="{cx}" y1="{margin - 30}" x2="{cx}" y2="{margin + b_length * scale + 15}" stroke="#94a3b8" stroke-width="0.75" stroke-dasharray="4,3"/>')
+            # Top Grid Bubble (positioned cleanly at cy = margin - 20)
             c_label = col_letters[c % len(col_letters)]
-            svg_content.append(f'<circle cx="{cx}" cy="{margin - 35}" r="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>')
-            svg_content.append(f'<text x="{cx}" y="{margin - 31}" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">{c_label}</text>')
+            svg_content.append(f'<circle cx="{cx}" cy="{margin - 20}" r="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>')
+            svg_content.append(f'<text x="{cx}" y="{margin - 16}" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">{c_label}</text>')
 
         for r in range(grid_rows + 1):
             ry = margin + (r * (b_length * scale / grid_rows))
             # Grid Line
-            svg_content.append(f'<line x1="{margin - 25}" y1="{ry}" x2="{margin + b_width * scale + 10}" y2="{ry}" stroke="#94a3b8" stroke-width="0.75" stroke-dasharray="4,3"/>')
-            # Left Grid Bubble
-            svg_content.append(f'<circle cx="{margin - 35}" cy="{ry}" r="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>')
-            svg_content.append(f'<text x="{margin - 35}" y="{ry + 4}" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">{r+1}</text>')
+            svg_content.append(f'<line x1="{margin - 30}" y1="{ry}" x2="{margin + b_width * scale + 15}" y2="{ry}" stroke="#94a3b8" stroke-width="0.75" stroke-dasharray="4,3"/>')
+            # Left Grid Bubble (positioned cleanly at cx = margin - 20)
+            svg_content.append(f'<circle cx="{margin - 20}" cy="{ry}" r="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>')
+            svg_content.append(f'<text x="{margin - 20}" y="{ry + 4}" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#334155" text-anchor="middle">{r+1}</text>')
 
         # 2. Outer Load-Bearing Boundary Wall Envelope
         svg_content.append(f'<rect x="{margin}" y="{margin}" width="{b_width * scale}" height="{b_length * scale}" fill="none" stroke="#0f172a" stroke-width="10"/>')
@@ -93,7 +93,7 @@ def render_floorplan_svg(floorplan: Dict[str, Any], output_path: str = None) -> 
             # Room Envelope & Interior Partition Wall
             svg_content.append(f'<rect x="{rx}" y="{ry}" width="{rw}" height="{rh}" fill="{bg_color}" stroke="{stroke_color}" stroke-width="4"/>')
 
-            # Architectural Furniture Schematic Schematics (PlanFinder & Edraw.AI style)
+            # Architectural Furniture Schematics (PlanFinder & Edraw.AI style)
             center_x = rx + (rw / 2)
             center_y = ry + (rh / 2)
 
@@ -150,13 +150,13 @@ def render_floorplan_svg(floorplan: Dict[str, Any], output_path: str = None) -> 
                 svg_content.append(f'<path d="M {arrow_x} {arrow_y_start} L {arrow_x} {arrow_y_end} L {arrow_x - 5} {arrow_y_end + 8} M {arrow_x} {arrow_y_end} L {arrow_x + 5} {arrow_y_end + 8}" fill="none" stroke="#ef4444" stroke-width="3"/>')
                 svg_content.append(f'<text x="{arrow_x}" y="{arrow_y_start + 12}" font-family="sans-serif" font-size="9" font-weight="bold" fill="#ef4444" text-anchor="middle">MAIN ENTRANCE</text>')
 
-        # 4. Architectural Title Block & Legend (Top Header)
-        svg_content.append(f'<text x="{margin}" y="42" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="#0f172a">2D ARCHITECTURAL BLUEPRINT — {b_type}</text>')
-        svg_content.append(f'<text x="{margin}" y="60" font-family="Inter, sans-serif" font-size="11" fill="#475569">Perimeter Bounds: {b_width:.1f}m × {b_length:.1f}m | Total Area: {b_width*b_length:.1f} m² | Scale 1:100</text>')
+        # 4. Architectural Title Block & Legend (Top Header, cleanly spaced)
+        svg_content.append(f'<text x="{margin}" y="32" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="#0f172a">2D ARCHITECTURAL BLUEPRINT — {b_type}</text>')
+        svg_content.append(f'<text x="{margin}" y="50" font-family="Inter, sans-serif" font-size="11" fill="#475569">Perimeter Bounds: {b_width:.1f}m × {b_length:.1f}m | Total Area: {b_width*b_length:.1f} m² | Scale 1:100</text>')
 
-        # Legend
+        # Legend (Right-aligned, top header)
         leg_x = margin + (b_width * scale) - 260
-        svg_content.append(f'<g transform="translate({leg_x}, 28)">')
+        svg_content.append(f'<g transform="translate({leg_x}, 20)">')
         svg_content.append(f'  <rect width="260" height="30" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>')
         svg_content.append(f'  <rect x="10" y="9" width="12" height="12" fill="#f0f9ff" stroke="#0369a1"/>')
         svg_content.append(f'  <text x="26" y="19" font-family="sans-serif" font-size="8" fill="#334155">Primary</text>')
