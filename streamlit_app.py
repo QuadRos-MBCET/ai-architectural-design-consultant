@@ -59,22 +59,97 @@ prompt_text = st.text_area(
     height=120
 )
 
-col_btn1, col_btn2 = st.columns([1, 4])
+# Workflow Modal Dialog
+@st.dialog("⚙️ Generative AI Synthesis Workflow: RAG + GAN Pipeline", width="large")
+def show_workflow_dialog(reqs_dict, gen_result):
+    btype_display = reqs_dict.get('building_type', 'building').replace('_', ' ').title()
+    rooms_list = [r.get('name', 'Room') for r in reqs_dict.get('rooms', [])]
+    rooms_preview = ", ".join(rooms_list[:6]) + (f" (+{len(rooms_list)-6} more)" if len(rooms_list) > 6 else "")
+    
+    st.markdown(f"""
+<div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 10px; padding: 18px; margin-bottom: 16px;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+        <span style="font-size: 1.4rem;">🏛️</span>
+        <h4 style="margin: 0; color: #00D2FF; font-family: 'Space Grotesk', sans-serif;">SURJ Homes Architectural Synthesis Engine</h4>
+    </div>
+    <p style="color: #94a3b8; font-size: 0.88rem; margin: 0;">
+        Real-time execution trace: How your natural language prompt transforms through <b>RAG</b> and <b>cGAN</b> into a collision-free 2D CAD floor plan.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+    <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px;">
+        <div style="color: #38bdf8; font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">
+            1️⃣ STAGE 1: RAG & Typology Extraction
+        </div>
+        <p style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.4; margin-bottom: 6px;">
+            <b>Detected Typology:</b> <span style="color: #00D2FF;">{btype_display}</span><br>
+            <b>Footprint Bounds:</b> {reqs_dict.get('building_width')}m × {reqs_dict.get('building_length')}m<br>
+            <b>Extracted Program:</b> {len(rooms_list)} functional zones
+        </p>
+        <div style="background: rgba(15, 23, 42, 0.7); border-radius: 4px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8;">
+            <b>Active Spaces:</b> {rooms_preview}
+        </div>
+    </div>
+    
+    <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px;">
+        <div style="color: #34d399; font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">
+            2️⃣ STAGE 2: Conditional GAN Spatial Packing
+        </div>
+        <p style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.4; margin-bottom: 6px;">
+            <b>Model:</b> <span style="color: #34d399;">{gen_result.get('actual_model_used', 'cGAN').upper()}</span><br>
+            <b>Spatial Solver:</b> Non-overlapping AABB partitioning<br>
+            <b>Validation Score:</b> {gen_result.get('validation', {}).get('score_percentage', 100)}% Compliance
+        </p>
+        <div style="background: rgba(15, 23, 42, 0.7); border-radius: 4px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8;">
+            <b>Circulation:</b> Central corridor alignment & zero-overlap guarantee
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+    
+    if st.button("Close Workflow & View 2D Blueprint", type="primary", use_container_width=True):
+        st.rerun()
+
+col_btn1, col_btn2 = st.columns([1.5, 3.5])
 with col_btn1:
-    generate_clicked = st.button("Generate 2D Floor Plan", type="primary")
+    generate_clicked = st.button("Generate 2D Floor Plan", type="primary", use_container_width=True)
+with col_btn2:
+    if "last_res" in st.session_state:
+        if st.button("ℹ️ View Generation Workflow", use_container_width=False):
+            show_workflow_dialog(st.session_state.get("last_reqs", {}), st.session_state["last_res"])
 
-if generate_clicked or "last_svg" not in st.session_state:
+# Check if prompt or parameters changed
+current_prompt_key = f"{prompt_text}_{building_type}_{width}_{length}_{model_choice}"
+is_new_prompt = st.session_state.get("active_key") != current_prompt_key
+
+if generate_clicked or is_new_prompt or "last_svg" not in st.session_state:
     with st.spinner("Executing generative layout model & layout validator..."):
+        # 1. Parse prompt
         reqs = parse_requirements_locally(prompt_text)
-        reqs["building_type"] = building_type
-        reqs["building_width"] = float(width)
-        reqs["building_length"] = float(length)
+        
+        # 2. Only override with sidebar if prompt did not explicitly define them
+        if not any(alias in prompt_text.lower() for aliases in [["library"], ["hospital"], ["school"], ["hotel"], ["house"], ["office"], ["mall"], ["police"], ["restaurant"]] for alias in aliases):
+            reqs["building_type"] = building_type
+            
+        dim_in_prompt = any(x in prompt_text.lower() for x in ["x", "×", "by"])
+        if not dim_in_prompt:
+            reqs["building_width"] = float(width)
+            reqs["building_length"] = float(length)
 
+        # 3. Generate floorplan
         gen_res = generate_floorplan(reqs, model_type=model_choice)
         svg_content = render_floorplan_svg(gen_res["floorplan"])
 
+        # 4. Save to session state
         st.session_state["last_res"] = gen_res
         st.session_state["last_svg"] = svg_content
+        st.session_state["last_reqs"] = reqs
+        st.session_state["active_key"] = current_prompt_key
+
+        # 5. Show popup on click
+        if generate_clicked:
+            show_workflow_dialog(reqs, gen_res)
 
 if "last_res" in st.session_state:
     res = st.session_state["last_res"]

@@ -65,12 +65,15 @@ def parse_requirements_locally(user_prompt: str) -> Dict[str, Any]:
     room_keywords = {
         "foyer": ["entrance", "reception", "lobby", "foyer", "waiting area", "duty desk", "triage", "host vestibule"],
         "reading_hall": ["reading hall", "study hall", "main hall", "dining hall", "dining atrium", "exhibition gallery", "auditorium"],
-        "computer_section": ["computer section", "computer lab", "it lab", "tech hub", "workstation area"],
-        "discussion_room": ["discussion room", "conference room", "meeting room", "interrogation room", "briefing room"],
-        "librarian_office": ["librarian office", "station chief office", "doctor office", "manager office", "executive office", "chief office"],
-        "bedroom": ["bedroom", "master bedroom", "guest suite", "suite", "patient room", "ward", "holding cell", "detention cell"],
+        "classroom": ["classroom", "class room", "lecture hall", "training room", "seminar room"],
+        "lab": ["laboratory", "science lab", "physics lab", "chemistry lab", "biology lab", "medical lab"],
+        "computer_section": ["computer section", "computer lab", "it lab", "tech hub", "workstation area", "open workstation"],
+        "discussion_room": ["discussion room", "conference room", "meeting room", "interrogation room", "briefing room", "boardroom"],
+        "librarian_office": ["librarian office", "station chief office", "doctor office", "manager office", "executive office", "chief office", "principal office", "staff office", "consultation room"],
+        "bedroom": ["bedroom", "master bedroom", "guest suite", "suite", "patient room", "patient ward", "ward", "icu", "holding cell", "detention cell"],
         "living_room": ["living room", "lounge", "family room", "sitting room"],
-        "kitchen": ["kitchen", "commercial kitchen", "prep area", "canteen"],
+        "kitchen": ["kitchen", "commercial kitchen", "prep area", "canteen", "cafeteria"],
+        "pharmacy": ["pharmacy", "medical supply", "dispensary"],
         "storage": ["storage", "archive", "armory", "evidence locker", "pantry", "cold storage", "store room", "linen store"],
         "toilet": ["toilet", "toilets", "restroom", "restrooms", "washroom", "bathroom", "en-suite"]
     }
