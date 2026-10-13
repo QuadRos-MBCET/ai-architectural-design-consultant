@@ -66,47 +66,48 @@ def show_workflow_dialog(reqs_dict, gen_result):
     rooms_list = [r.get('name', 'Room') for r in reqs_dict.get('rooms', [])]
     rooms_preview = ", ".join(rooms_list[:6]) + (f" (+{len(rooms_list)-6} more)" if len(rooms_list) > 6 else "")
     
-    st.markdown(f"""
+    html_dialog = f"""
 <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 10px; padding: 18px; margin-bottom: 16px;">
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-        <span style="font-size: 1.4rem;">🏛️</span>
-        <h4 style="margin: 0; color: #00D2FF; font-family: 'Space Grotesk', sans-serif;">SURJ Homes Architectural Synthesis Engine</h4>
-    </div>
-    <p style="color: #94a3b8; font-size: 0.88rem; margin: 0;">
-        Real-time execution trace: How your natural language prompt transforms through <b>RAG</b> and <b>cGAN</b> into a collision-free 2D CAD floor plan.
-    </p>
+<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+<span style="font-size: 1.4rem;">🏛️</span>
+<h4 style="margin: 0; color: #00D2FF; font-family: 'Space Grotesk', sans-serif;">SURJ Homes Architectural Synthesis Engine</h4>
+</div>
+<p style="color: #94a3b8; font-size: 0.88rem; margin: 0;">
+Real-time execution trace: How your natural language prompt transforms through <b>RAG</b> and <b>cGAN</b> into a collision-free 2D CAD floor plan.
+</p>
 </div>
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-    <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px;">
-        <div style="color: #38bdf8; font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">
-            1️⃣ STAGE 1: RAG & Typology Extraction
-        </div>
-        <p style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.4; margin-bottom: 6px;">
-            <b>Detected Typology:</b> <span style="color: #00D2FF;">{btype_display}</span><br>
-            <b>Footprint Bounds:</b> {reqs_dict.get('building_width')}m × {reqs_dict.get('building_length')}m<br>
-            <b>Extracted Program:</b> {len(rooms_list)} functional zones
-        </p>
-        <div style="background: rgba(15, 23, 42, 0.7); border-radius: 4px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8;">
-            <b>Active Spaces:</b> {rooms_preview}
-        </div>
-    </div>
-    
-    <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px;">
-        <div style="color: #34d399; font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">
-            2️⃣ STAGE 2: Conditional GAN Spatial Packing
-        </div>
-        <p style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.4; margin-bottom: 6px;">
-            <b>Model:</b> <span style="color: #34d399;">{gen_result.get('actual_model_used', 'cGAN').upper()}</span><br>
-            <b>Spatial Solver:</b> Non-overlapping AABB partitioning<br>
-            <b>Validation Score:</b> {gen_result.get('validation', {}).get('score_percentage', 100)}% Compliance
-        </p>
-        <div style="background: rgba(15, 23, 42, 0.7); border-radius: 4px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8;">
-            <b>Circulation:</b> Central corridor alignment & zero-overlap guarantee
-        </div>
-    </div>
+<div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px;">
+<div style="color: #38bdf8; font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">
+1️⃣ STAGE 1: RAG & Typology Extraction
 </div>
-""", unsafe_allow_html=True)
+<p style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.4; margin-bottom: 6px;">
+<b>Detected Typology:</b> <span style="color: #00D2FF;">{btype_display}</span><br>
+<b>Footprint Bounds:</b> {reqs_dict.get('building_width')}m × {reqs_dict.get('building_length')}m<br>
+<b>Extracted Program:</b> {len(rooms_list)} functional zones
+</p>
+<div style="background: rgba(15, 23, 42, 0.7); border-radius: 4px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8;">
+<b>Active Spaces:</b> {rooms_preview}
+</div>
+</div>
+
+<div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px;">
+<div style="color: #34d399; font-weight: 700; font-size: 0.95rem; margin-bottom: 6px;">
+2️⃣ STAGE 2: Conditional GAN Spatial Packing
+</div>
+<p style="color: #cbd5e1; font-size: 0.82rem; line-height: 1.4; margin-bottom: 6px;">
+<b>Model:</b> <span style="color: #34d399;">{gen_result.get('actual_model_used', 'cGAN').upper()}</span><br>
+<b>Spatial Solver:</b> Non-overlapping AABB partitioning<br>
+<b>Validation Score:</b> {gen_result.get('validation', {}).get('score_percentage', 100)}% Compliance
+</p>
+<div style="background: rgba(15, 23, 42, 0.7); border-radius: 4px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8;">
+<b>Circulation:</b> Central corridor alignment & zero-overlap guarantee
+</div>
+</div>
+</div>
+"""
+    st.markdown(html_dialog, unsafe_allow_html=True)
     
     if st.button("Close Workflow & View 2D Blueprint", type="primary", use_container_width=True):
         st.rerun()
