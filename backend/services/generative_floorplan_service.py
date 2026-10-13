@@ -31,6 +31,22 @@ def generate_bsp_baseline_floorplan(requirements: Dict[str, Any]) -> Dict[str, A
     if is_top:
         # Generate architectural top-floor specialized room programs with spacious spatial proportions
         typology_upper_programs = {
+            "hostel": [
+                {"type": "bedroom", "name": "Dormitory Suite 101", "width": b_width * 0.4, "height": b_length * 0.5, "x": 0.0, "y": 0.0},
+                {"type": "bedroom", "name": "Dormitory Suite 102", "width": b_width * 0.4, "height": b_length * 0.5, "x": b_width * 0.4, "y": 0.0},
+                {"type": "reading_hall", "name": "Night Study Lounge", "width": b_width * 0.2, "height": b_length * 0.5, "x": b_width * 0.8, "y": 0.0},
+                {"type": "bedroom", "name": "Dormitory Suite 103", "width": b_width * 0.4, "height": b_length * 0.5, "x": 0.0, "y": b_length * 0.5},
+                {"type": "toilet", "name": "Upper Washroom Core", "width": b_width * 0.3, "height": b_length * 0.5, "x": b_width * 0.4, "y": b_length * 0.5},
+                {"type": "foyer", "name": "Stairwell Riser", "width": b_width * 0.3, "height": b_length * 0.5, "x": b_width * 0.7, "y": b_length * 0.5}
+            ],
+            "school": [
+                {"type": "classroom", "name": "Upper Classroom A", "width": b_width * 0.35, "height": b_length * 0.5, "x": 0.0, "y": 0.0},
+                {"type": "classroom", "name": "Upper Classroom B", "width": b_width * 0.35, "height": b_length * 0.5, "x": b_width * 0.35, "y": 0.0},
+                {"type": "lab", "name": "Advanced Science Lab", "width": b_width * 0.3, "height": b_length * 0.5, "x": b_width * 0.7, "y": 0.0},
+                {"type": "classroom", "name": "Upper Classroom C", "width": b_width * 0.4, "height": b_length * 0.5, "x": 0.0, "y": b_length * 0.5},
+                {"type": "toilet", "name": "Upper Student Restrooms", "width": b_width * 0.3, "height": b_length * 0.5, "x": b_width * 0.4, "y": b_length * 0.5},
+                {"type": "foyer", "name": "Central Stair Riser", "width": b_width * 0.3, "height": b_length * 0.5, "x": b_width * 0.7, "y": b_length * 0.5}
+            ],
             "police_station": [
                 {"type": "storage", "name": "High-Security Holding Cells", "width": b_width * 0.5, "height": b_length * 0.5, "x": 0.0, "y": 0.0},
                 {"type": "discussion_room", "name": "Interrogation & Briefing Room", "width": b_width * 0.5, "height": b_length * 0.5, "x": b_width * 0.5, "y": 0.0},
